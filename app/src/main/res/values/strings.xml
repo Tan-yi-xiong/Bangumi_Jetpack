@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">Bangumi</string>
+    <string name="menu_title_home">主页</string>
+    <string name="menu_title_my_follow">我的追番</string>
+    <string name="menu_title_my_download">我的下载</string>
+    <string name="open_drawer">open drawer</string>
+    <string name="close_drawer">close drawer</string>
+    <string name="title_menu_bangumi">番剧</string>
+    <string name="title_menu_category">分类</string>
+    <string name="title_menu_timetable">时间表</string>
+    <string name="text_search">搜索你想看的吧~</string>
+    <string name="key_home_page">key_home_page</string>
+    <string name="favorite_bangumi">我的追番</string>
+    <string name="text_error_retry">出错了>_&lt; \n点击图片重试</string>
+    <string name="text_noting">什么都没有哦</string>
+    <string name="text_timetable_error">发生错误</string>
+</resources>

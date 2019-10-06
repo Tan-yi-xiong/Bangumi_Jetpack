@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:id="@+id/bangumiFragment"
+            android:title="@string/title_menu_bangumi"
+            android:icon="@drawable/ic_bangumi"/>
+
+    <item android:id="@+id/categoryFragment"
+          android:title="@string/title_menu_category"
+          android:icon="@drawable/ic_category"/>
+
+    <item android:id="@+id/timeTableFragment"
+          android:title="@string/title_menu_timetable"
+          android:icon="@drawable/ic_timetable"/>
+
+</menu>

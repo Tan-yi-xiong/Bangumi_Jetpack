@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="blue_A400">#2979ff</color>
+    <color name="colorAccent">#ff4081</color>
+    <color name="colorAccentDark">#f50057</color>
+    <color name="colorAccentLight">#ff80ab</color>
+    <color name="colorCloseChip">#ababab</color>
+    <color name="colorPrimary">@color/blue_A400</color>
+    <color name="colorPrimaryDark">@color/mdtp_white</color>
+    <color name="colorPrimaryLight">@color/blue_A400</color>
+    <color name="grey_200">#eeeeee</color>
+    <color name="grey_300">#e0e0e0</color>
+    <color name="grey_400">#bdbdbd</color>
+    <color name="grey_500">#9e9e9e</color>
+    <color name="grey_600">#757575</color>
+    <color name="grey_800">#424242</color>
+    <color name="mdtp_white">#ffffff</color>
+    <color name="overlay_drak">#4d000000</color>
+    <color name="primary_text">#444444</color>
+
+</resources>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:tools="http://schemas.android.com/tools"
+            android:id="@+id/nav_home" app:startDestination="@id/bangumiFragment">
+
+    <fragment android:id="@+id/bangumiFragment" android:name="com.tyxapp.bangumi_jetpack.main.home.BangumiFragment"
+              android:label="bangumi_fragment" tools:layout="@layout/bangumi_fragment"/>
+    <fragment android:id="@+id/categoryFragment" android:name="com.tyxapp.bangumi_jetpack.main.home.CategoryFragment"
+              android:label="category_fragment" tools:layout="@layout/category_fragment"/>
+    <fragment android:id="@+id/timeTableFragment" android:name="com.tyxapp.bangumi_jetpack.main.home.TimeTableFragment"
+              android:label="time_table_fragment" tools:layout="@layout/time_table_fragment"/>
+</navigation>
