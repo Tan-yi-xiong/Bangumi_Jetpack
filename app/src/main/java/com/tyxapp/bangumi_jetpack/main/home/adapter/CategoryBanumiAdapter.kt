@@ -11,7 +11,7 @@ import com.tyxapp.bangumi_jetpack.data.Bangumi
 import com.tyxapp.bangumi_jetpack.databinding.CategoryBangumiItemBinding
 import com.tyxapp.bangumi_jetpack.utilities.toPx
 
-class CategoryDetailAdapter :
+class CategoryBanumiAdapter :
     PagedListAdapter<Bangumi, CategoryDetailViewHoder>(BangumiDiffCallback()) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CategoryDetailViewHoder {
         return CategoryDetailViewHoder(

@@ -32,7 +32,7 @@
         android:id="@+id/categoryDetailFragment"
         android:name="com.tyxapp.bangumi_jetpack.main.home.CategoryBangumisFragment"
         android:label="category_detail_fragment"
-        tools:layout="@layout/category_detail_fragment">
+        tools:layout="@layout/category_bangumis_fragment">
         <argument
             android:name="categoryWord"
             app:argType="string" />

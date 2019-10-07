@@ -14,8 +14,8 @@ import androidx.paging.PagedList
 import androidx.recyclerview.widget.RecyclerView
 import com.tyxapp.bangumi_jetpack.R
 import com.tyxapp.bangumi_jetpack.data.Bangumi
-import com.tyxapp.bangumi_jetpack.databinding.CategoryDetailFragmentBinding
-import com.tyxapp.bangumi_jetpack.main.home.adapter.CategoryDetailAdapter
+import com.tyxapp.bangumi_jetpack.databinding.CategoryBangumisFragmentBinding
+import com.tyxapp.bangumi_jetpack.main.home.adapter.CategoryBanumiAdapter
 import com.tyxapp.bangumi_jetpack.main.viewmodels.CategoryBangumisModel
 import com.tyxapp.bangumi_jetpack.main.viewmodels.MainViewModel
 import com.tyxapp.bangumi_jetpack.utilities.InjectorUtils
@@ -28,7 +28,7 @@ class CategoryBangumisFragment : Fragment() {
         InjectorUtils.provideCategoryBangumisViewModelFactory(mainViewModel.homeDataRepository.value!!)
     }
 
-    private lateinit var binding: CategoryDetailFragmentBinding
+    private lateinit var binding: CategoryBangumisFragmentBinding
     private lateinit var mRecyclerView: RecyclerView
 
     override fun onCreateView(
@@ -36,22 +36,27 @@ class CategoryBangumisFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = CategoryDetailFragmentBinding.inflate(inflater, container, false)
-        mRecyclerView = binding.recyclerView
-        val toolbar = binding.toolBar
-        mRecyclerView.adapter = CategoryDetailAdapter()
-        toolbar.title = categoryArgs.categoryWord
-
-        toolbar.setNavigationOnClickListener { requireActivity().findNavController(R.id.main_content).navigateUp() }
+        initView(inflater, container)
         addObserver()
         return binding.root
+    }
+
+    private fun initView(inflater: LayoutInflater, container: ViewGroup?) {
+        binding = CategoryBangumisFragmentBinding.inflate(inflater, container, false)
+        mRecyclerView = binding.recyclerView
+        val toolbar = binding.toolBar
+        mRecyclerView.adapter = CategoryBanumiAdapter()
+        toolbar.title = categoryArgs.categoryWord
+        toolbar.setNavigationOnClickListener {
+            requireActivity().findNavController(R.id.main_content).navigateUp()
+        }
     }
 
     private fun addObserver() = with(viewModel) {
         binding.isLoading = true
         getCategoryBangumis(categoryArgs.categoryWord)
         categoryBangumis.observe(this@CategoryBangumisFragment, Observer<PagedList<Bangumi>> {
-            (mRecyclerView.adapter as CategoryDetailAdapter).submitList(it)
+            (mRecyclerView.adapter as CategoryBanumiAdapter).submitList(it)
             binding.isLoading = false
         })
     }
