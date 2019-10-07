@@ -30,7 +30,7 @@
         tools:layout="@layout/my_download_fragment" />
     <fragment
         android:id="@+id/categoryDetailFragment"
-        android:name="com.tyxapp.bangumi_jetpack.main.categorydetail.CategoryDetailFragment"
+        android:name="com.tyxapp.bangumi_jetpack.main.home.CategoryBangumisFragment"
         android:label="category_detail_fragment"
         tools:layout="@layout/category_detail_fragment">
         <argument

@@ -14,4 +14,5 @@
     <string name="text_error_retry">出错了>_&lt; \n点击图片重试</string>
     <string name="text_noting">什么都没有哦</string>
     <string name="text_timetable_error">发生错误</string>
+    <string name="meun_search">搜索</string>
 </resources>

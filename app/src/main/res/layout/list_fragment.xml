@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
 
@@ -61,7 +62,8 @@
             <ImageView
                 android:layout_width="150dp"
                 android:layout_height="150dp"
-                app:bindImage="@{@drawable/error}" />
+                app:bindImage="@{@drawable/error}"
+                tools:src="@drawable/error" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -84,7 +86,8 @@
             <ImageView
                 android:layout_width="150dp"
                 android:layout_height="150dp"
-                app:bindImage="@{@drawable/empty}" />
+                app:bindImage="@{@drawable/empty}"
+                tools:src="@drawable/empty" />
 
             <TextView
                 android:layout_width="wrap_content"

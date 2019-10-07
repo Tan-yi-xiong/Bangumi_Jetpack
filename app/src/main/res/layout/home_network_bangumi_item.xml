@@ -33,6 +33,8 @@
                 android:layout_height="wrap_content" />
 
             <ImageButton
+                android:focusable="false"
+                android:clickable="false"
                 android:backgroundTint="@android:color/transparent"
                 android:tint="@color/grey_800"
                 android:src="@drawable/ic_arrow"
