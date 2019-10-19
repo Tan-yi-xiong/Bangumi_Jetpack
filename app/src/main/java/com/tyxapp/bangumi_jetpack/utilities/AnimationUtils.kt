@@ -1,6 +1,7 @@
 package com.tyxapp.bangumi_jetpack.utilities
 
 import android.view.View
+import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import androidx.core.view.ViewCompat.animate
 import com.tyxapp.bangumi_jetpack.BangumiApp
@@ -36,4 +37,19 @@ fun View.popAnimation(
         interpolator = AnimationUtils.loadInterpolator(context, android.R.interpolator.overshoot)
         this.startDelay = startDelay
     }
+}
+
+inline fun Animation.doOnEnd(crossinline endAction: (Animation?) -> Unit) {
+    setAnimationListener(object : Animation.AnimationListener {
+        override fun onAnimationRepeat(animation: Animation?) {
+        }
+
+        override fun onAnimationEnd(animation: Animation?) {
+            endAction(animation)
+        }
+
+        override fun onAnimationStart(animation: Animation?) {
+        }
+
+    })
 }

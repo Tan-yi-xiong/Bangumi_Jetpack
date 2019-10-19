@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="searchWord"
+            type="com.tyxapp.bangumi_jetpack.data.SearchWord" />
+
+        <variable
+            name="viewModle"
+            type="com.tyxapp.bangumi_jetpack.main.viewmodels.SearchHelperViewModel" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:background="?attr/selectableItemBackground"
+        android:onClick="@{() -> viewModle.onSearchHelperItemClick(searchWord)}"
+        android:paddingStart="24dp"
+        android:paddingEnd="16dp">
+
+        <ImageView
+            android:tint="@android:color/tertiary_text_dark"
+            android:id="@+id/imageView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@{searchWord.fromNet ? @drawable/ic_search : @drawable/ic_restore}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:src="@drawable/ic_search" />
+
+        <TextView
+            android:textColor="@android:color/black"
+            android:id="@+id/textView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingStart="48dp"
+            android:text="@{searchWord.word}"
+            app:layout_constraintBottom_toBottomOf="@+id/imageView"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/imageView"
+            tools:text="多啦A梦" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

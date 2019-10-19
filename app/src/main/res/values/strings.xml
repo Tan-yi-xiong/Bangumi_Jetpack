@@ -15,4 +15,6 @@
     <string name="text_noting">什么都没有哦</string>
     <string name="text_timetable_error">发生错误</string>
     <string name="meun_search">搜索</string>
+    <string name="menu_title_history">历史记录</string>
+    <string name="button_text_retry">重试</string>
 </resources>

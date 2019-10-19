@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/my_download"
+    app:startDestination="@id/myDownloadFragment2">
+
+    <fragment
+        android:id="@+id/myDownloadFragment2"
+        android:name="com.tyxapp.bangumi_jetpack.main.ui.MyDownloadFragment"
+        android:label="my_download_fragment"
+        tools:layout="@layout/my_download_fragment" />
+</navigation>

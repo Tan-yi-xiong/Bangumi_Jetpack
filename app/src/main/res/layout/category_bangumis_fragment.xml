@@ -7,6 +7,14 @@
         <variable
             name="isLoading"
             type="Boolean" />
+
+        <variable
+            name="isError"
+            type="Boolean" />
+
+        <variable
+            name="showContent"
+            type="Boolean" />
     </data>
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -29,13 +37,17 @@
 
         </com.google.android.material.appbar.AppBarLayout>
 
+        <include
+            layout="@layout/error_layout"
+            app:visibility="@{isError}"/>
+
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_below="@+id/toolBar"
-            app:isGone="@{isLoading}"
+            app:isGone="@{!showContent}"
             app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
         <ProgressBar

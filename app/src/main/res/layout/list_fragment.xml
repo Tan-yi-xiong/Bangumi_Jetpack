@@ -33,69 +33,33 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
+                <androidx.recyclerview.widget.RecyclerView
+                    android:visibility="gone"
+                    android:id="@+id/recyclerView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:isGone="@{!showContent}" />
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recyclerView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:isGone="@{!showContent}" />
 
         </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
 
         <ProgressBar
+            android:visibility="gone"
             android:id="@+id/progressBar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             app:isGone="@{!showLoading}" />
 
-        <LinearLayout
-            android:id="@+id/errorView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:gravity="center_horizontal"
-            android:orientation="vertical"
-            app:isGone="@{!showError}">
 
-            <ImageView
-                android:layout_width="150dp"
-                android:layout_height="150dp"
-                app:bindImage="@{@drawable/error}"
-                tools:src="@drawable/error" />
+        <include
+            layout="@layout/error_layout"
+            app:visibility="@{showError}"/>
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:gravity="center_horizontal"
-                android:text="@string/text_error_retry" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/emptyView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:gravity="center_horizontal"
-            android:orientation="vertical"
-            app:isGone="@{!showEmpty}">
-
-            <ImageView
-                android:layout_width="150dp"
-                android:layout_height="150dp"
-                app:bindImage="@{@drawable/empty}"
-                tools:src="@drawable/empty" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="@string/text_noting" />
-
-        </LinearLayout>
+        <include
+            layout="@layout/empty_layout"
+            app:visibility="@{showEmpty}"/>
 
     </RelativeLayout>
 </layout>

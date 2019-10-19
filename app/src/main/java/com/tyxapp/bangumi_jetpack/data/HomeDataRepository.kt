@@ -1,5 +1,6 @@
 package com.tyxapp.bangumi_jetpack.data
 
+import com.tyxapp.bangumi_jetpack.data.parsers.IHomePageParser
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 

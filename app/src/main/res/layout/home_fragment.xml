@@ -58,20 +58,12 @@
         </com.google.android.material.appbar.AppBarLayout>
 
         <FrameLayout
+            android:id="@+id/homeContent"
             android:paddingBottom="58.5dp"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
 
-            <fragment
-                android:id="@+id/homeContent"
-                android:name="androidx.navigation.fragment.NavHostFragment"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:paddingBottom="58.5dp"
-                app:defaultNavHost="true"
-                app:navGraph="@navigation/nav_home" />
-        </FrameLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -89,8 +81,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="58dp"
                 android:background="@color/mdtp_white"
-                app:elevation="0dp"
-                app:menu="@menu/bottom_navigation_menu" />
+                app:menu="@menu/bottom_navigation_menu"
+                app:elevation="0dp" />
         </LinearLayout>
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 

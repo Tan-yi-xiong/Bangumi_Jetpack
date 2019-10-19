@@ -1,32 +1,32 @@
 package com.tyxapp.bangumi_jetpack.data.parsers
 
-import android.text.TextUtils.indexOf
-import android.text.TextUtils.lastIndexOf
 import android.widget.Toast
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Transformations
+import androidx.lifecycle.switchMap
 import androidx.paging.DataSource
+import androidx.paging.LivePagedListBuilder
 import androidx.paging.PageKeyedDataSource
+import androidx.paging.PagedList
 import com.tyxapp.bangumi_jetpack.BangumiApp
-import com.tyxapp.bangumi_jetpack.data.Bangumi
-import com.tyxapp.bangumi_jetpack.data.BangumiSource
-import com.tyxapp.bangumi_jetpack.data.CategorItem
-import com.tyxapp.bangumi_jetpack.data.IHomePageParser
-import com.tyxapp.bangumi_jetpack.main.home.adapter.BANNER
+import com.tyxapp.bangumi_jetpack.data.*
+import com.tyxapp.bangumi_jetpack.main.adapter.BANNER
+import com.tyxapp.bangumi_jetpack.utilities.*
 import com.tyxapp.bangumi_jetpack.utilities.OkhttpUtil.getResponseData
-import com.tyxapp.bangumi_jetpack.utilities.RequestMode
-import com.tyxapp.bangumi_jetpack.utilities.forEach
-import com.tyxapp.bangumi_jetpack.utilities.info
-import com.tyxapp.bangumi_jetpack.utilities.replace
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import okhttp3.MediaType
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONObject
+import java.net.URLEncoder
 import java.util.*
+import kotlin.collections.ArrayList
 
 
-class Zzzfun : IHomePageParser {
+class Zzzfun : IHomePageParser, IsearchParse {
 
     private val baseUrl = "http://111.230.89.165:8089/zapi"
     private val categorItemName by lazy(LazyThreadSafetyMode.NONE) {
@@ -118,8 +118,21 @@ class Zzzfun : IHomePageParser {
         return list
     }
 
-    override fun getCategoryBangumis(category: String): DataSource.Factory<Int, Bangumi> =
-        CategoryPageDataSourceFactor(category)
+    override fun getCategoryBangumis(category: String): Listing<Bangumi> {
+        val sourceFactor = CategoryPageDataSourceFactor(category)
+
+
+        val liveDataPagelist = LivePagedListBuilder(sourceFactor, 10).build()
+
+        return Listing<Bangumi>(
+            liveDataPagelist = liveDataPagelist,
+            netWordState = Transformations.switchMap(sourceFactor.sourceLiveData) {
+                it.netWordState
+            },
+            retry = { sourceFactor.sourceLiveData.value?.retry() }
+        )
+
+    }
 
 
     /**
@@ -169,29 +182,129 @@ class Zzzfun : IHomePageParser {
         return list
     }
 
+    override fun getSearchResult(searchWord: String): Listing<Bangumi> {
+        val factor = SearchResultDataSourceFactor(searchWord)
+
+        val livePagedList = LivePagedListBuilder(factor, 10).build()
+
+        return Listing(
+            liveDataPagelist = livePagedList,
+            netWordState = factor.searchResultDataSource.switchMap { it.netWordState },
+            retry = { factor.searchResultDataSource.value?.retry() }
+        )
+    }
+
+}
+
+private class SearchResultDataSource(
+    private val searchWord: String
+) : PageKeyedDataSource<Int, Bangumi>() {
+
+    val netWordState = MutableLiveData<NetWordState>()
+    private var retry: (() -> Unit)? = null
+
+    suspend fun retry() {
+        val prveRetry = retry
+        retry = null
+        withContext(Dispatchers.IO) {
+            prveRetry?.invoke()
+        }
+    }
+
+    override fun loadInitial(
+        params: LoadInitialParams<Int>,
+        callback: LoadInitialCallback<Int, Bangumi>
+    ) {
+        try {
+            netWordState.postValue(NetWordState.LOADING)
+            val url =
+                "http://111.230.89.165:8099/api.php/provvde/vod/?ac=list&wd=${URLEncoder.encode(
+                    searchWord,
+                    "UTF-8"
+                )}"
+
+            val jsonObject = JSONObject(getResponseData(url)).takeIf { !it.isNull("list") }
+                ?: return callback.onResult(emptyList(), null, null)
+
+            val bangumis = ArrayList<Bangumi>()
+            jsonObject.getJSONArray("list").forEach {
+                val name = it.getString("vod_name")
+                val id = it.getString("vod_id")
+                val cover = it.getString("vod_pic")
+
+                val ji = when {
+                    it.getString("vod_remarks").isNotEmpty() -> it.getString("vod_remarks")
+                    it.getString("vod_serial").isNotEmpty() -> "更新至${it.getString("vod_serial")}集"
+                    else -> "全${it.getString("vod_total")}集"
+                }
+
+                bangumis.add(Bangumi(id, BangumiSource.Zzzfun, name, cover, ji))
+            }
+            callback.onResult(bangumis, null, null)
+            netWordState.postValue(NetWordState.SUCCESS)
+        } catch (e: Exception) {
+            retry = {
+                loadInitial(params, callback)
+            }
+            netWordState.postValue(NetWordState.error(e.toString()))
+        }
+    }
+
+    override fun loadAfter(params: LoadParams<Int>, callback: LoadCallback<Int, Bangumi>) {
+
+    }
+
+    override fun loadBefore(params: LoadParams<Int>, callback: LoadCallback<Int, Bangumi>) {
+
+    }
+
+}
+
+private class SearchResultDataSourceFactor(
+    private val searchWord: String
+) : DataSource.Factory<Int, Bangumi>() {
+    val searchResultDataSource = MutableLiveData<SearchResultDataSource>()
+
+    override fun create(): DataSource<Int, Bangumi> {
+        return SearchResultDataSource(searchWord).apply {
+            searchResultDataSource.postValue(this)
+        }
+    }
 
 }
 
 private class CategoryPageDataSource(
     private val category: String
 ) : PageKeyedDataSource<Int, Bangumi>() {
-    private val JSON: MediaType = "application/json; charset=utf-8".toMediaType()
+    private val jsonMediaType: MediaType = "application/json; charset=utf-8".toMediaType()
+    val netWordState = MutableLiveData<NetWordState>()
+    private var retry: (() -> Unit)? = null
+
+    suspend fun retry() {
+        val prevRetry = retry
+        retry = null//防止连续点击
+        withContext(Dispatchers.IO) {
+            prevRetry?.invoke()
+        }
+    }
 
     override fun loadInitial(
         params: LoadInitialParams<Int>,
         callback: LoadInitialCallback<Int, Bangumi>
     ) {
         val page = 1
-        val result: List<Bangumi> = try {
-            parserCategoryData(category, page)
+        try {
+            netWordState.postValue(NetWordState.LOADING)
+            val result = parserCategoryData(category, page)
+            retry = null
+            netWordState.postValue(NetWordState.SUCCESS)
+            callback.onResult(result, null, page + 1)
         } catch (e: Exception) {
-            info(e.toString())
-            CoroutineScope(Dispatchers.Main).launch {
-                Toast.makeText(BangumiApp.getContext(), "发生错误", Toast.LENGTH_SHORT).show()
+            retry = {
+                loadInitial(params, callback)
             }
-            emptyList()
+            netWordState.postValue(NetWordState.error(e.toString()))
         }
-        callback.onResult(result, null, page + 1)
     }
 
     override fun loadAfter(params: LoadParams<Int>, callback: LoadCallback<Int, Bangumi>) {
@@ -206,7 +319,6 @@ private class CategoryPageDataSource(
             }
             emptyList()
         }
-
         callback.onResult(result, if (result.isEmpty()) null else page + 1)
     }
 
@@ -224,7 +336,7 @@ private class CategoryPageDataSource(
         }
         //POST请求
         val requestJaon = "{\"pageNow\":$page,\"tagNames\":\"$categoryName\"}"
-        val requestBody = requestJaon.toRequestBody(JSON)
+        val requestBody = requestJaon.toRequestBody(jsonMediaType)
         val responseData = getResponseData(url, RequestMode.POST, requestBody).run {
             substring(indexOf("{"), lastIndexOf("}") + 1)
         }
@@ -234,7 +346,7 @@ private class CategoryPageDataSource(
 
         return jsonObject.getJSONArray("result").run {
             val bangumis = ArrayList<Bangumi>()
-            forEach {
+            this.forEach {
                 val name = it.getString("name")
                 val cover = it.getString("pic")
                 val id = it.getString("id")
@@ -243,11 +355,14 @@ private class CategoryPageDataSource(
             bangumis
         }
     }
-
 }
 
 private class CategoryPageDataSourceFactor(
     private val category: String
 ) : DataSource.Factory<Int, Bangumi>() {
-    override fun create(): DataSource<Int, Bangumi> = CategoryPageDataSource(category)
+    val sourceLiveData = MutableLiveData<CategoryPageDataSource>()
+
+    override fun create(): DataSource<Int, Bangumi> = CategoryPageDataSource(category).apply {
+        sourceLiveData.postValue(this)
+    }
 }

@@ -10,7 +10,7 @@ enum class RequestMode {
     GET, POST
 }
 
-fun info(msg: String) = Log.i("MainActivity", msg)
+fun info(msg: String?) = Log.i("MainActivity", msg)
 
 object OkhttpUtil {
     private val client by lazy { OkHttpClient() }

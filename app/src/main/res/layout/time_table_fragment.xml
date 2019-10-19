@@ -18,7 +18,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        tools:context=".main.home.TimeTableFragment">
+        tools:context=".main.ui.TimeTableFragment">
 
         <com.google.android.material.tabs.TabLayout
             app:tabSelectedTextColor="@color/colorPrimary"

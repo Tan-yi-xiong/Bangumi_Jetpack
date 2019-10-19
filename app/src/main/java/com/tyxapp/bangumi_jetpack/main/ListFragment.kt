@@ -6,10 +6,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.tyxapp.bangumi_jetpack.R
 import com.tyxapp.bangumi_jetpack.databinding.ListFragmentBinding
 
 abstract class ListFragment : Fragment() {
@@ -25,8 +27,8 @@ abstract class ListFragment : Fragment() {
         return bind.apply {
             mRecyclerView = recyclerView
             mProgressBar = progressBar
-            mErrorView = errorView
-            mEmpttyView = emptyView
+            mErrorView = root.findViewById(R.id.errorView)
+            mEmpttyView = root.findViewById(R.id.emptyView)
             mSwipeRefreshLayout = swipeRefreshLayout
             mSwipeRefreshLayout.isEnabled = false
         }.root
@@ -44,7 +46,7 @@ abstract class ListFragment : Fragment() {
         bind.showError = false
         bind.showLoading = false
         bind.showContent = true
-    }
+    } 
 
     fun showError() {
         bind.showEmpty = false
@@ -61,6 +63,10 @@ abstract class ListFragment : Fragment() {
     }
 
     inline fun <reified T> LiveData<T>.observe(crossinline action: (T) -> Unit) {
-        observe(this@ListFragment, Observer<T> { action(it) })
+        observe(this@ListFragment ) { action(it) }
     }
+}
+
+inline fun <reified T> LiveData<T>.observe(owner: LifecycleOwner, crossinline action: (T) -> Unit) {
+    observe(owner, Observer<T> { action(it) })
 }

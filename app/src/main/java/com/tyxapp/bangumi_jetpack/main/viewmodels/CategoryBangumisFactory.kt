@@ -9,6 +9,6 @@ class CategoryBangumisFactory(
 ) : ViewModelProvider.NewInstanceFactory() {
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-        return CategoryBangumisModel(repository) as T
+        return CategoryBangumisViewModel(repository) as T
     }
 }
