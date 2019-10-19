@@ -1,10 +1,12 @@
 package com.tyxapp.bangumi_jetpack.utilities
 
+import android.animation.ObjectAnimator
 import android.view.View
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
-import androidx.core.view.ViewCompat.animate
+import androidx.core.animation.doOnStart
 import com.tyxapp.bangumi_jetpack.BangumiApp
+import com.tyxapp.bangumi_jetpack.R
 
 fun Int.toPx(): Int {
     val density = BangumiApp.getContext().resources.displayMetrics.density

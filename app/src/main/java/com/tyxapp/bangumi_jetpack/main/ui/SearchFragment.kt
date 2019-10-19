@@ -39,7 +39,8 @@ class SearchFragment : Fragment() {
         requireActivity().onBackPressedDispatcher.addCallback(owner = this) {
             //处理完自己的返回栈后再把自己pop
             if (childFragmentManager.backStackEntryCount > 0) {
-                childFragmentManager.popBackStack(SEARCH_BACK_STACK_NAME,
+                childFragmentManager.popBackStack(
+                    SEARCH_BACK_STACK_NAME,
                     FragmentManager.POP_BACK_STACK_INCLUSIVE)
             } else {
                 requireActivity().supportFragmentManager.popBackStack(SEARCHFRAGMENT_STACK_NAME,
@@ -79,7 +80,8 @@ class SearchFragment : Fragment() {
                     )
                     this.remove(searchHelperFragment)
                 } else {
-                    childFragmentManager.popBackStack(SEARCH_BACK_STACK_NAME,
+                    childFragmentManager.popBackStack(
+                        SEARCH_BACK_STACK_NAME,
                         FragmentManager.POP_BACK_STACK_INCLUSIVE)
                 }
             }

@@ -12,18 +12,14 @@ import com.tyxapp.bangumi_jetpack.databinding.TimetableBangumiItemBinding
 import com.tyxapp.bangumi_jetpack.main.viewmodels.TimeTableViewModel
 import com.tyxapp.bangumi_jetpack.utilities.toPx
 
-class TimeTableAdapter(
-        private val viewModel: TimeTableViewModel
-) : ListAdapter<Bangumi, TimeTableViewHolder>(BangumiDiffCallback()) {
+class TimeTableAdapter : ListAdapter<Bangumi, TimeTableViewHolder>(BangumiDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TimeTableViewHolder {
         return TimeTableViewHolder(
             TimetableBangumiItemBinding.inflate(
                 LayoutInflater.from(parent.context),
                 parent, false
-            ),
-
-            viewModel
+            )
         )
     }
 
@@ -46,14 +42,10 @@ class TimeTableAdapter(
 }
 
 class TimeTableViewHolder(
-        private val bind: TimetableBangumiItemBinding,
-        private val viewModel: TimeTableViewModel
+        private val bind: TimetableBangumiItemBinding
 ) : RecyclerView.ViewHolder(bind.root) {
 
     fun bind(bangumi: Bangumi) {
-        with(bind) {
-            this.bangumi = bangumi
-            this.viewmodel = viewModel
-        }
+        bind.bangumi = bangumi
     }
 }

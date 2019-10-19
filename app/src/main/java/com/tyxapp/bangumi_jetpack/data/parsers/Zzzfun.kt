@@ -2,12 +2,10 @@ package com.tyxapp.bangumi_jetpack.data.parsers
 
 import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Transformations
 import androidx.lifecycle.switchMap
 import androidx.paging.DataSource
 import androidx.paging.LivePagedListBuilder
 import androidx.paging.PageKeyedDataSource
-import androidx.paging.PagedList
 import com.tyxapp.bangumi_jetpack.BangumiApp
 import com.tyxapp.bangumi_jetpack.data.*
 import com.tyxapp.bangumi_jetpack.main.adapter.BANNER
@@ -126,10 +124,9 @@ class Zzzfun : IHomePageParser, IsearchParse {
 
         return Listing<Bangumi>(
             liveDataPagelist = liveDataPagelist,
-            netWordState = Transformations.switchMap(sourceFactor.sourceLiveData) {
-                it.netWordState
-            },
-            retry = { sourceFactor.sourceLiveData.value?.retry() }
+            netWordState = sourceFactor.sourceLiveData.switchMap { it.netWordState },
+            retry = { sourceFactor.sourceLiveData.value?.retry() },
+            initialLoad = sourceFactor.sourceLiveData.switchMap { it.initialLoadLiveData }
         )
 
     }
@@ -190,7 +187,8 @@ class Zzzfun : IHomePageParser, IsearchParse {
         return Listing(
             liveDataPagelist = livePagedList,
             netWordState = factor.searchResultDataSource.switchMap { it.netWordState },
-            retry = { factor.searchResultDataSource.value?.retry() }
+            retry = { factor.searchResultDataSource.value?.retry() },
+            initialLoad = factor.searchResultDataSource.switchMap { it.initialLoadLliveData }
         )
     }
 
@@ -202,6 +200,7 @@ private class SearchResultDataSource(
 
     val netWordState = MutableLiveData<NetWordState>()
     private var retry: (() -> Unit)? = null
+    val initialLoadLliveData = MutableLiveData<InitialLoad>()
 
     suspend fun retry() {
         val prveRetry = retry
@@ -216,7 +215,8 @@ private class SearchResultDataSource(
         callback: LoadInitialCallback<Int, Bangumi>
     ) {
         try {
-            netWordState.postValue(NetWordState.LOADING)
+            initialLoadLliveData.postValue(InitialLoad(NetWordState.LOADING))
+
             val url =
                 "http://111.230.89.165:8099/api.php/provvde/vod/?ac=list&wd=${URLEncoder.encode(
                     searchWord,
@@ -224,7 +224,11 @@ private class SearchResultDataSource(
                 )}"
 
             val jsonObject = JSONObject(getResponseData(url)).takeIf { !it.isNull("list") }
-                ?: return callback.onResult(emptyList(), null, null)
+
+            if (jsonObject == null) {
+                initialLoadLliveData.postValue(InitialLoad(NetWordState.SUCCESS, true))
+                return callback.onResult(emptyList(), null, null)
+            }
 
             val bangumis = ArrayList<Bangumi>()
             jsonObject.getJSONArray("list").forEach {
@@ -241,12 +245,13 @@ private class SearchResultDataSource(
                 bangumis.add(Bangumi(id, BangumiSource.Zzzfun, name, cover, ji))
             }
             callback.onResult(bangumis, null, null)
-            netWordState.postValue(NetWordState.SUCCESS)
+            initialLoadLliveData.postValue(InitialLoad(NetWordState.SUCCESS, bangumis.isEmpty()))
         } catch (e: Exception) {
             retry = {
                 loadInitial(params, callback)
             }
-            netWordState.postValue(NetWordState.error(e.toString()))
+
+            initialLoadLliveData.postValue(InitialLoad(NetWordState.error(e.toString())))
         }
     }
 
@@ -279,6 +284,7 @@ private class CategoryPageDataSource(
     private val jsonMediaType: MediaType = "application/json; charset=utf-8".toMediaType()
     val netWordState = MutableLiveData<NetWordState>()
     private var retry: (() -> Unit)? = null
+    val initialLoadLiveData = MutableLiveData<InitialLoad>()
 
     suspend fun retry() {
         val prevRetry = retry
@@ -294,16 +300,17 @@ private class CategoryPageDataSource(
     ) {
         val page = 1
         try {
-            netWordState.postValue(NetWordState.LOADING)
+            initialLoadLiveData.postValue(InitialLoad(NetWordState.LOADING))
             val result = parserCategoryData(category, page)
             retry = null
-            netWordState.postValue(NetWordState.SUCCESS)
             callback.onResult(result, null, page + 1)
+            initialLoadLiveData.postValue(InitialLoad(NetWordState.SUCCESS, result.isEmpty()))
         } catch (e: Exception) {
             retry = {
                 loadInitial(params, callback)
             }
-            netWordState.postValue(NetWordState.error(e.toString()))
+            val initialLoad = InitialLoad(NetWordState.error(e.toString()))
+            initialLoadLiveData.postValue(initialLoad)
         }
     }
 

@@ -9,15 +9,10 @@
             name="bangumi"
             type="com.tyxapp.bangumi_jetpack.data.Bangumi" />
 
-        <variable
-            name="viewmodel"
-            type="com.tyxapp.bangumi_jetpack.main.viewmodels.TimeTableViewModel" />
-
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:background="?attr/selectableItemBackground"
-        android:onClick="@{() -> viewmodel.onBangumiClick(bangumi)}"
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">

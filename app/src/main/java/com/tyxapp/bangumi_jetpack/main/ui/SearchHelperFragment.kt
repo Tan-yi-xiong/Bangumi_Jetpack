@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
+import android.widget.ImageButton
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.viewModels
 import com.tyxapp.bangumi_jetpack.R
@@ -24,8 +25,12 @@ class SearchHelperFragment : ListFragment() {
         InjectorUtils.provideSearchHelperViewModelFactory()
     }
 
-    private val editText: EditText by lazy {
+    private val editText: EditText by lazy(LazyThreadSafetyMode.NONE) {
         parentFragment!!.view!!.findViewById<EditText>(R.id.editText)
+    }
+
+    private val clearButton: ImageButton by lazy(LazyThreadSafetyMode.NONE) {
+        parentFragment!!.view!!.findViewById<ImageButton>(R.id.clear_text)
     }
 
     override fun onCreateView(
@@ -41,22 +46,27 @@ class SearchHelperFragment : ListFragment() {
 
     private fun initView() {
         mRecyclerView.adapter = SearchHelperAdapter(viewModel)
+        clearButton.setOnClickListener {
+            editText.setText("")
+            if (!editText.isFocused) {
+                editText.requestFocus()
+            }
+        }
 
         with(editText) {
 
             addTextChangedListener(onTextChanged = { s: CharSequence?, _, _, _ ->
                 viewModel.onTextChange(s.toString())
+                clearButton.visibility = if (s.isNullOrEmpty()) View.GONE else View.VISIBLE
             })
 
             setOnEditorActionListener { _, actionId, _ ->
-                if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-                    val word = editText.text.toString()
-                    viewModel.saveSearchWord(word)//保存搜索到历史搜索
-                    parentViewModel.searchWord.value = word
-                    true
-                } else {
-                    false
+                val text = editText.text.toString()
+                if (actionId == EditorInfo.IME_ACTION_SEARCH && text.isNotEmpty()) {
+                    viewModel.saveSearchWord(text)//保存搜索到历史搜索
+                    parentViewModel.searchWord.value = text
                 }
+                true//true为不隐藏键盘
             }
         }
     }

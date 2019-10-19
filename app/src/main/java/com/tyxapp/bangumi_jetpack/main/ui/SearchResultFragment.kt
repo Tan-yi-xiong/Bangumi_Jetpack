@@ -5,6 +5,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.RecyclerView
+import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.tyxapp.bangumi_jetpack.R
@@ -12,6 +14,7 @@ import com.tyxapp.bangumi_jetpack.data.BangumiSource
 import com.tyxapp.bangumi_jetpack.databinding.SearchResultFragmentBinding
 import com.tyxapp.bangumi_jetpack.main.adapter.SearchResultPgaeAadapter
 import com.tyxapp.bangumi_jetpack.utilities.info
+import java.lang.Exception
 
 class SearchResultFragment : Fragment() {
 
@@ -32,6 +35,17 @@ class SearchResultFragment : Fragment() {
         val binding = SearchResultFragmentBinding.inflate(inflater, container, false)
         val viewPager2 = binding.viewPager2
         val tabLayout = binding.tabLayout
+
+        //反射去除viewPager2到顶水波纹效果
+        try {
+            val field = viewPager2::class.java.getDeclaredField("mRecyclerView")
+            field.isAccessible = true
+            val recyclerView = field.get(viewPager2) as RecyclerView
+            recyclerView.overScrollMode = RecyclerView.OVER_SCROLL_NEVER
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+
 
         prevElevation = appBarLayout.elevation
 

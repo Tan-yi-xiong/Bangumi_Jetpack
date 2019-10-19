@@ -2,6 +2,7 @@ package com.tyxapp.bangumi_jetpack.main.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.paging.PagedList
 import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -10,12 +11,10 @@ import com.tyxapp.bangumi_jetpack.data.Bangumi
 import com.tyxapp.bangumi_jetpack.data.NetWordState
 import com.tyxapp.bangumi_jetpack.databinding.NetwordstateViewholderLayoutBinding
 import com.tyxapp.bangumi_jetpack.databinding.TimetableBangumiItemBinding
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import com.tyxapp.bangumi_jetpack.utilities.info
 
 class SearchResultChildAdapter(
-    private val retry:  () -> Unit
+    private val retry: () -> Unit
 ) : PagedListAdapter<Bangumi, RecyclerView.ViewHolder>(BangumiDiffCallback()) {
     private var netWordState: NetWordState? = null
 
@@ -97,7 +96,7 @@ class NetWordStateViewHolder(
     }
 
     companion object {
-        fun creat(viewGroup: ViewGroup, retry:  () -> Unit): NetWordStateViewHolder {
+        fun creat(viewGroup: ViewGroup, retry: () -> Unit): NetWordStateViewHolder {
             return NetWordStateViewHolder(
                 retry,
                 NetwordstateViewholderLayoutBinding.inflate(
@@ -109,7 +108,7 @@ class NetWordStateViewHolder(
 }
 
 class SearchResultChildViewHolder(
-    private val bind: TimetableBangumiItemBinding
+    val bind: TimetableBangumiItemBinding
 ) : RecyclerView.ViewHolder(bind.root) {
 
     fun bind(bangumi: Bangumi?) {

@@ -5,7 +5,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
+import androidx.paging.PagedList
 import com.tyxapp.bangumi_jetpack.data.BangumiSource
+import com.tyxapp.bangumi_jetpack.data.NetWordState
+import com.tyxapp.bangumi_jetpack.data.State
 import com.tyxapp.bangumi_jetpack.data.parsers.IsearchParse
 import com.tyxapp.bangumi_jetpack.data.parsers.Zzzfun
 import com.tyxapp.bangumi_jetpack.main.ListFragment
@@ -44,19 +47,37 @@ class SearchResultChildFragment : ListFragment() {
 
         parentViewModel.searchWord.observe { viewModel.setSearchWord(it) }
 
+        //结果集
         viewModel.searchResults.observe {
             adapter.submitList(it)
-            showContent()
         }
 
+        //加载下一页状态
         viewModel.netWordState.observe {
             adapter.submitNetWordState(it)
+        }
+
+        //初次加载
+        viewModel.initialLoad.observe { initialLoad ->
+            if (initialLoad.netWordState == NetWordState.LOADING) {
+                showLoading()
+            } else if (initialLoad.netWordState.state == State.ERROR) {
+                showError()
+            } else {
+                if (initialLoad.isDataEmpty) {
+                    showEmpty()
+                } else {
+                    showContent()
+                }
+            }
         }
     }
 
     private fun initView() {
         adapter = SearchResultChildAdapter(viewModel.retry())
         mRecyclerView.adapter = adapter
+
+        mErrorView.setOnClickListener { viewModel.retry().invoke() }
     }
 
     private fun getSearchParser(): IsearchParse {

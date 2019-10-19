@@ -15,7 +15,9 @@ class SearchResultChildViewModel(
 
     val searchResults = searchResultListing.switchMap { it.liveDataPagelist }
 
-    val netWordState = searchResultListing.switchMap { it.netWordState!! }
+    val netWordState = searchResultListing.switchMap { it.netWordState }
+
+    val initialLoad = searchResultListing.switchMap { it.initialLoad }
 
     fun setSearchWord(word: String) {
         if (searchWord.value != word) {

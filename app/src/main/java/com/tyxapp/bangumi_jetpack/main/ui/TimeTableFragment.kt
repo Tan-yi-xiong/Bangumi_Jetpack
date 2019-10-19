@@ -48,7 +48,7 @@ class TimeTableFragment : Fragment() {
                 tab?.let { viewModel.onTabSelect(tab.tag as Int) }
             }
         }
-        mRecyclerView.adapter = TimeTableAdapter(viewModel)
+        mRecyclerView.adapter = TimeTableAdapter()
 
         addObserver()
         return binding.root
