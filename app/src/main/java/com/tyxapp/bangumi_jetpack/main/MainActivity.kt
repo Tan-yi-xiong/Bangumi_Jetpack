@@ -1,10 +1,12 @@
 package com.tyxapp.bangumi_jetpack.main
 
+import android.content.SharedPreferences
 import android.graphics.Color
 import android.os.Bundle
 import android.preference.PreferenceManager
 import android.view.Gravity
 import android.view.MenuItem
+import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.forEach
 import androidx.core.view.get
@@ -13,14 +15,26 @@ import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.commit
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.NavHostFragment
+import com.bumptech.glide.Glide
 import com.google.android.material.navigation.NavigationView
 import com.tyxapp.bangumi_jetpack.R
 import com.tyxapp.bangumi_jetpack.data.BangumiSource
+import com.tyxapp.bangumi_jetpack.data.parsers.Dilidili
+import com.tyxapp.bangumi_jetpack.data.parsers.ParserFactory
 import com.tyxapp.bangumi_jetpack.data.parsers.Zzzfun
-import com.tyxapp.bangumi_jetpack.main.viewmodels.MainViewModel
+import com.tyxapp.bangumi_jetpack.main.mydownload.MyDownloadFragment
 import com.tyxapp.bangumi_jetpack.utilities.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import org.jetbrains.anko.defaultSharedPreferences
 
-class MainActivity : AppCompatActivity() {
+// 通知栏intent key
+const val START_DOWNLOAD = "START_DOWNLOAD"
+
+class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceChangeListener {
+
     private val mainViewModel by lazy { ViewModelProviders.of(this).get(MainViewModel::class.java) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -28,13 +42,33 @@ class MainActivity : AppCompatActivity() {
         window.statusBarColor = Color.TRANSPARENT
         setContentView(R.layout.activity_main)
 
+        // 通过通知栏进入下载fragment
+        if (intent.getBooleanExtra(START_DOWNLOAD, false)) {
+            supportFragmentManager.commit {
+                val navHostFragment = NavHostFragment.create(R.navigation.my_download)
+                replace(R.id.main_content, navHostFragment)
+            }
+            return
+        }
+
+        defaultSharedPreferences.registerOnSharedPreferenceChangeListener(this)
+
         val homeKey = PreferenceManager.getDefaultSharedPreferences(this).getString(
             getString(R.string.key_home_page),
-            BangumiSource.Zzzfun.name
+            BangumiSource.DiliDili.name
         )
         //创建主页Repository供主页的Fragment使用
         mainViewModel.homeDataRepository.value = when (homeKey) {
-            BangumiSource.Zzzfun.name -> InjectorUtils.getHomeDataRepository(Zzzfun())
+            BangumiSource.Zzzfun.name -> InjectorUtils.getHomeDataRepository(
+                ParserFactory.createHomePageParser(
+                    BangumiSource.Zzzfun
+                )
+            )
+            BangumiSource.DiliDili.name -> InjectorUtils.getHomeDataRepository(
+                ParserFactory.createHomePageParser(
+                    BangumiSource.DiliDili
+                )
+            )
             else -> throw IllegalAccessException("没有此主页")
         }
 
@@ -44,10 +78,15 @@ class MainActivity : AppCompatActivity() {
 
         //navigationView设置
         val navigationView = findViewById<NavigationView>(R.id.navigationView)
+        //加载头部图片
+        Glide.with(this).load(R.drawable.header_image)
+            .into(navigationView.getHeaderView(0) as ImageView)
+
         val navGraphIds = listOf(
             R.navigation.home,
             R.navigation.history,
-            R.navigation.my_download
+            R.navigation.my_download,
+            R.navigation.setting
         )
 
         navigationView.setupWithNavController(
@@ -57,38 +96,29 @@ class MainActivity : AppCompatActivity() {
         )
     }
 
-    override fun onBackPressed() {
-        val backStackEntryCount = supportFragmentManager.backStackEntryCount
-        for (i in backStackEntryCount - 1 downTo 0) {
-            //如果存在下面的栈, 优先按顺序处理
-            when (supportFragmentManager.getBackStackEntryAt(i).name) {
-                SEARCHFRAGMENT_STACK_NAME -> {
-                    return super.onBackPressed()
+    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
+        val keyString = getString(R.string.key_home_page)
+        if (key == keyString) {
+            when(PrefUtils.getHomeSourceName()) {
+                BangumiSource.Zzzfun.name -> {
+                    mainViewModel.homeDataRepository.value = InjectorUtils.getHomeDataRepository(Zzzfun())
                 }
 
-                HOME_TO_CB_STASK_NAME -> {
-                    supportFragmentManager.popBackStack(
-                        HOME_TO_CB_STASK_NAME,
-                        FragmentManager.POP_BACK_STACK_INCLUSIVE
-                    )
-                    return
-                }
-
-                NAVIGATION_VIEW_STACK_NAME -> {
-                    supportFragmentManager.popBackStack(
-                        NAVIGATION_VIEW_STACK_NAME,
-                        FragmentManager.POP_BACK_STACK_INCLUSIVE
-                    )
-                    return
+                BangumiSource.DiliDili.name -> {
+                    mainViewModel.homeDataRepository.value = InjectorUtils.getHomeDataRepository(Dilidili())
                 }
             }
         }
-        super.onBackPressed()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        defaultSharedPreferences.unregisterOnSharedPreferenceChangeListener(this)
     }
 }
 
 //NavigationView处理返回栈栈名
-private const val NAVIGATION_VIEW_STACK_NAME = "NAVIGATION_VIEW_STACK_NAME"
+const val NAVIGATION_VIEW_STACK_NAME = "NAVIGATION_VIEW_STACK_NAME"
 
 private fun NavigationView.setupWithNavController(
     navGraphIds: List<Int>,
@@ -126,32 +156,34 @@ private fun NavigationView.setupWithNavController(
         } else {
             val selectItemId = menuItem.itemId
             if (selectItemId != currentGraphId) {
+                delay(300) {
+                    fragmentManager.popBackStack(
+                        NAVIGATION_VIEW_STACK_NAME,
+                        FragmentManager.POP_BACK_STACK_INCLUSIVE
+                    )
 
-                fragmentManager.popBackStack(
-                    NAVIGATION_VIEW_STACK_NAME,
-                    FragmentManager.POP_BACK_STACK_INCLUSIVE
-                )
+                    if (selectItemId != fristGraphId) {
 
-                if (selectItemId != fristGraphId) {
-                    val navHostFragment =
-                        NavHostFragment.create(graphIdWithNavGraphId[selectItemId]!!)
+                        val navHostFragment =
+                            NavHostFragment.create(graphIdWithNavGraphId[selectItemId]!!)
 
-                    fragmentManager.commit {
-                        setCustomAnimations(
-                            R.anim.nav_default_enter_anim,
-                            R.anim.nav_default_exit_anim,
-                            R.anim.nav_default_pop_enter_anim,
-                            R.anim.nav_default_pop_exit_anim
-                        )
-                        hide(fragmentManager.findFragmentByTag(fristFragmentTag)!!)
-                        add(containerId, navHostFragment)
-                        setPrimaryNavigationFragment(navHostFragment)
-                        addToBackStack(NAVIGATION_VIEW_STACK_NAME)
-                        setReorderingAllowed(true)
+                        fragmentManager.commit {
+                            setCustomAnimations(
+                                R.anim.nav_default_enter_anim,
+                                R.anim.nav_default_exit_anim,
+                                R.anim.nav_default_pop_enter_anim,
+                                R.anim.nav_default_pop_exit_anim
+                            )
+                            hide(fragmentManager.findFragmentByTag(fristFragmentTag)!!)
+                            add(containerId, navHostFragment)
+                            setPrimaryNavigationFragment(navHostFragment)
+                            addToBackStack(NAVIGATION_VIEW_STACK_NAME)
+                            setReorderingAllowed(true)
+                        }
                     }
+                    currentGraphId = selectItemId
+                    isFristFragment = selectItemId == fristGraphId
                 }
-                currentGraphId = selectItemId
-                isFristFragment = selectItemId == fristGraphId
             }
             this.setCheckedItem(menuItem)
             (parent as DrawerLayout).closeDrawer(Gravity.LEFT)
@@ -167,6 +199,12 @@ private fun NavigationView.setupWithNavController(
         }
     }
 
+
+}
+
+fun delay(time: Long, action: () -> Unit) = CoroutineScope(Dispatchers.Main).launch {
+    delay(time)
+    action()
 }
 
 fun NavigationView.getSelectItem(): MenuItem {

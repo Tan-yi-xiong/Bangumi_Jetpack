@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="diliBangumi"
+            type="com.tyxapp.bangumi_jetpack.data.DiliBangumi" />
+        <import type="com.tyxapp.bangumi_jetpack.utilities.AnimationUtilsKt"/>
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <androidx.cardview.widget.CardView
+            app:cardCornerRadius="5dp"
+            android:id="@+id/cardView2"
+            android:layout_width="90dp"
+            android:layout_height="120dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:scaleType="centerCrop"
+                app:bindImage="@{diliBangumi.cover}"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+
+
+        </androidx.cardview.widget.CardView>
+
+        <TextView
+            tools:text="safasdfsadfasdfasdf"
+            android:id="@+id/name"
+            style="@style/dili_bangumi_item_text"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="16dp"
+            android:text="@{diliBangumi.name}"
+            android:textColor="?android:attr/textColorPrimary"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/cardView2"
+            app:layout_constraintTop_toTopOf="@+id/cardView2" />
+
+        <TextView
+            android:id="@+id/kandian"
+            style="@style/dili_bangumi_item_text"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="3dp"
+            android:text="@{diliBangumi.kandian}"
+            app:layout_constraintEnd_toEndOf="@+id/name"
+            app:layout_constraintStart_toStartOf="@+id/name"
+            app:layout_constraintTop_toBottomOf="@+id/name"
+            tools:text="safasdfsadfasdfasdf" />
+
+        <TextView
+            android:id="@+id/type"
+            style="@style/dili_bangumi_item_text"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="3dp"
+            android:text="@{diliBangumi.type}"
+            app:layout_constraintEnd_toEndOf="@+id/kandian"
+            app:layout_constraintStart_toStartOf="@+id/kandian"
+            app:layout_constraintTop_toBottomOf="@+id/kandian"
+            tools:text="safasdfsadfasdfasdf" />
+
+        <TextView
+            tools:text="safasdfsadfasdfasdf"
+            android:id="@+id/intro"
+            android:scrollbarSize="0dp"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="3dp"
+            android:layout_marginEnd="16dp"
+            android:ellipsize="end"
+            android:maxLines="3"
+            android:text="@{diliBangumi.intro}"
+            app:layout_constraintBottom_toBottomOf="@+id/cardView2"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/name"
+            app:layout_constraintTop_toBottomOf="@+id/type" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

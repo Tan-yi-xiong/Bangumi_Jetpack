@@ -1,6 +1,7 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
+apply plugin: "androidx.navigation.safeargs.kotlin"
 
 android {
     compileSdkVersion 28
@@ -8,13 +9,14 @@ android {
         applicationId "com.tyxapp.bangumi_jetpack"
         minSdkVersion 21
         targetSdkVersion 28
-        versionCode 1
-        versionName "1.0"
+        versionCode 5
+        versionName "3.0.1"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
@@ -37,6 +39,7 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$rootProject.kotlin_version"
     implementation "androidx.appcompat:appcompat:$rootProject.appCompatVersion"
     implementation "androidx.core:core-ktx:$rootProject.ktxVersion"
+    implementation 'androidx.preference:preference:1.1.0'
 
     //fragment-ktx
     implementation "androidx.fragment:fragment-ktx:$rootProject.fragmentVersion"
@@ -69,6 +72,7 @@ dependencies {
     implementation "com.google.android.material:material:$rootProject.materialVersion"
     implementation "androidx.constraintlayout:constraintlayout:$constraintLayoutVersion"
     implementation "androidx.recyclerview:recyclerview:$rootProject.recyclerViewVersion"
+    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
 
     //okhttp
     implementation "com.squareup.okhttp3:okhttp:$rootProject.okhttpVersion"
@@ -76,6 +80,14 @@ dependencies {
     //jsoup
     implementation "org.jsoup:jsoup:$jsoupVersion"
 
+    //playerbase
+    implementation 'cn.jiajunhui:ijkplayer:335_088_007'
+
+    //anko
+    implementation "org.jetbrains.anko:anko-commons:$anko_version"
+
+    //DanmakuFlameMaster
+    implementation 'com.github.ctiao:DanmakuFlameMaster:0.9.25'
 
     //Test
     testImplementation 'junit:junit:4.12'

@@ -1,7 +1,7 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="AppTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
@@ -12,5 +12,15 @@
         <item name="android:windowTranslucentStatus">true</item>
         <item name="android:windowBackground">@color/mdtp_white</item>
     </style>
+
+    <style name="PlayerTheme" parent="AppTheme">
+        <item name="android:statusBarColor">@color/overlay_drak</item>
+    </style>
+
+    <style name="dili_bangumi_item_text">
+        <item name="android:maxLines">1</item>
+        <item name="android:ellipsize">end</item>
+    </style>
+
 
 </resources>

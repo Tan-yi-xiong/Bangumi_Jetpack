@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory
+        android:layout="@layout/coustom_preference_category"
+        android:title="@string/title_play_settings">
+        <ListPreference
+            android:layout="@layout/coustom_preference_widget_checkbox"
+            android:title="@string/title_decoder_plan"
+            android:key="@string/key_decoder_plan"
+            android:entries="@array/decoder_plan_name"
+            android:entryValues="@array/decoder_plan_value"
+            android:defaultValue="IjkPlayer"/>
+        <SwitchPreference
+            android:key="@string/key_auto_play_next"
+            android:defaultValue="true"
+            android:layout="@layout/coustom_preference_widget_checkbox"
+            android:summary="@string/summary_auto_play_next"
+            android:title="@string/title_auto_play_next" />
+        <SwitchPreference
+            android:key="@string/key_play_moibleState"
+            android:defaultValue="false"
+            android:layout="@layout/coustom_preference_widget_checkbox"
+            android:summary="@string/summary_play_no_wifi"
+            android:title="@string/title_play_no_wifi" />
+        <SwitchPreference
+            android:key="@string/key_danmaku_auto_show"
+            android:defaultValue="true"
+            android:title="@string/title_danmaku_switch"
+            android:summary="@string/summary_danmaku_switch"
+            android:layout="@layout/coustom_preference_widget_checkbox"/>
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:layout="@layout/coustom_preference_category"
+        android:title="@string/title_download_settings">
+
+        <SwitchPreference
+            android:defaultValue="true"
+            android:key="@string/key_auto_resume_download"
+            android:layout="@layout/coustom_preference_widget_checkbox"
+            android:summary="@string/summary_auto_recover_download"
+            android:title="@string/titel_auto_recover_download" />
+
+        <Preference
+            android:key="@string/key_max_download"
+            android:layout="@layout/coustom_preference_widget_checkbox"
+            android:title="@string/title_max_download" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:layout="@layout/coustom_preference_category"
+        android:title="@string/title_other_settings">
+
+        <ListPreference
+            android:entries="@array/home_sourch"
+            android:entryValues="@array/home_sourch"
+            android:key="@string/key_home_page"
+            android:defaultValue="DiliDili"
+            android:layout="@layout/coustom_preference_widget_checkbox"
+            android:title="@string/title_home_sourch" />
+        <Preference
+            android:key="@string/key_clear_cache"
+            android:layout="@layout/coustom_preference_widget_checkbox"
+            android:title="@string/title_clear_cache" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:layout="@layout/coustom_preference_category"
+        android:title="@string/title_about">
+        <Preference
+            android:key="versions"
+            android:layout="@layout/coustom_preference_widget_checkbox"
+            android:title="@string/title_versions" />
+
+        <Preference
+            android:layout="@layout/coustom_preference_widget_checkbox"
+            android:summary="https://github.com/Tan-yi-xiong/Bangumi"
+            android:title="@string/title_project_url">
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:data="https://github.com/Tan-yi-xiong/Bngumi_Jetpack" />
+        </Preference>
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

@@ -6,6 +6,6 @@
 
     <fragment
         android:id="@+id/timeTableFragment"
-        android:name="com.tyxapp.bangumi_jetpack.main.ui.TimeTableFragment"
+        android:name="com.tyxapp.bangumi_jetpack.main.home.TimeTableFragment"
         android:label="TimeTableFragment" />
 </navigation>

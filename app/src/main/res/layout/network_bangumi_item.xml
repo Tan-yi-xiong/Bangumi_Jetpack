@@ -6,6 +6,10 @@
     <data>
 
         <variable
+            name="onClick"
+            type="android.view.View.OnClickListener" />
+
+        <variable
             name="bangumi"
             type="com.tyxapp.bangumi_jetpack.data.Bangumi" />
 
@@ -13,6 +17,7 @@
     </data>
 
     <LinearLayout
+        android:onClick="@{onClick}"
         android:gravity="center_horizontal"
         android:orientation="vertical"
         android:layout_width="wrap_content"
@@ -20,6 +25,7 @@
 
 
         <androidx.cardview.widget.CardView
+            android:layout_margin="2dp"
             app:cardCornerRadius="5dp"
             android:id="@+id/cardView"
             android:layout_width="95dp"

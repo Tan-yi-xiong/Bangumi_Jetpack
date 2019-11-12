@@ -5,6 +5,6 @@
 
     <fragment
         android:id="@+id/bangumiFollowFragment"
-        android:name="com.tyxapp.bangumi_jetpack.main.ui.BangumiFollowFragment"
+        android:name="com.tyxapp.bangumi_jetpack.main.home.FollowBangumiFragment"
         android:label="BangumiFollowFragment" />
 </navigation>

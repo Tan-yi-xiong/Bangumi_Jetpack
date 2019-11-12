@@ -15,11 +15,10 @@
 
     <androidx.cardview.widget.CardView
         app:cardCornerRadius="8dp"
-        android:layout_width="288dp"
-        android:layout_height="170dp"
+        android:layout_width="311.5dp"
+        android:layout_height="175dp"
         app:cardElevation="2dp"
-        android:layout_margin="2dp"
-        android:orientation="vertical">
+        android:layout_margin="2dp">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:onClick="@{OnClick}"
@@ -36,15 +35,16 @@
             <TextView
                 android:paddingStart="16dp"
                 android:paddingEnd="16dp"
+                android:paddingTop="16dp"
                 android:ellipsize="end"
                 tools:text="那朵花的名字怎么那么长, 我都忘记了"
                 android:id="@+id/name"
                 android:layout_width="0dp"
-                android:layout_height="81dp"
+                android:layout_height="wrap_content"
                 android:background="@drawable/banner_text_bg"
                 android:gravity="bottom|center"
                 android:text="@{bangumi.name}"
-                android:textSize="18sp"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                 android:maxLines="1"
                 android:textColor="@color/mdtp_white"
                 app:layout_constraintBottom_toBottomOf="@+id/cover"

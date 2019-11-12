@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+        <variable
+            name="showContent"
+            type="Boolean" />
+
+        <variable
+            name="showLoading"
+            type="Boolean" />
+
+        <variable
+            name="tipsText"
+            type="String" />
+    </data>
+
+    <RelativeLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            app:isGone="@{!showContent}"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:textColor="?android:attr/textColorPrimary"
+                tools:text="解析出错了!!!"
+                android:textSize="20sp"
+                android:text="@{tipsText}"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+            <Button
+                android:id="@+id/retryButton"
+                android:layout_marginTop="8dp"
+                android:background="@color/colorPrimary"
+                android:textColor="@color/mdtp_white"
+                android:text="@string/button_text_retry"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+        </LinearLayout>
+
+        <ProgressBar
+            app:isGone="@{!showLoading}"
+            android:layout_centerInParent="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+    </RelativeLayout>
+</layout>

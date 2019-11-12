@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+        <variable
+            name="showSkipText"
+            type="Boolean" />
+
+        <variable
+            name="showBrightnessView"
+            type="Boolean" />
+
+        <variable
+            name="showVolumeView"
+            type="Boolean" />
+
+    </data>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+
+        <TextView
+            app:isGone="@{!showSkipText}"
+            android:id="@+id/skip_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:background="@drawable/cover_gesture_subassembly_bg"
+            android:textColor="@color/mdtp_white" />
+
+
+        <LinearLayout
+            android:id="@+id/volume_progress_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:background="@drawable/cover_gesture_subassembly_bg"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            app:isGone="@{!showVolumeView}">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_volume"
+                android:tint="@color/mdtp_white" />
+
+            <SeekBar
+                android:id="@+id/video_volume_seekBar"
+                android:layout_width="100dp"
+                android:paddingStart="0dp"
+                android:paddingEnd="0dp"
+                android:layout_height="2dp"
+                android:thumb="@null"
+                android:layout_marginStart="5dp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/brightness_progress_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:background="@drawable/cover_gesture_subassembly_bg"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            app:isGone="@{!showBrightnessView}">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_brightness"
+                android:tint="@color/mdtp_white" />
+
+            <SeekBar
+                android:id="@+id/brightness_seekBar"
+                android:layout_width="100dp"
+                android:layout_height="2dp"
+                android:layout_marginStart="5dp"
+                android:paddingStart="0dp"
+                android:paddingEnd="0dp"
+                android:thumb="@null"/>
+
+        </LinearLayout>
+
+    </RelativeLayout>
+</layout>

@@ -5,6 +5,6 @@
 
     <fragment
         android:id="@+id/searchFragment"
-        android:name="com.tyxapp.bangumi_jetpack.main.ui.SearchFragment"
+        android:name="com.tyxapp.bangumi_jetpack.main.search.SearchFragment"
         android:label="SearchFragment" />
 </navigation>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="jiItem"
+            type="com.tyxapp.bangumi_jetpack.data.JiItem" />
+
+    </data>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/ji_selector"
+            android:orientation="vertical"
+            app:isSelect="@{jiItem.select}">
+
+            <TextView
+                android:id="@+id/ji"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@{jiItem.text}"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:textColor="@color/ji_text_color"
+                tools:text="第一集" />
+
+        </LinearLayout>
+</layout>

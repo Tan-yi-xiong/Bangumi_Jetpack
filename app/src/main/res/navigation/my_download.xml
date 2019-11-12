@@ -3,11 +3,27 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/my_download"
-    app:startDestination="@id/myDownloadFragment2">
+    app:startDestination="@id/myDownloadFragment">
 
     <fragment
-        android:id="@+id/myDownloadFragment2"
-        android:name="com.tyxapp.bangumi_jetpack.main.ui.MyDownloadFragment"
+        android:id="@+id/myDownloadFragment"
+        android:name="com.tyxapp.bangumi_jetpack.main.mydownload.MyDownloadFragment"
         android:label="my_download_fragment"
-        tools:layout="@layout/my_download_fragment" />
+        tools:layout="@layout/fragment_toolbar_list" >
+        <action
+            android:id="@+id/action_myDownloadFragment_to_downloadDetailFragment"
+            app:destination="@id/downloadDetailFragment" />
+    </fragment>
+    <fragment
+        tools:layout="@layout/fragment_toolbar_list"
+        android:id="@+id/downloadDetailFragment"
+        android:name="com.tyxapp.bangumi_jetpack.main.mydownload.DownloadDetailFragment"
+        android:label="DownloadDetailFragment" >
+        <argument
+            android:name="bangumiId"
+            app:argType="string" />
+        <argument
+            android:name="bangumiSource"
+            app:argType="string" />
+    </fragment>
 </navigation>

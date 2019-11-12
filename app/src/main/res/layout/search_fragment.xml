@@ -7,7 +7,7 @@
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".main.ui.SearchFragment">
+        tools:context=".main.search.SearchFragment">
 
         <com.google.android.material.appbar.AppBarLayout
             android:background="@color/mdtp_white"

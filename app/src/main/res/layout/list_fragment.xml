@@ -6,20 +6,8 @@
     <data>
 
         <variable
-            name="showContent"
-            type="Boolean" />
-
-        <variable
-            name="showError"
-            type="Boolean" />
-
-        <variable
-            name="showEmpty"
-            type="Boolean" />
-
-        <variable
-            name="showLoading"
-            type="Boolean" />
+            name="uiState"
+            type="Integer" />
 
     </data>
 
@@ -38,7 +26,7 @@
                     android:id="@+id/recyclerView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:isGone="@{!showContent}" />
+                    app:isGone="@{uiState != 1}" />
 
 
         </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
@@ -50,16 +38,16 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            app:isGone="@{!showLoading}" />
+            app:isGone="@{uiState != 2}" />
 
 
         <include
             layout="@layout/error_layout"
-            app:visibility="@{showError}"/>
+            app:visibility="@{uiState > 5}"/>
 
         <include
             layout="@layout/empty_layout"
-            app:visibility="@{showEmpty}"/>
+            app:visibility="@{uiState &lt; 0}"/>
 
     </RelativeLayout>
 </layout>

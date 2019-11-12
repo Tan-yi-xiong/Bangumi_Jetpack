@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="onClick"
+            type="android.view.View.OnClickListener" />
+
+    </data>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/transparent">
+
+        <RelativeLayout
+            android:id="@+id/control_view"
+            android:visibility="gone"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/topLayout"
+                android:layout_width="match_parent"
+                android:layout_height="80dp"
+                android:layout_alignParentTop="true"
+                android:background="@drawable/control_top_bg"
+                android:visibility="gone">
+
+                <ImageButton
+                    android:id="@+id/player_back"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:onClick="@{onClick}"
+                    android:tint="@color/mdtp_white"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0.26"
+                    app:srcCompat="@drawable/ic_left_black" />
+
+                <ImageButton
+                    android:id="@+id/setting"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="16dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:onClick="@{onClick}"
+                    android:tint="@color/mdtp_white"
+                    app:layout_constraintBottom_toBottomOf="@+id/title"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/title"
+                    app:srcCompat="@drawable/ic_more" />
+
+                <TextView
+                    android:id="@+id/title"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:textColor="@color/mdtp_white"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toBottomOf="@+id/player_back"
+                    app:layout_constraintEnd_toStartOf="@+id/time"
+                    app:layout_constraintStart_toEndOf="@+id/player_back"
+                    app:layout_constraintTop_toTopOf="@+id/player_back" />
+
+                <TextView
+                    android:id="@+id/time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="16dp"
+                    android:textColor="@color/mdtp_white"
+                    app:layout_constraintEnd_toStartOf="@+id/setting"
+                    app:layout_constraintTop_toTopOf="@+id/title" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/bottomLayout"
+                android:layout_width="match_parent"
+                android:layout_height="80dp"
+                android:layout_alignParentBottom="true"
+                android:background="@drawable/control_bottom_bg">
+
+
+                <SeekBar
+                    android:id="@+id/player_control_seekBar"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:progressDrawable="@drawable/seekbar_drawable"
+                    app:layout_constraintBottom_toBottomOf="@+id/current_time"
+                    app:layout_constraintEnd_toStartOf="@+id/total_time"
+                    app:layout_constraintStart_toEndOf="@+id/current_time"
+                    app:layout_constraintTop_toTopOf="@+id/current_time" />
+
+                <ImageButton
+                    android:id="@+id/state_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:onClick="@{onClick}"
+                    android:tint="@color/mdtp_white"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0.85"
+                    app:srcCompat="@drawable/selector_video_state_control" />
+
+                <ImageButton
+                    android:id="@+id/next_ji"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:onClick="@{onClick}"
+                    android:tint="@color/mdtp_white"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="@+id/state_button"
+                    app:layout_constraintStart_toEndOf="@+id/state_button"
+                    app:layout_constraintTop_toTopOf="@+id/state_button"
+                    app:layout_constraintVertical_bias="0.0"
+                    app:srcCompat="@drawable/ic_control_next" />
+
+                <ImageButton
+                    android:id="@+id/full_screen_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:onClick="@{onClick}"
+                    android:tint="@color/mdtp_white"
+                    app:layout_constraintBottom_toBottomOf="@+id/total_time"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/total_time"
+                    app:layout_constraintVertical_bias="0.41000003"
+                    app:srcCompat="@drawable/ic_fullscreen" />
+
+                <TextView
+                    android:id="@+id/total_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="5dp"
+                    android:text="00:00"
+                    android:textColor="@color/mdtp_white"
+                    android:textSize="11sp"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toBottomOf="@+id/current_time"
+                    app:layout_constraintEnd_toStartOf="@+id/full_screen_button"
+                    app:layout_constraintTop_toTopOf="@+id/current_time" />
+
+                <TextView
+                    android:id="@+id/current_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:text="00:00"
+                    android:textColor="@color/mdtp_white"
+                    android:textSize="11sp"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toBottomOf="@+id/state_button"
+                    app:layout_constraintStart_toEndOf="@+id/next_ji"
+                    app:layout_constraintTop_toTopOf="@+id/state_button" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </RelativeLayout>
+
+        <LinearLayout
+            android:visibility="gone"
+            android:id="@+id/returnToLastWatchView"
+            android:gravity="center_vertical"
+            android:background="@drawable/video_recor_text_bg"
+            android:orientation="horizontal"
+            android:layout_marginBottom="48dp"
+            android:layout_marginStart="8dp"
+            android:layout_alignParentBottom="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:onClick="@{onClick}"
+                android:id="@+id/hide"
+                android:layout_marginEnd="5dp"
+                android:tint="@color/mdtp_white"
+                android:src="@drawable/ic_close"
+                android:layout_width="15dp"
+                android:layout_height="15dp"/>
+
+            <TextView
+                android:textSize="11sp"
+                android:id="@+id/lastWatchText"
+                android:textColor="@color/mdtp_white"
+                tools:text="上次看到36:55"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+            <TextView
+                android:textSize="11sp"
+                android:id="@+id/returnToLastWatchText"
+                android:layout_marginStart="8dp"
+                android:textColor="@color/colorAccent"
+                android:text="@string/skipToPlayer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+        </LinearLayout>
+
+
+
+        <SeekBar
+            android:id="@+id/bottom_progressBar"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:clickable="false"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:progressDrawable="@drawable/bottom_seekbar_drawable"
+            android:layout_alignParentBottom="true"
+            android:maxHeight="4dp"
+            android:paddingStart="0dp"
+            android:paddingEnd="0dp"
+            android:thumb="@null" />
+    </RelativeLayout>
+</layout>

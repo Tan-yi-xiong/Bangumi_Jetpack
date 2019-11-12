@@ -5,6 +5,6 @@
     app:startDestination="@id/bangumiFragment">
     <fragment
         android:id="@+id/bangumiFragment"
-        android:name="com.tyxapp.bangumi_jetpack.main.ui.BangumiFragment"
+        android:name="com.tyxapp.bangumi_jetpack.main.home.BangumiFragment"
         android:label="BangumiFragment" />
 </navigation>

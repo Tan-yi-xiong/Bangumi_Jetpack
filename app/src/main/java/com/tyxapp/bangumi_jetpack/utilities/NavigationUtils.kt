@@ -1,13 +1,16 @@
 package com.tyxapp.bangumi_jetpack.utilities
 
+import android.app.Activity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.commit
 import androidx.navigation.fragment.NavHostFragment
 import com.tyxapp.bangumi_jetpack.R
 import com.tyxapp.bangumi_jetpack.main.MainActivity
-import com.tyxapp.bangumi_jetpack.main.ui.CategoryBangumisFragment
-import com.tyxapp.bangumi_jetpack.main.ui.SearchFragment
+import com.tyxapp.bangumi_jetpack.main.home.CategoryBangumisFragment
+import com.tyxapp.bangumi_jetpack.main.search.SearchFragment
+import com.tyxapp.bangumi_jetpack.player.*
+import org.jetbrains.anko.intentFor
 
 const val HOME_TO_CB_STASK_NAME = "HOME_TO_CB_STASK_NAME"
 
@@ -50,6 +53,17 @@ fun attachNavHostFragment(
 
 }
 
+/**
+ * 跳转到PlayerActivity
+ *
+ */
+fun Activity.startPlayerActivity(id: String, bangumiSource: String) {
+    startActivity(intentFor<PlayerActivity>(
+        ARG_ID to id,
+        ARG_BANGUMI_SOURCE to bangumiSource
+    ))
+}
+
 fun obtainNavHostFragment(
     fragmentManager: FragmentManager,
     fragmentTag: String,
@@ -85,6 +99,10 @@ fun MainActivity.navigateToCategoryBangumisFragment(arg: String) {
             addToBackStack(HOME_TO_CB_STASK_NAME)
         }
     }
+}
+
+fun Activity.navigateToLoaclPlayerActivity(url: String) {
+    startActivity(intentFor<LocalPlayerActivity>(LOCAL_VIDEO_URL_KEY to url))
 }
 
 const val SEARCHFRAGMENT_STACK_NAME = "SEARCHFRAGMENT_STACK_NAME"

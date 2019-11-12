@@ -1,20 +1,22 @@
 package com.tyxapp.bangumi_jetpack.data
 
-import androidx.room.ColumnInfo
-import androidx.room.Entity
-import androidx.room.PrimaryKey
-
-@Entity
-data class Bangumi(
-        @ColumnInfo(name = "video_id")
-        val id: String,
-
-        val source: BangumiSource,
-        var name: String = "",
-        var cover: String = "",//封面
-        var jiTotal: String = ""//集数
+/**
+ * 番剧数据类, 主页使用
+ *
+ */
+open class Bangumi(
+    var id: String,
+    val source: BangumiSource,
+    val name: String = "",
+    val cover: String = "",//封面
+    val jiTotal: String = ""//集数
 ) {
-        @PrimaryKey(autoGenerate = true)
-        @ColumnInfo(name = "id")
-        var dbId: Int = 0
+    override fun equals(other: Any?): Boolean {
+        return if (other is Bangumi) {
+            id == other.id && source == other.source
+                    && name == other.name && cover == other.cover && jiTotal == other.jiTotal
+        } else {
+            false
+        }
+    }
 }

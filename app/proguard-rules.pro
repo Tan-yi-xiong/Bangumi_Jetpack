@@ -19,3 +19,14 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+-keep public class * extends android.view.View{*;}
+
+-keepclasseswithmembernames class * {
+    native <methods>;
+}
+
+-keep class tv.danmaku.ijk.media.player.** {*;}
+-keep class tv.danmaku.ijk.media.player.IjkMediaPlayer{*;}
+-keep class tv.danmaku.ijk.media.player.ffmpeg.FFmpegApi{*;}
+
+-keep public class * implements com.kk.taurus.playerbase.player.IPlayer{*;}

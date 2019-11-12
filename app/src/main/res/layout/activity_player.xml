@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="bangumiDetali"
+            type="com.tyxapp.bangumi_jetpack.data.BangumiDetail" />
+
+    </data>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".player.PlayerActivity">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:overScrollMode="never" />
+
+        <include
+            layout="@layout/bangumi_detail_bottom_sheet"
+            app:bangumiDetali="@{bangumiDetali}" />
+
+
+        <com.tyxapp.bangumi_jetpack.views.ParallaxVideoView
+            android:id="@+id/videoView"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:background="@android:color/black"
+            android:minHeight="?attr/actionBarSize" />
+
+        <View
+            android:id="@+id/scrimView"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:background="@color/colorPrimary"
+            android:visibility="invisible" />
+
+
+        <LinearLayout
+            android:id="@+id/barLayout"
+            android:visibility="invisible"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <View
+                android:background="@android:color/transparent"
+                android:id="@+id/stateBar"
+                android:layout_width="match_parent"
+                android:layout_height="5dp" />
+
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/toolBar"
+                app:menu="@menu/player_menu"
+                app:titleTextColor="@color/mdtp_white"
+                app:navigationIcon="@drawable/ic_arrow_back_white"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                app:contentInsetStartWithNavigation="0dp"/>
+
+        </LinearLayout>
+
+    </FrameLayout>
+</layout>

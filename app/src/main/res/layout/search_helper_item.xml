@@ -11,7 +11,7 @@
 
         <variable
             name="viewModle"
-            type="com.tyxapp.bangumi_jetpack.main.viewmodels.SearchHelperViewModel" />
+            type="com.tyxapp.bangumi_jetpack.main.search.viewmodels.SearchHelperViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

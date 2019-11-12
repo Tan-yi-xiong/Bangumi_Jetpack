@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="bangumiDetail"
+            type="com.tyxapp.bangumi_jetpack.data.BangumiDetail" />
+
+        <variable
+            name="viewModel"
+            type="com.tyxapp.bangumi_jetpack.player.PlayerViewModel" />
+
+        <variable
+            name="onClick"
+            type="android.view.View.OnClickListener" />
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <View
+            android:id="@+id/view"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:background="@android:color/transparent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?attr/selectableItemBackground"
+            android:onClick="@{onClick}">
+
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/CardView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/player_item_margin"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                app:cardCornerRadius="3dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <ImageView
+                    android:id="@+id/cover"
+                    android:layout_width="75dp"
+                    android:layout_height="95dp"
+                    android:scaleType="centerCrop"
+                    app:bindImage="@{bangumiDetail.cover}"
+                    tools:srcCompat="@tools:sample/backgrounds/scenic[1]" />
+
+            </androidx.cardview.widget.CardView>
+
+
+            <TextView
+                android:id="@+id/name"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:text="@{bangumiDetail.name}"
+                android:textColor="?android:attr/textColorPrimary"
+                android:textSize="16sp"
+                app:layout_constraintEnd_toStartOf="@+id/follow_button"
+                app:layout_constraintStart_toEndOf="@+id/CardView"
+                app:layout_constraintTop_toTopOf="@+id/CardView"
+                tools:text="我的英雄学院" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/follow_button"
+                android:layout_width="66dp"
+                android:layout_height="25dp"
+                android:layout_marginEnd="8dp"
+                android:background="@drawable/follow_btn_selector"
+                android:textColor="@color/mdtp_white"
+                android:theme="@style/Theme.AppCompat.Light"
+                app:isSelect="@{viewModel.isFollowLiveData()}"
+                app:layout_constraintBottom_toBottomOf="@+id/name"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/name"
+                app:selectText="@{@string/followButtonSelectText}"
+                app:unSelectText="@{@string/followButtonUnSelectText}" />
+
+            <TextView
+                android:id="@+id/ji"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@{bangumiDetail.jiTotal}"
+                app:layout_constraintStart_toStartOf="@+id/name"
+                app:layout_constraintTop_toBottomOf="@+id/name"
+                tools:text="12集全" />
+
+            <TextView
+                android:id="@+id/showDetail"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/text_detail"
+                app:layout_constraintBottom_toBottomOf="@+id/intro"
+                app:layout_constraintEnd_toStartOf="@+id/imageButton" />
+
+            <TextView
+                android:id="@+id/intro"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginEnd="8dp"
+                android:ellipsize="end"
+                android:maxLines="3"
+                android:text="@{bangumiDetail.intro}"
+                app:layout_constraintBottom_toBottomOf="@+id/CardView"
+                app:layout_constraintEnd_toStartOf="@+id/showDetail"
+                app:layout_constraintStart_toStartOf="@+id/ji"
+                app:layout_constraintTop_toBottomOf="@+id/ji"
+                tools:text="说的分离那里卡士大夫；卡死；到了；拉数据来看见识到了；番剧；拉萨绝地反击氨基酸的反馈；爱神的箭法律框架阿萨德" />
+
+            <ImageButton
+                android:id="@+id/imageButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:onClick="@{onClick}"
+                android:tint="@android:color/tab_indicator_text"
+                app:layout_constraintBottom_toBottomOf="@+id/showDetail"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/showDetail"
+                app:layout_constraintVertical_bias="0.29000002"
+                app:srcCompat="@drawable/ic_arrow_right" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </LinearLayout>
+</layout>

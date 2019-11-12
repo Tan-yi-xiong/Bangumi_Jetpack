@@ -2,13 +2,15 @@ package com.tyxapp.bangumi_jetpack
 
 import androidx.test.runner.AndroidJUnit4
 import com.tyxapp.bangumi_jetpack.data.db.AppDataBase
-import com.tyxapp.bangumi_jetpack.data.parsers.Silisili
-import com.tyxapp.bangumi_jetpack.utilities.info
-import kotlinx.coroutines.GlobalScope
+import com.tyxapp.bangumi_jetpack.data.parsers.Nico
+import com.tyxapp.bangumi_jetpack.data.parsers.Qimi
+import com.tyxapp.bangumi_jetpack.utilities.LOGI
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import org.junit.Test
 import org.junit.runner.RunWith
-import kotlin.concurrent.thread
 
 /**
  * Instrumented test, which will execute on an Android device.
@@ -17,11 +19,12 @@ import kotlin.concurrent.thread
  */
 @RunWith(AndroidJUnit4::class)
 class ExampleInstrumentedTest {
+
     @Test
-    fun dBTest() {
-        val searchDao = AppDataBase.getInstance().searchDao()
-        searchDao.getSearchWords().forEach {
-            println(it.word)
+    fun parserTest() {
+        runBlocking {
+            print(Qimi().getPlayerUrl("zhegeyongzhemingmingchaoqiangqueguofenshenzhong", 0, 0))
         }
+
     }
 }

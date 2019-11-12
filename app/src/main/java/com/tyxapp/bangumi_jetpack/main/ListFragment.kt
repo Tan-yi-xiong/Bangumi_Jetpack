@@ -6,9 +6,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.Observer
+import androidx.lifecycle.observe
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.tyxapp.bangumi_jetpack.R
@@ -34,39 +33,35 @@ abstract class ListFragment : Fragment() {
         }.root
     }
 
+    /**
+     * 等于2隐藏其他显示加载
+     */
     fun showLoading() {
-        bind.showContent = false
-        bind.showEmpty = false
-        bind.showError = false
-        bind.showLoading = true
+        bind.uiState = 2
     }
 
+    /**
+     * 等于1隐藏其他显示内容
+     */
     fun showContent() {
-        bind.showEmpty = false
-        bind.showError = false
-        bind.showLoading = false
-        bind.showContent = true
-    } 
-
-    fun showError() {
-        bind.showEmpty = false
-        bind.showLoading = false
-        bind.showContent = false
-        bind.showError = true
+        bind.uiState = 1
     }
 
+    /**
+     *大于5显示错误页面
+     */
+    fun showError() {
+        bind.uiState = 6
+    }
+
+    /**
+     * 少于0显示空数据
+     */
     fun showEmpty() {
-        bind.showLoading = false
-        bind.showError = false
-        bind.showContent = false
-        bind.showEmpty = true
+        bind.uiState = -1
     }
 
     inline fun <reified T> LiveData<T>.observe(crossinline action: (T) -> Unit) {
         observe(this@ListFragment ) { action(it) }
     }
-}
-
-inline fun <reified T> LiveData<T>.observe(owner: LifecycleOwner, crossinline action: (T) -> Unit) {
-    observe(owner, Observer<T> { action(it) })
 }

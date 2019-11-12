@@ -9,34 +9,24 @@
         <item>banner</item>
     </array>
 
-    <array name="dilidili_title">
-        <item>最新更新</item>
-        <item>番剧排行</item>
-        <item>番剧推荐</item>
+    <array name="decoder_plan_name">
+        <item>IjkPlayer(速度快)</item>
+        <item>MediaPlayer</item>
     </array>
 
-    <array name="search_result_tab_text">
-        <item>Zzzfun</item>
-        <item>nico</item>
-        <item>樱花动漫</item>
-        <item>silisili</item>
-        <item>奇米</item>
+    <array name="decoder_plan_value">
+        <item>IjkPlayer</item>
+        <item>MediaPlayer</item>
     </array>
+
 
     <array name="main_bottomsheet_item">
-        <item>重播</item>
+        <item>刷新视频</item>
         <item>视频速度</item>
         <item>下载这个视频</item>
         <item>弹幕设置</item>
     </array>
 
-    <array name="video_speed_bottomsheet_item">
-        <item>0.5x</item>
-        <item>0.7x</item>
-        <item>1.0x</item>
-        <item>1.5x</item>
-        <item>2.0x</item>
-    </array>
 
     <array name="zzzfun_categor_name">
         <item>电影</item>
@@ -63,18 +53,7 @@
 
     <array name="home_sourch">
         <item>Zzzfun</item>
-        <item>dilidili</item>
-        <item>silisili</item>
-    </array>
-
-    <array name="decoder_plan_name">
-        <item>MediaPlayer</item>
-        <item>IjkPlayer(有可能出现卡屏)</item>
-    </array>
-
-    <array name="decoder_plan_value">
-        <item>MediaPlayer</item>
-        <item>IjkPlayer</item>
+        <item>DiliDili</item>
     </array>
 
 </resources>

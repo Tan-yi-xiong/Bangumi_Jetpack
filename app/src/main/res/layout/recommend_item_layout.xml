@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <View
+            android:background="@color/grey_300"
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp" />
+
+        <TextView
+            android:textColor="@android:color/black"
+            android:layout_marginStart="@dimen/player_item_margin"
+            android:text="更多推荐"
+            android:gravity="start|center"
+            android:layout_width="match_parent"
+            android:layout_height="35dp" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recommendRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+    </LinearLayout>
+</layout>

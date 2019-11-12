@@ -16,6 +16,7 @@
         android:orientation="vertical">
 
         <LinearLayout
+
             android:background="?attr/selectableItemBackground"
             android:id="@+id/homebangumiTitle"
             android:gravity="center_vertical"
@@ -33,6 +34,7 @@
                 android:layout_height="wrap_content" />
 
             <ImageButton
+                android:id="@+id/icon"
                 android:focusable="false"
                 android:clickable="false"
                 android:backgroundTint="@android:color/transparent"
