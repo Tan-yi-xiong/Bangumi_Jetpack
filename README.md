@@ -30,6 +30,7 @@
 - [coolweatherjetpack](https://github.com/guolindev/coolweatherjetpack)
 
 # 应用截图
+
 <div align=center>
 <img src="./Screenshots/player_start.gif" width="40%" />
 <br/>

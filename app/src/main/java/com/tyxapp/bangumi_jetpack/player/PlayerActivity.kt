@@ -17,6 +17,7 @@ import android.widget.FrameLayout
 import android.widget.Spinner
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.AppCompatSpinner
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.getSystemService
 import androidx.core.view.isVisible
@@ -298,12 +299,7 @@ class PlayerActivity : BasePlayerActivity() {
     private fun addObserver() = with(viewModel) {
         //番剧详情条目
         bangumiDetail.observe(this@PlayerActivity) {
-            try {
-                bindBangimiDetail(it)
-            } catch (e: Exception) {
-                LOGI(e.toString())
-            }
-
+            bindBangimiDetail(it)
         }
 
         //选集列表
@@ -443,18 +439,8 @@ class PlayerActivity : BasePlayerActivity() {
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spinner.adapter = spinnerAdapter
         spinner.itemSelect { position -> viewModel.currentLine = position }
-
-        try {//网上换图标方法报错, 不想自己做, 所以使用万能的反射
-            val field = spinner::class.java.getDeclaredField("mPopup")
-            field.isAccessible = true
-            val mPopup = field.get(spinner)
-            val method = mPopup::class.java.getMethod("show", Int::class.java, Int::class.java)
-            method.isAccessible = true
-            jiSelectItemBinding.spinnerIcon.setOnClickListener {
-                method.invoke(mPopup, spinner.textDirection, spinner.textAlignment)
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
+        jiSelectItemBinding.spinnerIcon.setOnClickListener {
+            spinner.performClick()
         }
     }
 
@@ -463,7 +449,8 @@ class PlayerActivity : BasePlayerActivity() {
         val layoutParams = mVideoView.layoutParams
         if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
             isLandscape = true
-            if ((mVideoView as ParallaxVideoView).offset != 0) (mVideoView as ParallaxVideoView).offset = 0
+            if ((mVideoView as ParallaxVideoView).offset != 0) (mVideoView as ParallaxVideoView).offset =
+                0
             registerSensor()
             layoutParams.height = FrameLayout.LayoutParams.MATCH_PARENT
         } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
@@ -531,9 +518,10 @@ class PlayerActivity : BasePlayerActivity() {
         permissions: Array<out String>,
         grantResults: IntArray
     ) {
-        when(requestCode) {
+        when (requestCode) {
             PERMISSION_REQUEST_CODE -> {
-                val success = grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED
+                val success =
+                    grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED
                 mReceiver.groupValue.putBoolean(PERMISSION_REQUEST_KEY, success, true)
             }
         }

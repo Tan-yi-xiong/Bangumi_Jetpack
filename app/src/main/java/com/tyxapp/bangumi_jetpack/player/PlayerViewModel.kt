@@ -4,7 +4,9 @@ import androidx.lifecycle.*
 import com.tyxapp.bangumi_jetpack.data.*
 import com.tyxapp.bangumi_jetpack.repository.PlayerRepository
 import com.tyxapp.bangumi_jetpack.utilities.LOGI
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 import master.flame.danmaku.danmaku.parser.BaseDanmakuParser
 
 class PlayerViewModel(
@@ -41,15 +43,10 @@ class PlayerViewModel(
                     if (currentJiPositionLiveData.value == null) {
                         val lastWatchJi = bangumiDetail.value!!.lastWatchJi
                         val jiSize = lineAndjiItems.value!!.second.size
-                        currentJiPositionLiveData.value =
-                            if (lastWatchJi > jiSize - 1) 0 else lastWatchJi
+                        setCurrentJi(if (lastWatchJi > jiSize - 1) 0 else lastWatchJi)
                     } else {
-                        currentJiPositionLiveData.value = currentJiPositionLiveData.value!!
+                        setCurrentJi(currentJiPositionLiveData.value!!)
                     }
-
-                    // 更新最后观看时线路
-                    bangumiDetail.value!!.lastWatchLine = position
-                    playerRepository.updateBangumiDetail(bangumiDetail.value!!)
                 })
             }
         }
@@ -155,12 +152,7 @@ class PlayerViewModel(
      */
     fun onJiClick(position: Int) {
         if (currentJiPositionLiveData.value != position) {
-            launch({
-                currentJiPositionLiveData.value = position
-                bangumiDetail.value!!.lastWatchJi = position
-                playerRepository.updateBangumiDetail(bangumiDetail.value!!)
-            })
-
+            setCurrentJi(position)
         }
     }
 
@@ -224,9 +216,17 @@ class PlayerViewModel(
                 alearMessage.value = "已经是最后一集了~"
             } else {
                 alearMessage.value = "正在加载下一集..."
-                currentJiPositionLiveData.value = it + 1
+                setCurrentJi(it + 1)
             }
         }
+    }
+
+    private fun setCurrentJi(position: Int) {
+        launch({
+            currentJiPositionLiveData.value = position
+            bangumiDetail.value!!.lastWatchJi = position
+            playerRepository.updateBangumiDetail(bangumiDetail.value!!)
+        })
     }
 
     private fun errorHandle(throwable: Throwable) {

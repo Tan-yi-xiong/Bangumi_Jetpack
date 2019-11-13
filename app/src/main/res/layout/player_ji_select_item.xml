@@ -18,7 +18,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
 
-        <Spinner
+        <androidx.appcompat.widget.AppCompatSpinner
             android:background="@android:color/transparent"
             android:id="@+id/spinner"
             android:layout_width="wrap_content"
