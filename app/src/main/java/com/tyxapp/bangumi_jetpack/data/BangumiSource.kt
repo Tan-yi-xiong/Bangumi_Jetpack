@@ -1,5 +1,5 @@
 package com.tyxapp.bangumi_jetpack.data
 
 enum class BangumiSource {
-    Nico, Zzzfun, Sakura, SiliSili, Qimi, Malimali, DiliDili
+    Nico, Zzzfun, Sakura, DiliDili, SiliSili, Qimi, Malimali,
 }

@@ -42,10 +42,6 @@ class SearchResultFragment : Fragment() {
             SearchResultPgaeAadapter(this)
 
         TabLayoutMediator(tabLayout, viewPager2) {tab, index ->
-            val bangumiSource = BangumiSource.values()[index]
-            if (bangumiSource == BangumiSource.DiliDili) {
-                return@TabLayoutMediator
-            }
             tab.text = getTabName(index)
         }.attach()
 

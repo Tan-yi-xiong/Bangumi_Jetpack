@@ -18,7 +18,8 @@ import kotlin.Exception
 private const val BASE_URL_PC = "http://www.dilidili.one"
 private const val BASE_URL_PHONE = "http://m.dilidili.one"
 
-class Dilidili : IHomePageParser, IPlayerVideoParser {
+class Dilidili : IHomePageParser, IPlayerVideoParser, IsearchParser {
+
     private var pcHomePageDocument: Document? = null
     private var categoryWithUrl: MutableMap<String, String>? = null
     private val playerHtmlUrls by lazy(LazyThreadSafetyMode.NONE) { ArrayList<String>() }
@@ -57,7 +58,7 @@ class Dilidili : IHomePageParser, IPlayerVideoParser {
         withContext(Dispatchers.IO) {
             initDetailDocument(id)
             val jiList = ArrayList<JiItem>()
-            detailDocument!!.getElementsByClass("swiper-wrapper mb20").getOrNull(0)
+            detailDocument!!.getElementsByClass("swiper-slide").getOrNull(0)
                 ?.getElementsByClass("clear")?.getOrNull(0)
                 ?.children()?.forEachWithIndex { index, jiElement ->
                     if (playerHtmlUrls.size == index) {
@@ -101,6 +102,19 @@ class Dilidili : IHomePageParser, IPlayerVideoParser {
         return null
     }
 
+    override fun getSearchResult(searchWord: String): Listing<Bangumi> {
+        val factor = DiliSearchResultDataSourceFactor(searchWord)
+        val pagelist = LivePagedListBuilder(factor, 8).build()
+        return Listing(
+            liveDataPagelist = pagelist,
+            initialLoad = factor.dataSourceLiveData.switchMap { it.initialLoadLiveData },
+            netWordState = factor.dataSourceLiveData.switchMap { it.netWordState },
+            retry = { factor.dataSourceLiveData.value?.retry() }
+        )
+    }
+
+    /***************************************视频播放***************************************/
+
     override suspend fun getHomeBangumis(): Map<String, List<Bangumi>> = coroutineScope {
         pcHomePageDocument = null //刷新数据
         initPcHomePageDocument()
@@ -123,18 +137,19 @@ class Dilidili : IHomePageParser, IPlayerVideoParser {
      * 轮播图解析
      *
      */
-    private suspend fun parserBanner(): Pair<String, List<Bangumi>> = withContext(Dispatchers.Default) {
-        val document = Jsoup.parse(OkhttpUtil.getResponseData(BASE_URL_PHONE))
-        val bangumis = ArrayList<Bangumi>()
-        document.getElementsByClass("swiper-wrapper")[0].children().forEach { lunboElement ->
-            if (!lunboElement.attrHref().contains("anime")) return@forEach //去广告
-            val name = lunboElement.get_img_tags()[0].attrAlt()
-            val id = parserId(lunboElement.attrHref())
-            val cover = lunboElement.get_img_tags()[0].attrSrc()
-            bangumis.add(Bangumi(id, BangumiSource.DiliDili, name, cover))
+    private suspend fun parserBanner(): Pair<String, List<Bangumi>> =
+        withContext(Dispatchers.Default) {
+            val document = Jsoup.parse(OkhttpUtil.getResponseData(BASE_URL_PHONE))
+            val bangumis = ArrayList<Bangumi>()
+            document.getElementsByClass("swiper-wrapper")[0].children().forEach { lunboElement ->
+                if (!lunboElement.attrHref().contains("anime")) return@forEach //去广告
+                val name = lunboElement.get_img_tags()[0].attrAlt()
+                val id = parserId(lunboElement.attrHref())
+                val cover = lunboElement.get_img_tags()[0].attrSrc()
+                bangumis.add(Bangumi(id, BangumiSource.DiliDili, name, cover))
+            }
+            Pair(BANNER, bangumis)
         }
-        Pair(BANNER, bangumis)
-    }
 
     /**
      *解析最新更新
@@ -146,7 +161,7 @@ class Dilidili : IHomePageParser, IPlayerVideoParser {
             val bangumis = ArrayList<Bangumi>()
             document.getElementsByClass("book article")[0].children()
                 .run {
-                    if (document == pcHomePageDocument){
+                    if (document == pcHomePageDocument) {
                         take(5)
                     } else {
                         this
@@ -186,42 +201,47 @@ class Dilidili : IHomePageParser, IPlayerVideoParser {
      * 随机推荐番剧解析
      *
      */
-    private suspend fun randomBangumiParser(): Pair<String, List<Bangumi>> = withContext(Dispatchers.Default) {
-        val bangumis = ArrayList<Bangumi>()
-        pcHomePageDocument!!.getElementsByClass("book suijituijian")[0].children()
-            .forEach { bangumiElement ->
-                bangumis.add(parserbangumi(bangumiElement))
-            }
-        Pair("随机番剧推荐", bangumis)
-    }
+    private suspend fun randomBangumiParser(): Pair<String, List<Bangumi>> =
+        withContext(Dispatchers.Default) {
+            val bangumis = ArrayList<Bangumi>()
+            pcHomePageDocument!!.getElementsByClass("book suijituijian")[0].children()
+                .forEach { bangumiElement ->
+                    bangumis.add(parserbangumi(bangumiElement))
+                }
+            Pair("随机番剧推荐", bangumis)
+        }
 
     /**
      * 本季新番解析
      *
      */
-    private suspend fun seasonBangumiParser(): Pair<String, List<Bangumi>> = withContext(Dispatchers.Default) {
-        val aTag = pcHomePageDocument!!.getElementsByClass("menu")[0].get_a_tags()[1]
-        val text = aTag.text()
-        val url = "$BASE_URL_PC${aTag.attrHref()}"
-        val document = Jsoup.parse(OkhttpUtil.getResponseData(url))
-        val bangumis = ArrayList<Bangumi>()
-        document.getElementsByClass("anime_list")[0]
-            .children()
-            .take(6)
-            .forEach { bangumiElement ->
+    private suspend fun seasonBangumiParser(): Pair<String, List<Bangumi>> =
+        withContext(Dispatchers.Default) {
+            val aTag = pcHomePageDocument!!.getElementsByClass("menu")[0].get_a_tags()[1]
+            val text = aTag.text()
+            val url = "$BASE_URL_PC${aTag.attrHref()}"
+            val document = Jsoup.parse(OkhttpUtil.getResponseData(url))
+            val bangumis = ArrayList<Bangumi>()
+            document.getElementsByClass("anime_list")[0]
+                .children()
+                .take(6)
+                .forEach { bangumiElement ->
 
-                val aTags = bangumiElement.get_a_tags()
-                val id = parserId(aTags[0].attrHref())
-                val name = aTags[1].text()
-                val cover = bangumiElement.get_img_tags()[0].attrSrc()
-                val ji =
-                    bangumiElement.getElementsByAttributeValue("style", "color:#F00")[0].parent()
-                        .text()
+                    val aTags = bangumiElement.get_a_tags()
+                    val id = parserId(aTags[0].attrHref())
+                    val name = aTags[1].text()
+                    val cover = bangumiElement.get_img_tags()[0].attrSrc()
+                    val ji =
+                        bangumiElement.getElementsByAttributeValue(
+                            "style",
+                            "color:#F00"
+                        )[0].parent()
+                            .text()
 
-                bangumis.add(Bangumi(id, BangumiSource.DiliDili, name, cover, ji))
-            }
-        Pair(text, bangumis)
-    }
+                    bangumis.add(Bangumi(id, BangumiSource.DiliDili, name, cover, ji))
+                }
+            Pair(text, bangumis)
+        }
 
     override suspend fun getCategorItems(): List<CategorItem> = withContext(Dispatchers.IO) {
         val url = "$BASE_URL_PHONE/fenlei.html"
@@ -285,7 +305,12 @@ class Dilidili : IHomePageParser, IPlayerVideoParser {
                 try {
                     val result = parserUpdateBangmi(document).second
                     callback.onResult(result, null, null)
-                    initialLoadLiveData.postValue(InitialLoad(NetWordState.SUCCESS, result.isEmpty()))
+                    initialLoadLiveData.postValue(
+                        InitialLoad(
+                            NetWordState.SUCCESS,
+                            result.isEmpty()
+                        )
+                    )
                 } catch (e: Exception) {
                     initialLoadLiveData.postValue(InitialLoad(NetWordState.error(e.toString())))
                 }
@@ -351,12 +376,77 @@ private fun parserId(idString: String): String {
     }
 }
 
+private class DiliSearchResultDataSource(
+    searchWord: String
+) : PageResultDataSourch<String>(searchWord) {
+    override fun initialLoad(
+        params: LoadInitialParams<String>,
+        callback: LoadInitialCallback<String, Bangumi>
+    ) {
+
+        val url = "$BASE_URL_PC/search.php?q=$encodeSearchWord"
+        val document = Jsoup.parse(OkhttpUtil.getResponseData(url))
+        val nextUrl = getNextPageUrl(document)
+        val result: List<Bangumi> = parserSearchResult(document)
+        val isEmpty = result.isEmpty()
+        callback.onResult(result, null, nextUrl)
+        initialLoadLiveData.postValue(InitialLoad(NetWordState.SUCCESS, isEmpty))
+    }
+
+    private fun getNextPageUrl(document: Document): String? {
+        return document.getElementsByClass("pagelist")
+            .getOrNull(0)
+            ?.run {
+                val hasNext = get_a_tags().getOrNull(0)?.text()?.equals("下一页") ?: false
+                if (hasNext) {
+                    "$BASE_URL_PC${get_a_tags()[0].attrHref()}"
+                } else {
+                    null
+                }
+            }
+    }
+
+    private fun parserSearchResult(document: Document): List<Bangumi> {
+        val bangumis = ArrayList<Bangumi>()
+        document.getElementsByClass("col-sm-6 hang").forEach { bangumiElement ->
+            val aTag = bangumiElement.get_a_tags().getOrNull(1)
+            val id = aTag?.run { parserId(this.attrHref()) } ?: return@forEach
+            val name = aTag.getElementsByTag("h2")?.text() ?: ""
+
+            val cover = bangumiElement.get_img_tags().getOrNull(0)?.attrSrc() ?: ""
+            bangumis.add(Bangumi(id, BangumiSource.DiliDili, name, cover))
+        }
+        return bangumis
+    }
+
+    override fun afterload(params: LoadParams<String>, callback: LoadCallback<String, Bangumi>) {
+        val document = Jsoup.parse(params.key)
+        val nextUrl = getNextPageUrl(document)
+        val result = parserSearchResult(document)
+        callback.onResult(result, nextUrl)
+    }
+
+}
+
+private class DiliSearchResultDataSourceFactor(
+    private val searchWord: String
+): DataSource.Factory<String, Bangumi>() {
+    val dataSourceLiveData = MutableLiveData<DiliSearchResultDataSource>()
+
+    override fun create(): DataSource<String, Bangumi> {
+        return DiliSearchResultDataSource(searchWord).apply {
+            dataSourceLiveData.postValue(this)
+        }
+    }
+}
+
 private class CategoryResultDataSource(
     private val categoryUrl: String
 ) : PageResultDataSourch<Int>(null) {
     override fun initialLoad(
         params: LoadInitialParams<Int>,
-        callback: LoadInitialCallback<Int, Bangumi>) {
+        callback: LoadInitialCallback<Int, Bangumi>
+    ) {
 
         val document = Jsoup.parse(OkhttpUtil.getResponseData(categoryUrl))
         val bangumis = ArrayList<Bangumi>()

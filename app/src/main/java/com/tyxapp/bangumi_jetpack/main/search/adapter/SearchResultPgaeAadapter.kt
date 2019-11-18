@@ -9,9 +9,8 @@ class SearchResultPgaeAadapter(
     fragment: Fragment
 ) : FragmentStateAdapter(fragment) {
     private val tabWithFragments = LinkedHashMap<BangumiSource, Fragment>().apply {
-        BangumiSource.values().forEach {
-            if (it == BangumiSource.DiliDili) return@forEach
-            this[it] = SearchResultChildFragment.newInstance(it.name)
+        BangumiSource.values().forEach { source ->
+            this[source] = SearchResultChildFragment.newInstance(source.name)
         }
     }
 

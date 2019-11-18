@@ -2,6 +2,10 @@ package com.tyxapp.bangumi_jetpack.data.parsers
 
 import com.tyxapp.bangumi_jetpack.data.BangumiSource
 
+/**
+ * 创建解析类工厂
+ *
+ */
 class ParserFactory {
     companion object{
         fun createHomePageParser(bangumiSource: BangumiSource): IHomePageParser = when(bangumiSource) {
@@ -14,10 +18,10 @@ class ParserFactory {
             BangumiSource.Zzzfun -> Zzzfun()
             BangumiSource.Nico -> Nico()
             BangumiSource.Malimali -> Malimali()
+            BangumiSource.DiliDili -> Dilidili()
             BangumiSource.Sakura -> Sakura()
             BangumiSource.SiliSili -> Silisili()
             BangumiSource.Qimi -> Qimi()
-            else -> throw IllegalAccessException("该资源没有实现IsearchParser接口")
         }
 
         fun createPlayerVideoParser(bangumiSource: BangumiSource): IPlayerVideoParser = when(bangumiSource) {
