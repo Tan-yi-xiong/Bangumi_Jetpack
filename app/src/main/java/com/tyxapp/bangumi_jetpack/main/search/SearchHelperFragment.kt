@@ -34,8 +34,8 @@ class SearchHelperFragment : ListFragment() {
         parentFragment!!.view!!.findViewById<ImageButton>(R.id.clear_text)
     }
 
-    private val appBarLayout: AppBarLayout by lazy(LazyThreadSafetyMode.NONE) {
-        parentFragment!!.view!!.findViewById<AppBarLayout>(R.id.appBarLayout)
+    private val appBarLayout: AppBarLayout? by lazy(LazyThreadSafetyMode.NONE) {
+        parentFragment?.view?.findViewById<AppBarLayout>(R.id.appBarLayout)
     }
 
 
@@ -52,8 +52,8 @@ class SearchHelperFragment : ListFragment() {
 
     private fun initView() {
         if (appbarElevation == 0f) {
-            appBarLayout.post {
-                appbarElevation =  appBarLayout.elevation
+            appBarLayout?.post {
+                appbarElevation =  appBarLayout?.elevation ?: 0f
             }
         }
 
@@ -102,27 +102,14 @@ class SearchHelperFragment : ListFragment() {
 
     override fun onResume() {
         super.onResume()
+        if (appBarLayout?.elevation == 0f) {
+            appBarLayout?.elevation =
+                appbarElevation
+        }
         if (!editText.isFocused) {
             editText.requestFocus()
         }
-        if (appBarLayout.elevation == 0f) {
-            appBarLayout.elevation =
-                appbarElevation
-        }
         showKeyBoard()
-    }
-
-    override fun onPause() {
-        super.onPause()
-        if (editText.isFocused) {
-            editText.clearFocus()
-        }
-        hideKeyBoard()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        appBarLayout.elevation = 0f
     }
 
     private fun hideKeyBoard() {
@@ -133,6 +120,13 @@ class SearchHelperFragment : ListFragment() {
     private fun showKeyBoard() {
         val inputService = requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         inputService.showSoftInput(editText, 0)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        appBarLayout?.elevation = 0f
+        editText.clearFocus()
+        hideKeyBoard()
     }
 
     companion object {

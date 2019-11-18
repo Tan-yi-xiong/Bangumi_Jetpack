@@ -10,7 +10,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.commit
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.observe
 import com.tyxapp.bangumi_jetpack.R
 import com.tyxapp.bangumi_jetpack.databinding.SearchFragmentBinding
@@ -41,10 +40,13 @@ class SearchFragment : Fragment() {
             if (childFragmentManager.backStackEntryCount > 0) {
                 childFragmentManager.popBackStack(
                     SEARCH_BACK_STACK_NAME,
-                    FragmentManager.POP_BACK_STACK_INCLUSIVE)
+                    FragmentManager.POP_BACK_STACK_INCLUSIVE
+                )
             } else {
-                requireActivity().supportFragmentManager.popBackStack(SEARCHFRAGMENT_STACK_NAME,
-                    FragmentManager.POP_BACK_STACK_INCLUSIVE)
+                requireActivity().supportFragmentManager.popBackStack(
+                    SEARCHFRAGMENT_STACK_NAME,
+                    FragmentManager.POP_BACK_STACK_INCLUSIVE
+                )
             }
         }
     }
@@ -72,6 +74,7 @@ class SearchFragment : Fragment() {
                 val searchHelperFragment =
                     childFragmentManager.findFragmentByTag(SearchHelperFragment::class.java.simpleName)!!
 
+
                 if (searchResultFragment == null) {
                     this.add(
                         R.id.searchContent,
@@ -82,7 +85,8 @@ class SearchFragment : Fragment() {
                 } else {
                     childFragmentManager.popBackStack(
                         SEARCH_BACK_STACK_NAME,
-                        FragmentManager.POP_BACK_STACK_INCLUSIVE)
+                        FragmentManager.POP_BACK_STACK_INCLUSIVE
+                    )
                 }
             }
         }
@@ -124,24 +128,6 @@ class SearchFragment : Fragment() {
                 }
             }
         }
-
         mEditText.requestFocus()
-
-//        childFragmentManager.addOnBackStackChangedListener {
-//            //有返回栈证明searchResultFragment被覆盖, 生命周期控制到onPause, 否则控制到onResume
-//            val searchResultFragment =
-//                childFragmentManager.findFragmentByTag(SearchResultFragment::class.java.simpleName)!!
-//
-//            if (childFragmentManager.backStackEntryCount > 0) {
-//                setMaxLifecycle(searchResultFragment, Lifecycle.State.STARTED)
-//            } else {
-//                setMaxLifecycle(searchResultFragment, Lifecycle.State.RESUMED)
-//            }
-//        }
     }
-
-    private fun setMaxLifecycle(fragment: Fragment, state: Lifecycle.State) {
-        childFragmentManager.commit { setMaxLifecycle(fragment, state) }
-    }
-
 }
