@@ -60,6 +60,14 @@
             android:defaultValue="DiliDili"
             android:layout="@layout/coustom_preference_widget_checkbox"
             android:title="@string/title_home_sourch" />
+
+        <SwitchPreference
+            android:key="@string/key_dl_unlock"
+            android:defaultValue="false"
+            android:title="@string/title_skid_dl"
+            android:summary="@string/summary_skid_dl"
+            android:layout="@layout/coustom_preference_widget_checkbox"/>
+
         <Preference
             android:key="@string/key_clear_cache"
             android:layout="@layout/coustom_preference_widget_checkbox"

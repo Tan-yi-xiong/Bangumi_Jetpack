@@ -122,11 +122,15 @@ class SearchHelperFragment : ListFragment() {
         inputService.showSoftInput(editText, 0)
     }
 
+    override fun onPause() {
+        super.onPause()
+        editText.clearFocus()
+        hideKeyBoard()
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         appBarLayout?.elevation = 0f
-        editText.clearFocus()
-        hideKeyBoard()
     }
 
     companion object {

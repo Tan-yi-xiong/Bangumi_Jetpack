@@ -1,6 +1,7 @@
 package com.tyxapp.bangumi_jetpack.main.history
 
 import android.os.Bundle
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,6 +9,7 @@ import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import androidx.activity.addCallback
 import androidx.core.view.isVisible
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.viewModels
 import com.tyxapp.bangumi_jetpack.R
@@ -70,7 +72,10 @@ class HistoryFragment : ToolbarListFragment() {
 
     private fun initView() {
         with(mToolBar) {
-            setNavigationOnClickListener { requireActivity().onBackPressed() }
+            setNavigationIcon(R.drawable.ic_menu)
+            setNavigationOnClickListener {
+                requireActivity().findViewById<DrawerLayout>(R.id.drawerlayout).openDrawer(Gravity.LEFT)
+            }
             title = getString(R.string.menu_title_history)
             setOnMenuItemClickListener { menuItem ->
                 if (menuItem.itemId == R.id.search) {

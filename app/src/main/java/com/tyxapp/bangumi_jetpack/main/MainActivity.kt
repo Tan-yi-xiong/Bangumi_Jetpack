@@ -36,6 +36,7 @@ const val START_DOWNLOAD = "START_DOWNLOAD"
 class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceChangeListener {
 
     private val mainViewModel by lazy { ViewModelProviders.of(this).get(MainViewModel::class.java) }
+    private lateinit var drawerLayout: DrawerLayout
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -72,9 +73,11 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
             else -> throw IllegalAccessException("没有此主页")
         }
 
-        //禁止侧边划出
-        val drawerLayout = findViewById<DrawerLayout>(R.id.drawerlayout)
-        drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
+        drawerLayout = findViewById(R.id.drawerlayout)
+        if (!PrefUtils.getDrawerLayoutIsUnLock()) {
+            drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
+        }
+
 
         //navigationView设置
         val navigationView = findViewById<NavigationView>(R.id.navigationView)
@@ -94,11 +97,11 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
             fragmentManager = supportFragmentManager,
             containerId = R.id.main_content
         )
+
     }
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
-        val keyString = getString(R.string.key_home_page)
-        if (key == keyString) {
+        if (key == getString(R.string.key_home_page)) {
             when(PrefUtils.getHomeSourceName()) {
                 BangumiSource.Zzzfun.name -> {
                     mainViewModel.homeDataRepository.value = InjectorUtils.getHomeDataRepository(Zzzfun())
@@ -108,6 +111,21 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
                     mainViewModel.homeDataRepository.value = InjectorUtils.getHomeDataRepository(Dilidili())
                 }
             }
+        } else if (key == getString(R.string.key_dl_unlock)) {
+            val lockMode = if (PrefUtils.getDrawerLayoutIsUnLock()) {
+                DrawerLayout.LOCK_MODE_UNLOCKED
+            } else {
+                DrawerLayout.LOCK_MODE_LOCKED_CLOSED
+            }
+            drawerLayout.setDrawerLockMode(lockMode)
+        }
+    }
+
+    override fun onBackPressed() {
+        if (drawerLayout.isDrawerOpen(Gravity.LEFT)) {
+            drawerLayout.closeDrawer(Gravity.LEFT)
+        } else {
+            super.onBackPressed()
         }
     }
 

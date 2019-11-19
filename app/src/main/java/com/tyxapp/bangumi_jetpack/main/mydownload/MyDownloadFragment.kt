@@ -1,11 +1,13 @@
 package com.tyxapp.bangumi_jetpack.main.mydownload
 
 import android.os.Bundle
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.viewModels
 import com.tyxapp.bangumi_jetpack.R
 import com.tyxapp.bangumi_jetpack.main.ToolbarListFragment
@@ -66,8 +68,11 @@ class MyDownloadFragment : ToolbarListFragment() {
 
         with(mToolBar) {
             mToolBar.menu.removeItem(R.id.search)
+            mToolBar.setNavigationIcon(R.drawable.ic_menu)
             setTitle(R.string.menu_title_my_download)
-            setNavigationOnClickListener { requireActivity().onBackPressed() }
+            setNavigationOnClickListener {
+                requireActivity().findViewById<DrawerLayout>(R.id.drawerlayout).openDrawer(Gravity.LEFT)
+            }
             setOnMenuItemClickListener { menuItem ->
                 when(menuItem.itemId) {
                     R.id.search -> (requireActivity() as MainActivity).navigateToSearchFragment(parentFragment!!)

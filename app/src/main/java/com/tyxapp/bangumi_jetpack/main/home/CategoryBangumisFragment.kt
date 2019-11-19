@@ -56,6 +56,15 @@ class CategoryBangumisFragment : ToolbarListFragment() {
     }
 
 
+    /**
+     * 不能滑出侧栏
+     *
+     */
+    override fun canSkidDrawerLayout(): Boolean {
+        return false
+    }
+
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,

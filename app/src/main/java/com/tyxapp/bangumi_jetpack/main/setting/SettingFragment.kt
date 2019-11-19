@@ -1,12 +1,14 @@
 package com.tyxapp.bangumi_jetpack.main.setting
 
 import android.os.Bundle
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import androidx.appcompat.widget.Toolbar
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
 import com.tyxapp.bangumi_jetpack.R
@@ -30,7 +32,9 @@ class SettingFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_setting, container, false)
         mToolBar = view.findViewById(R.id.toolBar)
         mToolBar.setTitle(R.string.title_setting)
-        mToolBar.setNavigationOnClickListener { requireActivity().onBackPressed() }
+        mToolBar.setNavigationOnClickListener {
+            requireActivity().findViewById<DrawerLayout>(R.id.drawerlayout).openDrawer(Gravity.LEFT)
+        }
         childFragmentManager.commit { replace(R.id.content, MainSettingFragment.getInstance()) }
         return view
     }

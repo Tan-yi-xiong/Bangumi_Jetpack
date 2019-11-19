@@ -24,6 +24,7 @@
     <group android:id="@+id/menu_group_setting">
         <item android:id="@+id/menu_setting"
             android:title="@string/title_setting"
+            android:checkable="true"
             android:icon="@drawable/ic_settings"/>
     </group>
 

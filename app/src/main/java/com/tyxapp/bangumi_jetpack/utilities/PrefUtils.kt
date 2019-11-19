@@ -23,6 +23,17 @@ class PrefUtils {
                 defaultvalue
             )
         }
+
+        /**
+         * [MainActivity]侧栏是否能滑动
+         *
+         */
+        fun getDrawerLayoutIsUnLock(): Boolean {
+            return context.defaultSharedPreferences.getBoolean(
+                context.getString(R.string.key_dl_unlock),
+                false
+            )
+        }
     }
 
 }

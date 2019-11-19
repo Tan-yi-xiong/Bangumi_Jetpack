@@ -6,13 +6,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import androidx.activity.addCallback
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.commit
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.observe
 import com.tyxapp.bangumi_jetpack.R
 import com.tyxapp.bangumi_jetpack.databinding.SearchFragmentBinding
+import com.tyxapp.bangumi_jetpack.main.UnSkidFragment
 import com.tyxapp.bangumi_jetpack.main.search.viewmodels.SearchViewModel
 import com.tyxapp.bangumi_jetpack.utilities.SEARCHFRAGMENT_STACK_NAME
 
@@ -23,7 +23,7 @@ const val SEARCH_BACK_STACK_NAME = "SEARCH_BACK_STACK_NAME"
  *
  */
 
-class SearchFragment : Fragment() {
+class SearchFragment : UnSkidFragment() {
 
     private lateinit var bind: SearchFragmentBinding
     private lateinit var mEditText: EditText
@@ -55,6 +55,7 @@ class SearchFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        super.onCreateView(inflater, container, savedInstanceState)
         bind = SearchFragmentBinding.inflate(inflater, container, false)
         mEditText = bind.editText
 

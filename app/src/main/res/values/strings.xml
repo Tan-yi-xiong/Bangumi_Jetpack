@@ -69,4 +69,7 @@
     <string name="key_auto_play_next">key_auto_play_next</string>
     <string name="title_max_download">同时最大下载数量</string>
     <string name="title_setting">设置</string>
+    <string name="key_dl_unlock">key_dl_lock</string>
+    <string name="title_skid_dl">滑动打开侧栏</string>
+    <string name="summary_skid_dl">通过手势滑动打开侧栏面板</string>
 </resources>
