@@ -23,7 +23,7 @@ class MainViewModel(
                     .packageManager
                     .getPackageInfo(BangumiApp.getContext().packageName, 0)
                 val currVersionCode = packageInfo.versionCode
-                val currVersionName = packageInfo.packageName
+                val currVersionName = packageInfo.versionName
 
                 val (newVersionCode: Int, newVersionName: String) = repository.getAppVersionFromNet()
 
