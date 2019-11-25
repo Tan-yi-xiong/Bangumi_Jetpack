@@ -55,12 +55,18 @@ class BannerViewHolder(
         private val bind: BannerItemBinding
 ) : RecyclerView.ViewHolder(bind.root) {
 
+    init {
+        bind.setOnClick { view ->
+            bind.bangumi?.let {
+                (view.context as MainActivity).startPlayerActivity(it.id, it.source.name)
+            }
+        }
+    }
+
     fun bind(bangumi: Bangumi, indicatorText: String) {
         bind.bangumi = bangumi
         bind.indicator.text = indicatorText
-        bind.setOnClick { view ->
-            (view.context as MainActivity).startPlayerActivity(bangumi.id, bangumi.source.name)
-        }
+
     }
 }
 
