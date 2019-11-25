@@ -9,9 +9,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.net.URLEncoder
 
-abstract class PageResultDataSourch<T>(
+abstract class PageResultDataSourch<T, B>(
     private val searchWord: String?
-) : PageKeyedDataSource<T, Bangumi>() {
+) : PageKeyedDataSource<T, B>() {
 
     val encodeSearchWord: String by lazy(LazyThreadSafetyMode.NONE) {
         URLEncoder.encode(searchWord, "UTF-8")
@@ -30,7 +30,7 @@ abstract class PageResultDataSourch<T>(
 
     override fun loadInitial(
         params: LoadInitialParams<T>,
-        callback: LoadInitialCallback<T, Bangumi>
+        callback: LoadInitialCallback<T, B>
     ) {
         try {
             initialLoadLiveData.postValue(InitialLoad(NetWordState.LOADING))
@@ -46,9 +46,9 @@ abstract class PageResultDataSourch<T>(
         }
     }
 
-    abstract fun initialLoad(params: LoadInitialParams<T>, callback: LoadInitialCallback<T, Bangumi>)
+    abstract fun initialLoad(params: LoadInitialParams<T>, callback: LoadInitialCallback<T, B>)
 
-    override fun loadAfter(params: LoadParams<T>, callback: LoadCallback<T, Bangumi>) {
+    override fun loadAfter(params: LoadParams<T>, callback: LoadCallback<T, B>) {
         try {
             netWordState.postValue(NetWordState.LOADING)
             retry = null
@@ -63,9 +63,9 @@ abstract class PageResultDataSourch<T>(
         }
     }
 
-    abstract fun afterload(params: LoadParams<T>, callback: LoadCallback<T, Bangumi>)
+    abstract fun afterload(params: LoadParams<T>, callback: LoadCallback<T, B>)
 
-    override fun loadBefore(params: LoadParams<T>, callback: LoadCallback<T, Bangumi>) {
+    override fun loadBefore(params: LoadParams<T>, callback: LoadCallback<T, B>) {
 
     }
 

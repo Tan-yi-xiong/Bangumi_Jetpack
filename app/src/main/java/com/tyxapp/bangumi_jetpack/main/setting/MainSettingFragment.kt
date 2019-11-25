@@ -7,6 +7,8 @@ import android.widget.Button
 import android.widget.SeekBar
 import android.widget.TextView
 import androidx.core.content.edit
+import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.observe
 import androidx.preference.ListPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
@@ -15,25 +17,30 @@ import com.kk.taurus.ijkplayer.IjkPlayer
 import com.kk.taurus.playerbase.config.PlayerConfig
 import com.tyxapp.bangumi_jetpack.BangumiApp
 import com.tyxapp.bangumi_jetpack.R
-import com.tyxapp.bangumi_jetpack.data.BangumiSource
+import com.tyxapp.bangumi_jetpack.main.MainViewModel
 import com.tyxapp.bangumi_jetpack.utilities.PrefUtils
 import com.tyxapp.bangumi_jetpack.utilities.formatFileSize
 import kotlinx.coroutines.*
 import org.jetbrains.anko.alert
 import org.jetbrains.anko.defaultSharedPreferences
+import org.jetbrains.anko.toast
 
 class MainSettingFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedPreferenceChangeListener {
 
     private val mainScope by lazy(LazyThreadSafetyMode.NONE) { MainScope() }
+    private val mainViewModel: MainViewModel by activityViewModels()
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
 
         setPreferencesFromResource(R.xml.preferences_setting, rootKey)
         // 主页
-        val currentHomeSource = requireContext().defaultSharedPreferences
-            .getString(this.getString(R.string.key_home_page), BangumiSource.DiliDili.name)
+        val currentHomeSource = PrefUtils.getHomeSourceName()
         val homeListPreference = findPreference<ListPreference>(getString(R.string.key_home_page))
         homeListPreference?.summary = currentHomeSource
+
+        //优先搜索结果初始化
+        val prioritizedSearchSourchPreference = findPreference<ListPreference>(getString(R.string.key_prioritized_search_sourch))
+        prioritizedSearchSourchPreference?.summary = PrefUtils.getPrioritizedSearchSourch()
 
         //解码
         val defDecodePlanName = resources.getStringArray(R.array.decoder_plan_name)[0]
@@ -56,6 +63,9 @@ class MainSettingFragment : PreferenceFragmentCompat(), SharedPreferences.OnShar
             .getInt(getString(R.string.key_max_download), 3)
         val maxDownloadPreference = findPreference<Preference>(getString(R.string.key_max_download))
         maxDownloadPreference?.summary = maxDownload.toString()
+
+        //更新应用提示消息
+        mainViewModel.alearMessage.observe(this) { requireContext().toast(it) }
     }
 
     private fun getGildeCache(): Long {
@@ -84,10 +94,19 @@ class MainSettingFragment : PreferenceFragmentCompat(), SharedPreferences.OnShar
                 true
             }
 
+            "versions" -> {
+                mainViewModel.checkAppUpdate()
+                true
+            }
+
             else -> super.onPreferenceTreeClick(preference)
         }
     }
 
+    /**
+     * 最大下载数设置Dialog
+     *
+     */
     private fun showDialog() {
         val view = layoutInflater.inflate(R.layout.layout_seekbar_dialog, null, false)
         val dialog = requireActivity().alert {
@@ -138,31 +157,38 @@ class MainSettingFragment : PreferenceFragmentCompat(), SharedPreferences.OnShar
     }
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
-        if (key == getString(R.string.key_decoder_plan)) {
-            val plan = resources.getStringArray(R.array.decoder_plan_value)
-            val planPreference = findPreference<ListPreference>(getString(R.string.key_decoder_plan))
-            when(sharedPreferences?.getString(key, plan[0])) {
-                plan[0] -> {
-                    planPreference?.summary = plan[0]
-                    if (PlayerConfig.getDefaultPlanId() != IjkPlayer.PLAN_ID) {
-                        if (PlayerConfig.getPlan(IjkPlayer.PLAN_ID) == null) {
-                            IjkPlayer.init(BangumiApp.getContext())
-                        } else {
-                            PlayerConfig.setDefaultPlanId(IjkPlayer.PLAN_ID)
+        when (key) {
+            getString(R.string.key_decoder_plan) -> {
+                val plan = resources.getStringArray(R.array.decoder_plan_value)
+                val planPreference = findPreference<ListPreference>(getString(R.string.key_decoder_plan))
+                when(sharedPreferences?.getString(key, plan[0])) {
+                    plan[0] -> {
+                        planPreference?.summary = plan[0]
+                        if (PlayerConfig.getDefaultPlanId() != IjkPlayer.PLAN_ID) {
+                            if (PlayerConfig.getPlan(IjkPlayer.PLAN_ID) == null) {
+                                IjkPlayer.init(BangumiApp.getContext())
+                            } else {
+                                PlayerConfig.setDefaultPlanId(IjkPlayer.PLAN_ID)
+                            }
+                        }
+                    }
+
+                    plan[1] -> {
+                        planPreference?.summary = plan[1]
+                        if (PlayerConfig.getDefaultPlanId() != PlayerConfig.DEFAULT_PLAN_ID) {
+                            PlayerConfig.setDefaultPlanId(PlayerConfig.DEFAULT_PLAN_ID)
                         }
                     }
                 }
-
-                plan[1] -> {
-                    planPreference?.summary = plan[1]
-                    if (PlayerConfig.getDefaultPlanId() != PlayerConfig.DEFAULT_PLAN_ID) {
-                        PlayerConfig.setDefaultPlanId(PlayerConfig.DEFAULT_PLAN_ID)
-                    }
-                }
             }
-        } else if (key == getString(R.string.key_home_page)) {
-            val sourceName = PrefUtils.getHomeSourceName()
-            findPreference<Preference>(key)?.summary = sourceName
+            getString(R.string.key_home_page) -> {
+                val sourceName = PrefUtils.getHomeSourceName()
+                findPreference<Preference>(key)?.summary = sourceName
+            }
+            getString(R.string.key_prioritized_search_sourch) -> {
+                val selectName = PrefUtils.getPrioritizedSearchSourch()
+                findPreference<ListPreference>(getString(R.string.key_prioritized_search_sourch))?.summary = selectName
+            }
         }
     }
 

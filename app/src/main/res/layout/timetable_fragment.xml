@@ -27,9 +27,9 @@
         <com.google.android.material.tabs.TabLayout
             app:tabSelectedTextColor="@color/colorPrimary"
             android:id="@+id/tabLayout"
+            app:tabIndicatorFullWidth="false"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:tabIndicatorHeight="0dp" />
+            android:layout_height="wrap_content"/>
 
         <View
             android:background="@color/grey_200"
@@ -46,10 +46,10 @@
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true" />
 
-            <androidx.recyclerview.widget.RecyclerView
+            <androidx.viewpager2.widget.ViewPager2
                 android:overScrollMode="never"
                 app:isGone="@{!showContent}"
-                android:id="@+id/recyclerView"
+                android:id="@+id/viewpager"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 

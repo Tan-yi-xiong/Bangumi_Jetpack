@@ -139,7 +139,7 @@ private fun parserBangumiFromHtml(document: Document): List<Bangumi> {
 
 class SakuraSearchResultDataSource(
     private val searchWord: String
-) : PageResultDataSourch<String>(searchWord) {
+) : PageResultDataSourch<String, Bangumi>(searchWord) {
     override fun initialLoad(
         params: LoadInitialParams<String>,
         callback: LoadInitialCallback<String, Bangumi>) {

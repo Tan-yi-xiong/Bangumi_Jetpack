@@ -35,11 +35,17 @@ class DiliUpdateBangumiItemAdapter: ListAdapter<Bangumi, DiliUpdateBangumiItemAd
         private val bind: LayoutDidlidiliItemBinding
     ) : RecyclerView.ViewHolder(bind.root) {
 
+        init {
+            bind.root.setOnClickListener { view ->
+                bind.bangumi?.let {
+                    (view.context as MainActivity).startPlayerActivity(it.id, it.source.name)
+                }
+            }
+        }
+
         fun bind(bangumi: Bangumi) {
             bind.bangumi = bangumi
-            bind.root.setOnClickListener {
-                (it.context as MainActivity).startPlayerActivity(bangumi.id, bangumi.source.name)
-            }
+            bind.executePendingBindings()
         }
     }
 

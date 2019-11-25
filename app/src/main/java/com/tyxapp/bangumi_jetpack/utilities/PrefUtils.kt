@@ -34,6 +34,24 @@ class PrefUtils {
                 false
             )
         }
+
+        /**
+         * 是否设置了打开应用自动检查更新
+         *
+         */
+        fun isAutoCheckUpdate(): Boolean {
+            return context.defaultSharedPreferences.getBoolean(
+                context.getString(R.string.key_auto_check_updata),
+                false
+            )
+        }
+
+        fun getPrioritizedSearchSourch(): String {
+            return context.defaultSharedPreferences.getString(
+                context.getString(R.string.key_prioritized_search_sourch),
+                BangumiSource.Nico.name
+            )!!
+        }
     }
 
 }

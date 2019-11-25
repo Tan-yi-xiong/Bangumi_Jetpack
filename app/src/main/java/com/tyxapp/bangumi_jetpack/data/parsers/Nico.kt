@@ -219,7 +219,7 @@ private fun parserBangumiFromHtml(document: Document): List<Bangumi> {
 
 private class NicoSearchResultDataSource(
     searchWord: String
-) : PageResultDataSourch<Int>(searchWord) {
+) : PageResultDataSourch<Int, Bangumi>(searchWord) {
     override fun initialLoad(
         params: LoadInitialParams<Int>,
         callback: LoadInitialCallback<Int, Bangumi>) {

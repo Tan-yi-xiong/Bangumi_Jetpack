@@ -186,7 +186,7 @@ private fun parserid(idStr: String) = Regex("""\d+""").find(idStr)?.value
 
 class MalimaliSearchResultDataSource(
     searchWord: String
-) : PageResultDataSourch<Int>(searchWord) {
+) : PageResultDataSourch<Int, Bangumi>(searchWord) {
     override fun initialLoad(
         params: LoadInitialParams<Int>,
         callback: LoadInitialCallback<Int, Bangumi>) {

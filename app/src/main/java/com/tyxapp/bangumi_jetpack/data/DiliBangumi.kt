@@ -5,8 +5,9 @@ class DiliBangumi(
     source: BangumiSource,
     name: String,
     cover: String,
-    ji: String = "",
+    isFollow: Boolean,
+    val ji: String = "",
     val intro: String,
     val kandian: String,
     val type: String
-) : Bangumi(id, source, name, cover, ji)
+) : CategoryBangumi(id, name, source, cover, isFollow)

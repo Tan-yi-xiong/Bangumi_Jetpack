@@ -20,13 +20,12 @@ import com.tyxapp.bangumi_jetpack.data.DownLoadInfo
 import com.tyxapp.bangumi_jetpack.data.DownLoadState
 import com.tyxapp.bangumi_jetpack.main.MainActivity
 import com.tyxapp.bangumi_jetpack.main.START_DOWNLOAD
-import com.tyxapp.bangumi_jetpack.utilities.LOGI
 
 /**
  * 下载服务, 负责管理正在下载任务
  *
  */
-class DownloadServer : Service() {
+class DownloadVideoServer : Service() {
     // 执行的任务列表
     private val tasks = SparseArray<DownLoadTask>()
     private val mReceiver = DownLoadStateReceiver()
@@ -103,7 +102,7 @@ class DownloadServer : Service() {
     }
 
     inner class DownloadBinder : Binder() {
-        fun getDownloadServer(): DownloadServer = this@DownloadServer
+        fun getDownloadServer(): DownloadVideoServer = this@DownloadVideoServer
     }
 
     private inner class DownLoadStateReceiver : BroadcastReceiver() {

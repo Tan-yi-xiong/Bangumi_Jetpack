@@ -60,6 +60,17 @@ class DiliBottomSheetAdapter :
         private val bind: LayoutDiliUpdateBsItemBinding
     ) : RecyclerView.ViewHolder(bind.root) {
 
+        init {
+            bind.setOnClick { view ->
+                bind.bangumi?.let {
+                    val intent = Intent(view.context, PlayerActivity::class.java)
+                    intent.putExtra(ARG_ID, it.id)
+                    intent.putExtra(ARG_BANGUMI_SOURCE, it.source.name)
+                    view.context.startActivity(intent)
+                }
+            }
+        }
+
         fun bind(bangumi: Bangumi) {
             bind.bangumi = bangumi
             bind.cover.setOnClickListener {

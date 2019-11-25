@@ -37,6 +37,9 @@ class BangumiFragment : Fragment(), SharedPreferences.OnSharedPreferenceChangeLi
             BangumiViewPagerAdapter(childFragmentManager)
         tabLayout.setupWithViewPager(viewPager)
 
+        val sourceName = PrefUtils.getHomeSourceName()
+        binding.tabLayout.getTabAt(0)?.text = sourceName
+
         requireActivity().defaultSharedPreferences.registerOnSharedPreferenceChangeListener(this)
         return binding.root
     }

@@ -5,6 +5,7 @@ import androidx.lifecycle.switchMap
 import androidx.paging.DataSource
 import androidx.paging.LivePagedListBuilder
 import com.tyxapp.bangumi_jetpack.data.*
+import com.tyxapp.bangumi_jetpack.data.db.AppDataBase
 import com.tyxapp.bangumi_jetpack.main.home.adapter.BANNER
 import com.tyxapp.bangumi_jetpack.utilities.*
 import kotlinx.coroutines.*
@@ -294,7 +295,7 @@ class Dilidili : IHomePageParser, IPlayerVideoParser, IsearchParser {
 
     }
 
-    private inner class UpdateBnagumisDataSource : PageResultDataSourch<Int>(null) {
+    private inner class UpdateBnagumisDataSource : PageResultDataSourch<Int, Bangumi>(null) {
         override fun initialLoad(
             params: LoadInitialParams<Int>,
             callback: LoadInitialCallback<Int, Bangumi>
@@ -378,7 +379,7 @@ private fun parserId(idString: String): String {
 
 private class DiliSearchResultDataSource(
     searchWord: String
-) : PageResultDataSourch<String>(searchWord) {
+) : PageResultDataSourch<String, Bangumi>(searchWord) {
     override fun initialLoad(
         params: LoadInitialParams<String>,
         callback: LoadInitialCallback<String, Bangumi>
@@ -442,7 +443,9 @@ private class DiliSearchResultDataSourceFactor(
 
 private class CategoryResultDataSource(
     private val categoryUrl: String
-) : PageResultDataSourch<Int>(null) {
+) : PageResultDataSourch<Int, Bangumi>(null) {
+    private val bangumiDetailDao = AppDataBase.getInstance().bangumiDetailDao()
+
     override fun initialLoad(
         params: LoadInitialParams<Int>,
         callback: LoadInitialCallback<Int, Bangumi>
@@ -463,11 +466,15 @@ private class CategoryResultDataSource(
                 .getOrNull(1)?.getElementsByTag("span")?.get(0)?.text() ?: ""
             val jianjie = bangumiElement.getElementsByClass("jianjie").getOrNull(0)
                 ?.getElementsByTag("span")?.get(0)?.text() ?: ""
+
+            val isFollow = bangumiDetailDao.isFollowingBangumi(id, BangumiSource.DiliDili.name)
+
             bangumis.add(
                 DiliBangumi(
                     id = id,
                     source = BangumiSource.DiliDili,
                     name = name,
+                    isFollow = isFollow,
                     cover = cover,
                     intro = jianjie,
                     kandian = kandian,

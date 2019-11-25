@@ -4,6 +4,7 @@ import androidx.test.runner.AndroidJUnit4
 import com.tyxapp.bangumi_jetpack.data.db.AppDataBase
 import com.tyxapp.bangumi_jetpack.data.parsers.Nico
 import com.tyxapp.bangumi_jetpack.data.parsers.Qimi
+import com.tyxapp.bangumi_jetpack.repository.MainRepository
 import com.tyxapp.bangumi_jetpack.utilities.LOGI
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -23,7 +24,7 @@ class ExampleInstrumentedTest {
     @Test
     fun parserTest() {
         runBlocking {
-            print(Qimi().getPlayerUrl("zhegeyongzhemingmingchaoqiangqueguofenshenzhong", 0, 0))
+            LOGI(MainRepository().getAppVersionFromNet().toString())
         }
 
     }

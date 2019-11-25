@@ -30,4 +30,7 @@ interface BangumiDetailDao {
 
     @Query("SELECT * FROM BANGUMI_DETAIL WHERE isDownLoad=1")
     fun getDownloadBagnumiList(): List<BangumiDetail>
+
+    @Query("SELECT isFollow FROM BANGUMI_DETAIL WHERE vod_id=:id AND source=:bangumiSource")
+    fun isFollowingBangumi(id: String, bangumiSource: String): Boolean
 }

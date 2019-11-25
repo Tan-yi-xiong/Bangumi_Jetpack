@@ -4,11 +4,16 @@
 
     <data>
         <variable
+            name="onClick"
+            type="android.view.View.OnClickListener" />
+
+        <variable
             name="bangumi"
             type="com.tyxapp.bangumi_jetpack.data.Bangumi" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:onClick="@{onClick}"
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">

@@ -28,7 +28,7 @@ class JiSelectAdapter(
     }
 
     override fun onBindViewHolder(holder: JiSelectViewHolder, position: Int) {
-        holder.bind(getItem(position), position)
+        holder.bind(getItem(position))
     }
 
     override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
@@ -105,9 +105,15 @@ class JiSelectViewHolder(
     val bind: JiSelectItemBinding
 ) : RecyclerView.ViewHolder(bind.root) {
 
-    fun bind(jiItem: JiItem, position: Int) {
+    init {
+        bind.root.setOnClickListener {
+            viewModel.onJiClick(adapterPosition)
+        }
+    }
+
+    fun bind(jiItem: JiItem) {
         bind.jiItem = jiItem
-        bind.root.setOnClickListener { viewModel.onJiClick(position) }
+
         bind.executePendingBindings()
     }
 }

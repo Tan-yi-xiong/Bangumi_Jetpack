@@ -14,7 +14,7 @@ enum class RequestMode {
 fun LOGI(msg: String?) = Log.i("MainActivity", msg)
 
 object OkhttpUtil {
-    private val client by lazy { OkHttpClient() }
+    private val client = OkHttpClient()
 
     fun getResponseData(
         url: String,

@@ -24,7 +24,7 @@ fun View.snack(msgRes: Int, buttonText: Int? = null, listener: View.OnClickListe
     }
 }
 
-fun Activity.alert(
+fun Activity.alertBuilder(
     title: Int,
     message: Int,
     alertAction: AlertDialog.Builder.() -> AlertDialog.Builder

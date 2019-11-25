@@ -7,13 +7,11 @@ import android.os.IBinder
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.tyxapp.bangumi_jetpack.BangumiApp
 import com.tyxapp.bangumi_jetpack.R
-import com.tyxapp.bangumi_jetpack.data.*
+import com.tyxapp.bangumi_jetpack.data.BangumiSource
+import com.tyxapp.bangumi_jetpack.data.DownLoadInfo
+import com.tyxapp.bangumi_jetpack.data.DownLoadState
 import com.tyxapp.bangumi_jetpack.data.db.AppDataBase
-import com.tyxapp.bangumi_jetpack.utilities.LOGI
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import org.jetbrains.anko.defaultSharedPreferences
-import org.jetbrains.anko.toast
 import java.io.File
 import java.util.concurrent.locks.ReentrantLock
 
@@ -27,7 +25,7 @@ object DownloadManager {
     private val lock = ReentrantLock()
     private val context = BangumiApp.getContext()
     private val downLoadInfoDao = AppDataBase.getInstance().downLoadInfoDao()
-    private var mDownloadServer: DownloadServer? = null
+    private var mDownloadServer: DownloadVideoServer? = null
     private val mCurrentExecuteTasks = ArrayList<DownLoadInfo>() // 正在执行的任务
     private val mOnProgressUpdateListeners = ArrayList<OnProgressUpdateListener>()
     private var maxDownloadTask: Int = 3
@@ -37,7 +35,7 @@ object DownloadManager {
         }
 
         override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
-            mDownloadServer = (service as DownloadServer.DownloadBinder).getDownloadServer()
+            mDownloadServer = (service as DownloadVideoServer.DownloadBinder).getDownloadServer()
             mDownloadServer!!.onProgressUpdateListener = { downloadProgress ->
                 mOnProgressUpdateListeners.forEach { it.invoke(downloadProgress) }
             }
@@ -203,10 +201,14 @@ object DownloadManager {
     private fun checkBindServer() {
         if (mDownloadServer == null) {
             context.bindService(
-                Intent(context, DownloadServer::class.java),
+                Intent(context, DownloadVideoServer::class.java),
                 mConnect, Context.BIND_AUTO_CREATE
             )
         }
+    }
+
+    fun downLoadApk() {
+
     }
 
     fun addOnProgressUpdateListener(onProgressUpdateListener: OnProgressUpdateListener) {

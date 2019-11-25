@@ -14,7 +14,7 @@ import com.tyxapp.bangumi_jetpack.main.MainActivity
 import com.tyxapp.bangumi_jetpack.utilities.startPlayerActivity
 import com.tyxapp.bangumi_jetpack.utilities.toPx
 
-class TimeTableAdapter : ListAdapter<Bangumi, TimeTableViewHolder>(BANGUMI_DIFF_CALLBACK) {
+class TimeTableBangumiAdapter : ListAdapter<Bangumi, TimeTableViewHolder>(BANGUMI_DIFF_CALLBACK) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TimeTableViewHolder {
         return TimeTableViewHolder(
@@ -47,10 +47,18 @@ class TimeTableViewHolder(
         private val bind: TimetableBangumiItemBinding
 ) : RecyclerView.ViewHolder(bind.root) {
 
+    init {
+        bind.setOnClick { view ->
+            bind.bangumi?.let {
+                (view.context as MainActivity).startPlayerActivity(it.id, it.source.name)
+            }
+        }
+    }
+
     fun bind(bangumi: Bangumi) {
-        bind.bangumi = bangumi
-        bind.root.setOnClickListener {
-            (it.context as MainActivity).startPlayerActivity(bangumi.id, bangumi.source.name)
+        with (bind) {
+            this.bangumi = bangumi
+            executePendingBindings()
         }
     }
 }

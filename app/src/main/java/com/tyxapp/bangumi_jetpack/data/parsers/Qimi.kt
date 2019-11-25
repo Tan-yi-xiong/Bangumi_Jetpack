@@ -154,7 +154,7 @@ class Qimi : IsearchParser, IPlayerVideoParser {
 
 private class QimiSearchResultDataSourch(
     searchWord: String
-) : PageResultDataSourch<Int>(searchWord) {
+) : PageResultDataSourch<Int, Bangumi>(searchWord) {
     override fun initialLoad(
         params: LoadInitialParams<Int>,
         callback: LoadInitialCallback<Int, Bangumi>

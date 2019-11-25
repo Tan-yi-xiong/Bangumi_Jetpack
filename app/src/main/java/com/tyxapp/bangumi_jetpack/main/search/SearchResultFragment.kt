@@ -8,15 +8,16 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.tabs.TabLayoutMediator
 import com.tyxapp.bangumi_jetpack.data.BangumiSource
+import com.tyxapp.bangumi_jetpack.data.BangumiSourceNameConversion
 import com.tyxapp.bangumi_jetpack.databinding.SearchResultFragmentBinding
 import com.tyxapp.bangumi_jetpack.main.search.adapter.SearchResultPgaeAadapter
+import com.tyxapp.bangumi_jetpack.utilities.PrefUtils
 
 class SearchResultFragment : Fragment() {
 
     companion object {
         fun newInstance() = SearchResultFragment()
     }
-
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -41,18 +42,26 @@ class SearchResultFragment : Fragment() {
         viewPager2.adapter =
             SearchResultPgaeAadapter(this)
 
+        viewPager2.setCurrentItem(getPrioritizedSearchSourchPosistion(), false)
+
         TabLayoutMediator(tabLayout, viewPager2) {tab, index ->
-            tab.text = getTabName(index)
+            tab.text = BangumiSourceNameConversion.getConversionName(BangumiSource.values()[index])
         }.attach()
 
         return binding.root
     }
 
-    private fun getTabName(index: Int): CharSequence? {
-        return when(BangumiSource.values()[index]) {
-            BangumiSource.Sakura-> "樱花动漫"
-            BangumiSource.Malimali -> "嘛哩嘛哩"
-            else -> BangumiSource.values()[index].name
+    /**
+     * 优先显示的搜索结果
+     *
+     */
+    private fun getPrioritizedSearchSourchPosistion(): Int {
+        val prioritizedName = PrefUtils.getPrioritizedSearchSourch()
+        BangumiSource.values().forEachIndexed { index, bangumiSource ->
+            if (BangumiSourceNameConversion.getConversionName(bangumiSource) == prioritizedName) {
+                return index
+            }
         }
+        return 0
     }
 }

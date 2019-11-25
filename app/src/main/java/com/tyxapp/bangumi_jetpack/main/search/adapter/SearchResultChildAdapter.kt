@@ -10,9 +10,10 @@ import com.tyxapp.bangumi_jetpack.data.Bangumi
 import com.tyxapp.bangumi_jetpack.data.NetWordState
 import com.tyxapp.bangumi_jetpack.databinding.NetwordstateViewholderLayoutBinding
 import com.tyxapp.bangumi_jetpack.databinding.TimetableBangumiItemBinding
-import com.tyxapp.bangumi_jetpack.main.MainActivity
 import com.tyxapp.bangumi_jetpack.main.BANGUMI_DIFF_CALLBACK
-import com.tyxapp.bangumi_jetpack.main.home.adapter.TimeTableAdapter
+import com.tyxapp.bangumi_jetpack.main.MainActivity
+import com.tyxapp.bangumi_jetpack.main.home.adapter.TimeTableBangumiAdapter
+import com.tyxapp.bangumi_jetpack.utilities.LOGI
 import com.tyxapp.bangumi_jetpack.utilities.startPlayerActivity
 
 class SearchResultChildAdapter(
@@ -22,7 +23,6 @@ class SearchResultChildAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {
-
             R.layout.networdstate_viewholder_layout -> NetWordStateViewHolder.creat(
                 parent,
                 retry
@@ -83,7 +83,7 @@ class SearchResultChildAdapter(
 
     override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
         recyclerView.layoutManager = LinearLayoutManager(recyclerView.context)
-        recyclerView.addItemDecoration(TimeTableAdapter.ItemDecoration())
+        recyclerView.addItemDecoration(TimeTableBangumiAdapter.ItemDecoration())
         super.onAttachedToRecyclerView(recyclerView)
     }
 
@@ -116,13 +116,16 @@ class SearchResultChildViewHolder(
     val bind: TimetableBangumiItemBinding
 ) : RecyclerView.ViewHolder(bind.root) {
 
-    fun bind(bangumi: Bangumi?) {
-        bangumi?.let {
-            bind.root.setOnClickListener { view ->
+    init {
+        bind.setOnClick { view ->
+            bind.bangumi?.let {
                 (view.context as MainActivity).startPlayerActivity(it.id, it.source.name)
             }
-            bind.bangumi = it
         }
+    }
+
+    fun bind(bangumi: Bangumi?) {
+        bangumi?.let { bind.bangumi = it }
         bind.executePendingBindings()
     }
 }

@@ -3,6 +3,7 @@ package com.tyxapp.bangumi_jetpack
 import com.tyxapp.bangumi_jetpack.data.parsers.Dilidili
 import com.tyxapp.bangumi_jetpack.data.parsers.Qimi
 import com.tyxapp.bangumi_jetpack.data.parsers.Silisili
+import com.tyxapp.bangumi_jetpack.repository.MainRepository
 import com.tyxapp.bangumi_jetpack.utilities.OkhttpUtil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -27,22 +28,8 @@ class ExampleUnitTest {
     @Test
     fun addition_isCorrect() {
         runBlocking {
-            val a1 = async(Dispatchers.IO) {
-                println("fdsas")
-                for (i in 1..5000) {
-                    println("我是$i")
-                }
+            print( MainRepository().getAppVersionFromNet())
 
-            }
-
-            val a2 = async(Dispatchers.IO) {
-                println("dddddd")
-                for (i in 1..5000) {
-                    println("IM$i")
-                }
-            }
-            a1.await()
-            a2.await()
         }
     }
 

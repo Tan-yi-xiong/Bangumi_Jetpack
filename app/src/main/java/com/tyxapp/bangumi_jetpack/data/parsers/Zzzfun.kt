@@ -1,7 +1,6 @@
 package com.tyxapp.bangumi_jetpack.data.parsers
 
 import android.util.SparseArray
-import android.widget.Toast
 import androidx.core.util.isEmpty
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.switchMap
@@ -10,6 +9,7 @@ import androidx.paging.LivePagedListBuilder
 import com.tyxapp.bangumi_jetpack.BangumiApp
 import com.tyxapp.bangumi_jetpack.R
 import com.tyxapp.bangumi_jetpack.data.*
+import com.tyxapp.bangumi_jetpack.data.db.AppDataBase
 import com.tyxapp.bangumi_jetpack.main.home.adapter.BANNER
 import com.tyxapp.bangumi_jetpack.player.danmakuparser.ZzzFunDanmakuParser
 import com.tyxapp.bangumi_jetpack.utilities.*
@@ -355,7 +355,7 @@ class Zzzfun : IHomePageParser, IsearchParser, IPlayerVideoParser {
 
 private class ZzzfunSearchResultDataSource(
     private val searchWord: String
-) : PageResultDataSourch<Int>(searchWord) {
+) : PageResultDataSourch<Int, Bangumi>(searchWord) {
     override fun initialLoad(
         params: LoadInitialParams<Int>,
         callback: LoadInitialCallback<Int, Bangumi>) {
@@ -414,8 +414,10 @@ private class SearchResultDataSourceFactor(
 
 private class CategoryPageDataSource(
     private val category: String
-) : PageResultDataSourch<Int>(category) {
+) : PageResultDataSourch<Int, Bangumi>(category) {
     private val jsonMediaType: MediaType = "application/json; charset=utf-8".toMediaType()
+    private val bangumiDetailDao = AppDataBase.getInstance().bangumiDetailDao()
+
 
     override fun initialLoad(
         params: LoadInitialParams<Int>,
@@ -432,10 +434,7 @@ private class CategoryPageDataSource(
         val result: List<Bangumi> = try {
             parserCategoryData(category, page)
         } catch (e: Exception) {
-            LOGI(e.toString())
-            CoroutineScope(Dispatchers.Main).launch {
-                Toast.makeText(BangumiApp.getContext(), "发生错误", Toast.LENGTH_SHORT).show()
-            }
+            e.printStackTrace()
             emptyList()
         }
         callback.onResult(result, if (result.isEmpty()) null else page + 1)
@@ -465,7 +464,8 @@ private class CategoryPageDataSource(
                 val name = it.getString("name")
                 val cover = it.getString("pic")
                 val id = it.getString("id")
-                bangumis.add(Bangumi(id, BangumiSource.Zzzfun, name, cover))
+                val isFollow = bangumiDetailDao.isFollowingBangumi(id, BangumiSource.Zzzfun.name)
+                bangumis.add(CategoryBangumi(id, name, BangumiSource.Zzzfun, cover, isFollow = isFollow))
             }
             bangumis
         }

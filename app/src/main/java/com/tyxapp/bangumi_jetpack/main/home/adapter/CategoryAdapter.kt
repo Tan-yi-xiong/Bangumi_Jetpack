@@ -53,14 +53,17 @@ class CategoryViewHolder(
         val bind: CategoryItemBinding
 ) : RecyclerView.ViewHolder(bind.root) {
 
+    init {
+        bind.root.setOnClickListener { view ->
+            bind.categorItem?.let {
+                (view.context as MainActivity).navigateToCategoryBangumisFragment(it.categorName)
+            }
+        }
+    }
+
     fun bind(categorItem: CategorItem) {
         with(bind) {
             this.categorItem = categorItem
-
-            //暂时没有想到更好的办法
-            bind.cover.setOnClickListener { view ->
-                (view.context as MainActivity).navigateToCategoryBangumisFragment(categorItem.categorName)
-            }
             executePendingBindings()
         }
     }

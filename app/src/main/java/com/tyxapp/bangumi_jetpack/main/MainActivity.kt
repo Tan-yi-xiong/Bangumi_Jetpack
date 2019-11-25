@@ -14,6 +14,7 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.commit
 import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.observe
 import androidx.navigation.fragment.NavHostFragment
 import com.bumptech.glide.Glide
 import com.google.android.material.navigation.NavigationView
@@ -22,12 +23,15 @@ import com.tyxapp.bangumi_jetpack.data.BangumiSource
 import com.tyxapp.bangumi_jetpack.data.parsers.Dilidili
 import com.tyxapp.bangumi_jetpack.data.parsers.ParserFactory
 import com.tyxapp.bangumi_jetpack.data.parsers.Zzzfun
-import com.tyxapp.bangumi_jetpack.main.mydownload.MyDownloadFragment
 import com.tyxapp.bangumi_jetpack.utilities.*
+import com.tyxapp.bangumi_jetpack.views.alertBuilder
+import com.tyxapp.bangumi_jetpack.views.noButton
+import com.tyxapp.bangumi_jetpack.views.yesButton
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import org.jetbrains.anko.browse
 import org.jetbrains.anko.defaultSharedPreferences
 
 // 通知栏intent key
@@ -35,7 +39,9 @@ const val START_DOWNLOAD = "START_DOWNLOAD"
 
 class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceChangeListener {
 
-    private val mainViewModel by lazy { ViewModelProviders.of(this).get(MainViewModel::class.java) }
+    private val mainViewModel by lazy {
+        ViewModelProviders.of(this, MainViewModelFactor()).get(MainViewModel::class.java)
+    }
     private lateinit var drawerLayout: DrawerLayout
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -54,10 +60,8 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
         defaultSharedPreferences.registerOnSharedPreferenceChangeListener(this)
 
-        val homeKey = PreferenceManager.getDefaultSharedPreferences(this).getString(
-            getString(R.string.key_home_page),
-            BangumiSource.DiliDili.name
-        )
+        val homeKey = PrefUtils.getHomeSourceName()
+
         //创建主页Repository供主页的Fragment使用
         mainViewModel.homeDataRepository.value = when (homeKey) {
             BangumiSource.Zzzfun.name -> InjectorUtils.getHomeDataRepository(
@@ -73,6 +77,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
             else -> throw IllegalAccessException("没有此主页")
         }
 
+        //drawerLayout能否滑出navigationView
         drawerLayout = findViewById(R.id.drawerlayout)
         if (!PrefUtils.getDrawerLayoutIsUnLock()) {
             drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
@@ -98,17 +103,31 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
             containerId = R.id.main_content
         )
 
+        //检查更新
+        if (PrefUtils.isAutoCheckUpdate()) {
+            mainViewModel.checkAppUpdate()
+        }
+        mainViewModel.shouldShowUpdateDialog.observe(this) {
+            alertBuilder(R.string.text_app_update_title, R.string.text_app_update_message) {
+                yesButton(R.string.text_app_update_now) {
+                    browse("https://github.com/Tan-yi-xiong/Bngumi_Jetpack/blob/master/release/app-release.apk")
+                }
+                noButton { it.cancel() }
+            }.show()
+        }
     }
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
         if (key == getString(R.string.key_home_page)) {
-            when(PrefUtils.getHomeSourceName()) {
+            when (PrefUtils.getHomeSourceName()) {
                 BangumiSource.Zzzfun.name -> {
-                    mainViewModel.homeDataRepository.value = InjectorUtils.getHomeDataRepository(Zzzfun())
+                    mainViewModel.homeDataRepository.value =
+                        InjectorUtils.getHomeDataRepository(Zzzfun())
                 }
 
                 BangumiSource.DiliDili.name -> {
-                    mainViewModel.homeDataRepository.value = InjectorUtils.getHomeDataRepository(Dilidili())
+                    mainViewModel.homeDataRepository.value =
+                        InjectorUtils.getHomeDataRepository(Dilidili())
                 }
             }
         } else if (key == getString(R.string.key_dl_unlock)) {

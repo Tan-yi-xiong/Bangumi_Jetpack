@@ -5,13 +5,21 @@
 
     <data>
         <variable
+            name="onClick"
+            type="android.view.View.OnClickListener" />
+
+
+        <variable
             name="diliBangumi"
             type="com.tyxapp.bangumi_jetpack.data.DiliBangumi" />
         <import type="com.tyxapp.bangumi_jetpack.utilities.AnimationUtilsKt"/>
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:onClick="@{onClick}"
         android:orientation="vertical"
+        android:id="@+id/item_parent"
+        android:background="?attr/selectableItemBackground"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -32,6 +40,14 @@
                 app:bindImage="@{diliBangumi.cover}"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"/>
+
+            <com.tyxapp.bangumi_jetpack.views.CheckableImageButton
+                android:onClick="@{onClick}"
+                android:id="@+id/follow_button"
+                android:background="@drawable/ic_heart_bg"
+                android:src="@drawable/ic_heart_20dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
 
 
         </androidx.cardview.widget.CardView>

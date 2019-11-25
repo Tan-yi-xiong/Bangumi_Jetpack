@@ -17,5 +17,6 @@
     <color name="mdtp_white">#ffffff</color>
     <color name="overlay_drak">#4d000000</color>
     <color name="primary_text">#444444</color>
+    <color name="liked">#ED5E32</color>
 
 </resources>

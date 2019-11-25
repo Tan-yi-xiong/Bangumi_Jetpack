@@ -44,6 +44,9 @@
     <string name="key_auto_resume_download">key_auto_resume_download</string>
     <string name="text_permission">如果不授权储存权限, 将无法下载视频喔</string>
     <string name="text_get_permission">去授权</string>
+    <string name="text_app_update_title">更新提示</string>
+    <string name="text_app_update_message">发现了新版本, 喜欢的朋友可以更新一波哦~</string>
+    <string name="text_app_update_now">去下载</string>
 
 
     <string name="title_about">关于</string>
@@ -72,4 +75,9 @@
     <string name="key_dl_unlock">key_dl_lock</string>
     <string name="title_skid_dl">滑动打开侧栏</string>
     <string name="summary_skid_dl">通过手势滑动打开侧栏面板</string>
+    <string name="summary_app_check_update">软件开启后检查应用是否有更新</string>
+    <string name="title_app_check_update">自动检查更新</string>
+    <string name="key_auto_check_updata">key_auto_check_updata</string>
+    <string name="title_prioritized_sourch">优先显示的搜索结果</string>
+    <string name="key_prioritized_search_sourch">key_prioritized_search_sourch</string>
 </resources>

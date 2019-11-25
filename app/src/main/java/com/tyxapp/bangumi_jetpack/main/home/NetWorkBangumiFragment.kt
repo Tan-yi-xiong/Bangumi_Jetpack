@@ -19,6 +19,7 @@ import com.google.android.material.tabs.TabLayout
 import com.tyxapp.bangumi_jetpack.R
 import com.tyxapp.bangumi_jetpack.data.BangumiSource
 import com.tyxapp.bangumi_jetpack.data.State
+import com.tyxapp.bangumi_jetpack.data.UIStata
 import com.tyxapp.bangumi_jetpack.main.ListFragment
 import com.tyxapp.bangumi_jetpack.main.home.adapter.DefaultNetWorkBangumiAdapter
 import com.tyxapp.bangumi_jetpack.main.MainViewModel
@@ -87,7 +88,13 @@ class NetWorkBangumiFragment : ListFragment() {
         //setSwipeRefreshLayout
         with(mSwipeRefreshLayout) {
             isEnabled = true
-            setOnRefreshListener { viewModel.refresh() }
+            setOnRefreshListener {
+                if (viewModel.uiState.value != UIStata.LOADING) {
+                    viewModel.refresh()
+                } else {
+                    isRefreshing = false
+                }
+            }
             setColorSchemeColors(ContextCompat.getColor(requireContext(), R.color.colorPrimary))
         }
 

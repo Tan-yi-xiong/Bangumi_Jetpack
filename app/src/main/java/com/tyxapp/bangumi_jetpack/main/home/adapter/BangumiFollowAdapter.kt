@@ -44,15 +44,25 @@ class BangumiFollowViewHolder(
     private val viewModel: BangumiFollowViewModel
 ) : RecyclerView.ViewHolder(bind.root) {
 
+    init {
+        bind.root.setOnLongClickListener { view ->
+            bind.bangumi?.let {
+                viewModel.onItemLongClick(it)
+            }
+            false
+        }
+
+        bind.root.setOnClickListener { view ->
+            bind.bangumi?.let {
+                (view.context as MainActivity).startPlayerActivity(it.id, it.source.name)
+            }
+        }
+    }
+
     fun bind(bangumiDetail: BangumiDetail?) {
         bangumiDetail?.let {
             bind.bangumi = it
-            bind.root.setOnClickListener { view ->
-                (view.context as MainActivity).startPlayerActivity(it.id, it.source.name)
-            }
-            bind.root.setOnLongClickListener {
-                viewModel.onItemLongClick(bangumiDetail)
-                true
+            bind.root.setOnClickListener {
             }
         }
 

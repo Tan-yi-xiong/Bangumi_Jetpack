@@ -37,7 +37,7 @@ import com.tyxapp.bangumi_jetpack.player.adapter.SPEED_ITEM
 import com.tyxapp.bangumi_jetpack.player.bottomsheet.SettingBottomSheet
 import com.tyxapp.bangumi_jetpack.player.bottomsheet.SpeedBottomSheet
 import com.tyxapp.bangumi_jetpack.utilities.*
-import com.tyxapp.bangumi_jetpack.views.alert
+import com.tyxapp.bangumi_jetpack.views.alertBuilder
 import com.tyxapp.bangumi_jetpack.views.noButton
 import com.tyxapp.bangumi_jetpack.views.yesButton
 import org.jetbrains.anko.defaultSharedPreferences
@@ -124,7 +124,7 @@ class ControlCover(
                 } else {
                     if (!ActivityCompat.shouldShowRequestPermissionRationale(mActivity, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
                         // 引导去设置权限
-                        mActivity.alert(R.string.text_tips, R.string.text_permission) {
+                        mActivity.alertBuilder(R.string.text_tips, R.string.text_permission) {
                             noButton { it.dismiss() }
                             yesButton(R.string.text_get_permission) {
                                 val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)

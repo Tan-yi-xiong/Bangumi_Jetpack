@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.tyxapp.bangumi_jetpack.R
 import com.tyxapp.bangumi_jetpack.data.Bangumi
 import com.tyxapp.bangumi_jetpack.data.BangumiDetail
-import com.tyxapp.bangumi_jetpack.databinding.CategoryBangumiItemBinding
+import com.tyxapp.bangumi_jetpack.databinding.DownoadBangumiItemBinding
 import com.tyxapp.bangumi_jetpack.main.BANGUMI_DETAIL_DIFFUTIL
 import com.tyxapp.bangumi_jetpack.main.home.adapter.CategoryBangumiItemDecoration
 import com.tyxapp.bangumi_jetpack.main.mydownload.MyDownloadFragmentDirections
@@ -25,7 +25,7 @@ class DownloadAdapter(
         return ViewHolder(
             DataBindingUtil.inflate(
                 LayoutInflater.from(parent.context),
-                R.layout.category_bangumi_item, parent, false
+                R.layout.zf_category_bangumi_item, parent, false
             ),
             viewModel
         )
@@ -42,17 +42,12 @@ class DownloadAdapter(
     }
 
     class ViewHolder(
-        private val bind: CategoryBangumiItemBinding,
+        private val bind: DownoadBangumiItemBinding,
         private val viewModel: MyDownloadViewModel
     ) : RecyclerView.ViewHolder(bind.root) {
 
         fun bind(bangumiDetail: BangumiDetail) {
-            bind.bangumi = Bangumi(
-                bangumiDetail.id,
-                bangumiDetail.source,
-                bangumiDetail.name,
-                bangumiDetail.cover
-            )
+            bind.bangumiDetail = bangumiDetail
             bind.root.setOnClickListener { view ->
                 val action =
                     MyDownloadFragmentDirections.actionMyDownloadFragmentToDownloadDetailFragment(

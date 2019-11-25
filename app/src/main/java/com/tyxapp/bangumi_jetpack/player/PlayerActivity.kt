@@ -1,5 +1,7 @@
 package com.tyxapp.bangumi_jetpack.player
 
+import android.app.Activity
+import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
 import android.content.res.Configuration
@@ -16,8 +18,6 @@ import android.widget.ArrayAdapter
 import android.widget.FrameLayout
 import android.widget.Spinner
 import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.AppCompatSpinner
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.getSystemService
 import androidx.core.view.isVisible
@@ -31,7 +31,6 @@ import androidx.transition.TransitionManager
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.kk.taurus.playerbase.assist.OnVideoViewEventHandler
 import com.kk.taurus.playerbase.entity.DataSource
-import com.kk.taurus.playerbase.event.OnPlayerEventListener
 import com.kk.taurus.playerbase.player.IPlayer
 import com.kk.taurus.playerbase.receiver.ReceiverGroup
 import com.kk.taurus.playerbase.widget.BaseVideoView
@@ -49,7 +48,7 @@ import com.tyxapp.bangumi_jetpack.player.adapter.*
 import com.tyxapp.bangumi_jetpack.player.cover.*
 import com.tyxapp.bangumi_jetpack.utilities.*
 import com.tyxapp.bangumi_jetpack.views.ParallaxVideoView
-import com.tyxapp.bangumi_jetpack.views.alert
+import com.tyxapp.bangumi_jetpack.views.alertBuilder
 import com.tyxapp.bangumi_jetpack.views.noButton
 import com.tyxapp.bangumi_jetpack.views.yesButton
 import org.jetbrains.anko.browse
@@ -75,6 +74,7 @@ class PlayerActivity : BasePlayerActivity() {
     private lateinit var mToolBar: Toolbar
 
     //datas
+    private val resultIntent = Intent() // 回传给启动这个Activity的Intent
     private var scrimViewOffset: Int = 0
 
     private var videoViewHeight = 0
@@ -332,7 +332,7 @@ class PlayerActivity : BasePlayerActivity() {
             mVideoView.setDataSource(dataSource)
             mVideoView.start()
             if (videoUrl.isJumpToBrowser) {
-                alert(R.string.text_tips, R.string.text_video_parser_error) {
+                alertBuilder(R.string.text_tips, R.string.text_video_parser_error) {
                     yesButton { browse(videoUrl.url) }
                     noButton { it.dismiss() }
                 }.show()
@@ -426,6 +426,9 @@ class PlayerActivity : BasePlayerActivity() {
             playerAdapter.addBangumiDetail(bangumiDetailItemBinding.root)
             bangumiDetailItemBinding.followButton.setOnClickListener { view ->
                 viewModel.onFollowButtonClick(!view.isSelected)
+
+                resultIntent.putExtra(FOLLOW_RESULT_KEY, !view.isSelected)
+                setResult(Activity.RESULT_OK, resultIntent)
             }
         }
     }

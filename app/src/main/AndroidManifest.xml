@@ -22,8 +22,9 @@
             android:screenOrientation="landscape"/>
 
         <service
-            android:name=".download.DownloadServer"
+            android:name=".download.DownloadVideoServer"
             android:exported="false" />
+
 
         <activity
             android:name=".player.PlayerActivity"

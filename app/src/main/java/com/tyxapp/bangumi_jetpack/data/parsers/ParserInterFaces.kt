@@ -1,6 +1,5 @@
 package com.tyxapp.bangumi_jetpack.data.parsers
 
-import android.util.SparseArray
 import com.tyxapp.bangumi_jetpack.data.*
 import master.flame.danmaku.danmaku.parser.BaseDanmakuParser
 

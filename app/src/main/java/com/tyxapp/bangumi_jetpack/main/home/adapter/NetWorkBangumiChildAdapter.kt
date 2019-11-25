@@ -56,13 +56,17 @@ class BangumiViewHolder(
     private val bind: NetworkBangumiItemBinding
 ) : RecyclerView.ViewHolder(bind.root) {
 
+    init {
+        bind.setOnClick { view ->
+            bind.bangumi?.let {
+                (view.context as MainActivity).startPlayerActivity(it.id, it.source.name)
+            }
+
+        }
+    }
+
     fun bind(bangumi: Bangumi) {
         bind.bangumi = bangumi
-        bind.setOnClick {
-            (it.context as MainActivity).startPlayerActivity(
-                bangumi.id,
-                bangumi.source.name
-            )
-        }
+
     }
 }
