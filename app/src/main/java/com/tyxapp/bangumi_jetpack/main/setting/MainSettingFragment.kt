@@ -64,8 +64,6 @@ class MainSettingFragment : PreferenceFragmentCompat(), SharedPreferences.OnShar
         val maxDownloadPreference = findPreference<Preference>(getString(R.string.key_max_download))
         maxDownloadPreference?.summary = maxDownload.toString()
 
-        //更新应用提示消息
-        mainViewModel.alearMessage.observe(this) { requireContext().toast(it) }
     }
 
     private fun getGildeCache(): Long {
@@ -96,6 +94,7 @@ class MainSettingFragment : PreferenceFragmentCompat(), SharedPreferences.OnShar
 
             "versions" -> {
                 mainViewModel.checkAppUpdate()
+                mainViewModel.alearMessage.observe(this) { requireContext().toast(it) }
                 true
             }
 
@@ -142,6 +141,7 @@ class MainSettingFragment : PreferenceFragmentCompat(), SharedPreferences.OnShar
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar?) {
+
             }
 
             override fun onStopTrackingTouch(seekBar: SeekBar?) {
