@@ -64,6 +64,12 @@ class MainSettingFragment : PreferenceFragmentCompat(), SharedPreferences.OnShar
         val maxDownloadPreference = findPreference<Preference>(getString(R.string.key_max_download))
         maxDownloadPreference?.summary = maxDownload.toString()
 
+        mainViewModel.alearMessage.observe(this) { messaage ->
+            messaage?.let {
+                requireContext().toast(messaage)
+                mainViewModel.alearMessage.value = null //重置更新消息
+            }
+        }
     }
 
     private fun getGildeCache(): Long {
@@ -94,7 +100,6 @@ class MainSettingFragment : PreferenceFragmentCompat(), SharedPreferences.OnShar
 
             "versions" -> {
                 mainViewModel.checkAppUpdate()
-                mainViewModel.alearMessage.observe(this) { requireContext().toast(it) }
                 true
             }
 

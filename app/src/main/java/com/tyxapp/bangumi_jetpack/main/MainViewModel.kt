@@ -14,7 +14,7 @@ class MainViewModel(
     // 主页的FragmentViewmodel共享的Repository
     val homeDataRepository = MutableLiveData<HomeDataRepository>()
     val shouldShowUpdateDialog = MutableLiveData<Boolean>()
-    val alearMessage = MutableLiveData<String>()
+    val alearMessage = MutableLiveData<String?>()
 
     fun checkAppUpdate() {
         viewModelScope.launch {

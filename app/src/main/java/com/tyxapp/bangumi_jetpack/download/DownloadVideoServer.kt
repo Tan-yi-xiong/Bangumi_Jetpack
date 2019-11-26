@@ -39,6 +39,8 @@ class DownloadVideoServer : Service() {
             .setContentTitle("正在下载${tasks.size()}个视频")
             .setSmallIcon(R.drawable.ic_notifi_icon)
             .setWhen(System.currentTimeMillis())
+            .setVibrate(longArrayOf(0L))
+            .setSound(null)
             .setContentIntent(
                 PendingIntent.getActivity(
                     this, 0,
@@ -51,7 +53,12 @@ class DownloadVideoServer : Service() {
         super.onCreate()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel =
-                NotificationChannel(CHANNEL_ID, "下载通知", NotificationManager.IMPORTANCE_DEFAULT)
+                NotificationChannel(CHANNEL_ID, "下载通知", NotificationManager.IMPORTANCE_DEFAULT).apply {
+                    enableLights(false)
+                    enableVibration(false)
+                    vibrationPattern = longArrayOf(0L)
+                    setSound(null, null)
+                }
             val notificationManager =
                 getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             notificationManager.createNotificationChannel(channel)

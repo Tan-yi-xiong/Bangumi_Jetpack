@@ -25,7 +25,7 @@ class DownloadAdapter(
         return ViewHolder(
             DataBindingUtil.inflate(
                 LayoutInflater.from(parent.context),
-                R.layout.zf_category_bangumi_item, parent, false
+                R.layout.downoad_bangumi_item, parent, false
             ),
             viewModel
         )
@@ -46,19 +46,24 @@ class DownloadAdapter(
         private val viewModel: MyDownloadViewModel
     ) : RecyclerView.ViewHolder(bind.root) {
 
-        fun bind(bangumiDetail: BangumiDetail) {
-            bind.bangumiDetail = bangumiDetail
+        init {
             bind.root.setOnClickListener { view ->
-                val action =
-                    MyDownloadFragmentDirections.actionMyDownloadFragmentToDownloadDetailFragment(
-                        bangumiDetail.id, bangumiDetail.source.name
-                    )
-                view.findNavController().navigate(action)
+                bind.bangumiDetail?.let {
+                    val action =
+                        MyDownloadFragmentDirections.actionMyDownloadFragmentToDownloadDetailFragment(
+                            it.id, it.source.name
+                        )
+                    view.findNavController().navigate(action)
+                }
             }
             bind.root.setOnLongClickListener {
-                viewModel.onItemLongCick(bangumiDetail)
+                bind.bangumiDetail?.let { viewModel.onItemLongCick(it) }
                 true
             }
+        }
+
+        fun bind(bangumiDetail: BangumiDetail) {
+            bind.bangumiDetail = bangumiDetail
         }
     }
 }

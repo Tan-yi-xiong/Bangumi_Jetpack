@@ -44,13 +44,18 @@ class HistoryBagnuimisViewHolder(
 
     private val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault())
 
+    init {
+        binding.root.setOnClickListener { view ->
+            binding.bangumi?.let {
+                (view.context as MainActivity).startPlayerActivity(it.id, it.source.name)
+            }
+        }
+    }
+
     fun bind(bangumiDetail: BangumiDetail?) {
         bangumiDetail?.let {
             binding.bangumi = it
             binding.historyTime.text = dateFormat.format(it.lastWatchTime)
-            binding.root.setOnClickListener { view ->
-                (view.context as MainActivity).startPlayerActivity(it.id, it.source.name)
-            }
         }
     }
 }

@@ -62,8 +62,6 @@ class BangumiFollowViewHolder(
     fun bind(bangumiDetail: BangumiDetail?) {
         bangumiDetail?.let {
             bind.bangumi = it
-            bind.root.setOnClickListener {
-            }
         }
 
     }
