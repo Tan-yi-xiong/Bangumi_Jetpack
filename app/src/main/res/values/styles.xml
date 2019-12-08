@@ -1,4 +1,5 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
@@ -6,21 +7,206 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+
     </style>
 
-    <style name="MainStyle" parent="AppTheme">
+    <!--    基主题-->
+    <style name="BaseLightTheme" parent="AppTheme">
+        <item name="playerToolBarColor">?android:attr/colorPrimary</item>
+        <item name="imageMask">@android:color/transparent</item>
+        <item name="jiBgStrokeColor">@color/grey_300</item>
+        <item name="android:windowLightStatusBar" tools:targetApi="m">false</item>
+        <item name="mainSearchMeunColor">@android:color/white</item>
+        <item name="appBarLayoutColor">?android:attr/colorPrimary</item>
+        <item name="mainSearchBarColor">#22ffffff</item>
+        <item name="android:textColorHint">@color/textHintColor</item>
+<!--        <item name="android:editTextColor">@color/mdtp_white</item>-->
+        <item name="android:textCursorDrawable">@null</item>
+
+        <item name="tabSelectedTextColor">@color/mdtp_white</item>
+        <item name="tabTextColor">@color/textHintColor</item>
+        <item name="tabIndicatorColor">@color/mdtp_white</item>
+
+        <item name="android:toolbarStyle">@style/DarkToolBarTheme</item>
+        <item name="lineColor">@color/grey_300</item>
+
+        <item name="mainSearchTextHint">@android:color/tertiary_text_dark</item>
+    </style>
+
+    <style name="WhiteTheme" parent="BaseLightTheme">
+        <item name="android:toolbarStyle">@style/LightTollBarTheme</item>
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/mdtp_white</item>
+        <item name="colorAccent">@color/colorAccent</item>
+
+        <item name="tabSelectedTextColor">?android:attr/colorPrimary</item>
+        <item name="tabTextColor">@android:color/tertiary_text_dark</item>
+        <item name="tabIndicatorColor">?android:attr/colorPrimary</item>
+
+        <item name="appBarLayoutColor">?android:attr/windowBackground</item>
+        <item name="android:colorControlNormal">@android:color/black</item>
+
         <item name="android:windowTranslucentStatus">true</item>
-        <item name="android:windowBackground">@color/mdtp_white</item>
+        <item name="android:editTextColor">@android:color/black</item>
+
     </style>
 
-    <style name="PlayerTheme" parent="AppTheme">
-        <item name="android:statusBarColor">@color/overlay_drak</item>
+    <style name="MaterialColorTheme" parent="BaseLightTheme">
+        <item name="mainSearchTextHint">@android:color/white</item>
+        <item name="editTextColor">@color/mdtp_white</item>
     </style>
+
+    <style name="PinkTheme" parent="MaterialColorTheme">
+        <item name="colorPrimary">@color/PinkThemeColor</item>
+        <item name="colorPrimaryDark">@color/PinkThemeColor</item>
+        <item name="colorAccent">@color/PinkThemeColor</item>
+        <item name="tabTextColor">#aaffffff</item>
+    </style>
+
+
+    <style name="IndigoTheme" parent="MaterialColorTheme">
+        <item name="colorPrimary">@color/indigo</item>
+        <item name="colorPrimaryDark">@color/indigo</item>
+        <item name="colorAccent">@color/indigo</item>
+    </style>
+
+    <style name="DeepPurpleTheme" parent="MaterialColorTheme">
+        <item name="colorPrimary">@color/DeepPurple</item>
+        <item name="colorPrimaryDark">@color/DeepPurple</item>
+        <item name="colorAccent">@color/DeepPurple</item>
+    </style>
+
+    <style name="BrowTheme" parent="MaterialColorTheme">
+        <item name="colorPrimary">@color/BrowThemeColor</item>
+        <item name="colorPrimaryDark">@color/BrowThemeColor</item>
+        <item name="colorAccent">@color/BrowThemeColor</item>
+    </style>
+
+    <style name="DeepOrangeTheme" parent="MaterialColorTheme">
+        <item name="colorPrimary">@color/DeepOrange</item>
+        <item name="colorPrimaryDark">@color/DeepOrange</item>
+        <item name="colorAccent">@color/DeepOrange</item>
+        <item name="tabTextColor">#aaffffff</item>
+    </style>
+
+    <style name="TealTheme" parent="MaterialColorTheme">
+        <item name="colorPrimary">@color/Teal</item>
+        <item name="colorPrimaryDark">@color/Teal</item>
+        <item name="colorAccent">@color/Teal</item>
+    </style>
+
+    <style name="kuanTheme" parent="MaterialColorTheme">
+        <item name="colorPrimary">@color/kuanTheme</item>
+        <item name="colorPrimaryDark">@color/kuanTheme</item>
+        <item name="colorAccent">@color/kuanTheme</item>
+    </style>
+
+    <style name="wangyiTheme" parent="MaterialColorTheme">
+        <item name="colorPrimary">@color/wangyiTheme</item>
+        <item name="colorPrimaryDark">@color/wangyiTheme</item>
+        <item name="colorAccent">@color/wangyiTheme</item>
+    </style>
+
+    <style name="zhihuTheme" parent="MaterialColorTheme">
+        <item name="colorPrimary">@color/zhihuTheme</item>
+        <item name="colorPrimaryDark">@color/zhihuTheme</item>
+        <item name="colorAccent">@color/zhihuTheme</item>
+    </style>
+
+    <style name="biliTheme" parent="MaterialColorTheme">
+        <item name="colorPrimary">@color/biliTheme</item>
+        <item name="colorPrimaryDark">@color/biliTheme</item>
+        <item name="colorAccent">@color/biliTheme</item>
+        <item name="tabTextColor">#aaffffff</item>
+    </style>
+
+    <!-- Widgent  -->
 
     <style name="dili_bangumi_item_text">
         <item name="android:maxLines">1</item>
         <item name="android:ellipsize">end</item>
     </style>
 
+    <style name="tabLayoutStyle" parent="Widget.MaterialComponents.TabLayout">
+        <item name="android:background">?android:attr/colorPrimaryDark</item>
+        <item name="tabTextColor">?attr/tabTextColor</item>
+        <item name="tabIndicatorColor">?attr/tabIndicatorColor</item>
+    </style>
 
+    <style name="DarkToolBarTheme" parent="ThemeOverlay.AppCompat.Dark">
+        <item name="colorControlNormal">@color/mdtp_white</item>
+    </style>
+
+    <style name="LightTollBarTheme" parent="ThemeOverlay.AppCompat.Light">
+        <item name="android:colorControlNormal">@android:color/black</item>
+    </style>
+
+    <!--    DarkTheme-->
+    <style name="BaseDarkTheme" parent="ThemeOverlay.MaterialComponents.Dark">
+        <item name="mainSearchMeunColor">@android:color/tertiary_text_dark</item>
+        <item name="lineColor">@android:color/transparent</item>
+        <item name="android:colorBackground">@android:color/black</item>
+        <item name="colorSurface">@android:color/black</item>
+        <item name="android:windowBackground">?android:colorBackground</item>
+        <item name="playerToolBarColor">?android:attr/windowBackground</item>
+        <item name="android:toolbarStyle">@style/ThemeOverlay.MaterialComponents.Dark</item>
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">?android:colorBackground</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorControlNormal">@color/mdtp_white</item>
+        <item name="android:windowLightStatusBar" tools:targetApi="m">false</item>
+        <item name="mainSearchBarColor">@color/material_grey_850</item>
+        <item name="imageMask">#33000000</item>
+        <item name="appBarLayoutColor">?android:attr/windowBackground</item>
+        <item name="jiBgStrokeColor">@color/grey_800</item>
+        <item name="tabSelectedTextColor">?android:attr/colorPrimary</item>
+        <item name="tabTextColor">@android:color/tertiary_text_dark</item>
+        <item name="tabIndicatorColor">?android:attr/colorPrimary</item>
+    </style>
+
+    <style name="DarkTheme_White" parent="BaseDarkTheme"/>
+
+    <style name="MaterialDarkTheme" parent="BaseDarkTheme">
+        <item name="colorAccent">?android:attr/colorPrimary</item>
+    </style>
+
+    <style name="DarkTheme_Pink" parent="MaterialDarkTheme">
+        <item name="colorPrimary">@color/PinkThemeColor</item>
+    </style>
+
+    <style name="DarkTheme_Indigo" parent="MaterialDarkTheme">
+        <item name="colorPrimary">@color/indigo</item>
+    </style>
+
+    <style name="DarkTheme_DeepPurple" parent="MaterialDarkTheme">
+        <item name="colorPrimary">@color/DeepPurple</item>
+    </style>
+
+    <style name="DarkTheme_Brow" parent="MaterialDarkTheme">
+        <item name="colorPrimary">@color/BrowThemeColor</item>
+    </style>
+
+    <style name="DarkTheme_DeepOrange" parent="MaterialDarkTheme">
+        <item name="colorPrimary">@color/DeepOrange</item>
+    </style>
+
+    <style name="DarkTheme_Teal" parent="MaterialDarkTheme">
+        <item name="colorPrimary">@color/Teal</item>
+    </style>
+
+    <style name="DarkTheme_kuan" parent="MaterialDarkTheme">
+        <item name="colorPrimary">@color/kuanTheme</item>
+    </style>
+
+    <style name="DarkTheme_zhihu" parent="MaterialDarkTheme">
+        <item name="colorPrimary">@color/zhihuTheme</item>
+    </style>
+
+    <style name="DarkTheme_wangyi" parent="MaterialDarkTheme">
+        <item name="colorPrimary">@color/wangyiTheme</item>
+    </style>
+
+    <style name="DarkTheme_bili" parent="MaterialDarkTheme">
+        <item name="colorPrimary">@color/biliTheme</item>
+    </style>
 </resources>

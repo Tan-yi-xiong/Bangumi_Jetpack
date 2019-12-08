@@ -3,7 +3,6 @@ package com.tyxapp.bangumi_jetpack.main
 import android.content.SharedPreferences
 import android.graphics.Color
 import android.os.Bundle
-import android.preference.PreferenceManager
 import android.view.Gravity
 import android.view.MenuItem
 import android.widget.ImageView
@@ -18,6 +17,7 @@ import androidx.lifecycle.observe
 import androidx.navigation.fragment.NavHostFragment
 import com.bumptech.glide.Glide
 import com.google.android.material.navigation.NavigationView
+import com.tyxapp.bangumi_jetpack.BangumiApp
 import com.tyxapp.bangumi_jetpack.R
 import com.tyxapp.bangumi_jetpack.data.BangumiSource
 import com.tyxapp.bangumi_jetpack.data.parsers.Dilidili
@@ -27,10 +27,7 @@ import com.tyxapp.bangumi_jetpack.utilities.*
 import com.tyxapp.bangumi_jetpack.views.alertBuilder
 import com.tyxapp.bangumi_jetpack.views.noButton
 import com.tyxapp.bangumi_jetpack.views.yesButton
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import org.jetbrains.anko.browse
 import org.jetbrains.anko.defaultSharedPreferences
 
@@ -45,6 +42,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     private lateinit var drawerLayout: DrawerLayout
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        ThemeUtil.setTheme(this)
         super.onCreate(savedInstanceState)
         window.statusBarColor = Color.TRANSPARENT
         setContentView(R.layout.activity_main)
@@ -94,6 +92,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
             R.navigation.home,
             R.navigation.history,
             R.navigation.my_download,
+            R.id.menu_night_light_switch,
             R.navigation.setting
         )
 
@@ -152,6 +151,19 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         super.onDestroy()
         defaultSharedPreferences.unregisterOnSharedPreferenceChangeListener(this)
     }
+
+    /**
+     * 重启Activity, 切换主题使用
+     */
+    internal fun restartActivity() {
+        val cyIntent = intent
+        finish()
+        overridePendingTransition(
+            R.anim.nav_default_enter_anim,
+            R.anim.nav_default_exit_anim
+        )
+        BangumiApp.getContext().startActivity(cyIntent)
+    }
 }
 
 //NavigationView处理返回栈栈名
@@ -167,6 +179,21 @@ private fun NavigationView.setupWithNavController(
     val fristFragmentTag = getFragmentTag(0)
 
     navGraphIds.forEachIndexed { index, navGraphId ->
+        
+        if (navGraphId == R.id.menu_night_light_switch) {
+            if (PrefUtils.isDayNight()) {
+                with(menu[index]) {
+                    setIcon(R.drawable.ic_day_light)
+                    setTitle(R.string.title_day_light)
+                }
+            } else {
+                with(menu[index]) {
+                    setIcon(R.drawable.ic_day_night)
+                    setTitle(R.string.text_day_night)
+                }
+            }
+            return@forEachIndexed
+        }
 
         val graphId = this.menu[index].itemId
 
@@ -192,6 +219,13 @@ private fun NavigationView.setupWithNavController(
             false
         } else {
             val selectItemId = menuItem.itemId
+
+            if (selectItemId == R.id.menu_night_light_switch) {// 日夜模式切换
+                PrefUtils.setIsDayNight(!PrefUtils.isDayNight())
+                (context as MainActivity).restartActivity()
+                return@setNavigationItemSelectedListener false
+            }
+
             if (selectItemId != currentGraphId) {
                 delay(300) {
                     fragmentManager.popBackStack(
@@ -236,10 +270,9 @@ private fun NavigationView.setupWithNavController(
         }
     }
 
-
 }
 
-fun delay(time: Long, action: () -> Unit) = CoroutineScope(Dispatchers.Main).launch {
+fun delay(time: Long, action: () -> Unit) = MainScope().launch {
     delay(time)
     action()
 }

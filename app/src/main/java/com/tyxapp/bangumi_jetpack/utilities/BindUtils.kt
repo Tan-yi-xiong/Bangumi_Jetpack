@@ -59,4 +59,4 @@ fun View.isSelect(isSelect: Boolean) {
 }
 
 val glideOptions = RequestOptions()
-    .error(R.drawable.error)
+    .error(R.drawable.error2)

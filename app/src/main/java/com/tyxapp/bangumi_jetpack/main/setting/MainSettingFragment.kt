@@ -8,7 +8,9 @@ import android.widget.SeekBar
 import android.widget.TextView
 import androidx.core.content.edit
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.commit
 import androidx.lifecycle.observe
+import androidx.navigation.fragment.findNavController
 import androidx.preference.ListPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
@@ -37,6 +39,10 @@ class MainSettingFragment : PreferenceFragmentCompat(), SharedPreferences.OnShar
         val currentHomeSource = PrefUtils.getHomeSourceName()
         val homeListPreference = findPreference<ListPreference>(getString(R.string.key_home_page))
         homeListPreference?.summary = currentHomeSource
+
+        //主题
+        val themePreference = findPreference<Preference>("theme")
+        themePreference?.summary = PrefUtils.getCurrentTheme()
 
         //优先搜索结果初始化
         val prioritizedSearchSourchPreference = findPreference<ListPreference>(getString(R.string.key_prioritized_search_sourch))
@@ -100,6 +106,21 @@ class MainSettingFragment : PreferenceFragmentCompat(), SharedPreferences.OnShar
 
             "versions" -> {
                 mainViewModel.checkAppUpdate()
+                true
+            }
+
+            "theme" -> {
+                parentFragment?.childFragmentManager?.commit {
+                    setCustomAnimations(
+                        R.anim.slide_in_right,
+                        R.anim.slide_out_left,
+                        R.anim.slide_in_left,
+                        R.anim.slide_out_right
+                    )
+                    hide(this@MainSettingFragment)
+                    add(R.id.content, ThemeSettingFragment.getInstance())
+                    addToBackStack(null)
+                }
                 true
             }
 

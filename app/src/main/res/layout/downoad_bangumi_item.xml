@@ -16,6 +16,7 @@
 
 
         <androidx.cardview.widget.CardView
+            android:foreground="?attr/imageMask"
             android:id="@+id/cardView"
             android:layout_width="92dp"
             android:layout_height="132dp"

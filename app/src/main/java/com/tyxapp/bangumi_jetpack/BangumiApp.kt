@@ -21,7 +21,6 @@ class BangumiApp : Application() {
     override fun onCreate() {
         super.onCreate()
         appContext = applicationContext
-
         initPlayer()
         initDownload()
     }

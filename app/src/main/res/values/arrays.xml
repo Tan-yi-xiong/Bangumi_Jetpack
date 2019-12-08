@@ -67,5 +67,18 @@
         <item>嘛哩嘛哩</item>
     </array>
 
+    <array name="theme_name">
+        <item>简洁白</item>
+        <item>深粉色</item>
+        <item>古铜棕</item>
+        <item>深橙色</item>
+        <item>基佬紫</item>
+        <item>颐堤蓝</item>
+        <item>水鸭青</item>
+        <item>酷安绿</item>
+        <item>知乎蓝</item>
+        <item>网易红</item>
+        <item>哔哩粉</item>
+    </array>
 
 </resources>

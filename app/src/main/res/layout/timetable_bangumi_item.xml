@@ -23,6 +23,7 @@
         android:layout_height="wrap_content">
 
         <androidx.cardview.widget.CardView
+            android:foreground="?attr/imageMask"
             android:id="@+id/cardView"
             android:layout_width="90dp"
             android:layout_height="125dp"
@@ -49,7 +50,7 @@
         <TextView
             android:textSize="16sp"
             android:text="@{bangumi.name}"
-            android:textColor="@android:color/black"
+            android:textColor="?android:attr/textColorPrimary"
             android:id="@+id/name"
             android:layout_width="0dp"
             android:layout_height="wrap_content"

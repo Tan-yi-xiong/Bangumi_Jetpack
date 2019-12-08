@@ -4,8 +4,10 @@ import android.animation.Animator
 import android.animation.ObjectAnimator
 import android.animation.PropertyValuesHolder
 import android.content.Context
+import android.content.res.TypedArray
 import android.graphics.drawable.GradientDrawable
 import android.util.AttributeSet
+import android.util.TypedValue
 import android.view.Gravity
 import android.view.View
 import android.widget.ImageView
@@ -15,6 +17,7 @@ import androidx.core.view.isVisible
 import com.tyxapp.bangumi_jetpack.R
 import com.tyxapp.bangumi_jetpack.utilities.LOGI
 import com.tyxapp.bangumi_jetpack.utilities.toPx
+import org.jetbrains.anko.attr
 
 private const val DOT_COUNT = 3
 private const val DURATION = 500L

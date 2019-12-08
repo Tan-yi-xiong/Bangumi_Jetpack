@@ -19,6 +19,7 @@ import android.widget.FrameLayout
 import android.widget.Spinner
 import androidx.activity.viewModels
 import androidx.appcompat.widget.Toolbar
+import androidx.core.content.ContextCompat
 import androidx.core.content.getSystemService
 import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
@@ -98,8 +99,10 @@ class PlayerActivity : BasePlayerActivity() {
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        ThemeUtil.setTheme(this)
         super.onCreate(savedInstanceState)
         window.addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
+        window.statusBarColor = ContextCompat.getColor(this, R.color.overlay_drak)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_player)
         mSensorManager = getSystemService()
         init()
@@ -152,12 +155,12 @@ class PlayerActivity : BasePlayerActivity() {
         //BaseVideoView
         setReceiverGroup(ReceiverGroup().apply {
             addReceiver(
-                DanmuCover::class.java.simpleName,
-                DanmuCover(this@PlayerActivity, viewModel)
-            )
-            addReceiver(
                 ControlCover::class.java.simpleName,
                 ControlCover(this@PlayerActivity, viewModel)
+            )
+            addReceiver(
+                DanmuCover::class.java.simpleName,
+                DanmuCover(this@PlayerActivity, viewModel)
             )
             addReceiver(LoadingCover::class.java.simpleName, LoadingCover(this@PlayerActivity))
             addReceiver(GestureCover::class.java.simpleName, GestureCover(this@PlayerActivity))

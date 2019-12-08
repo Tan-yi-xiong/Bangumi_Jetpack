@@ -18,6 +18,7 @@ class SettingBottomSheet : BaseBottomSheet() {
         savedInstanceState: Bundle?
     ): View? {
         val recyclerView = super.onCreateView(inflater, container, savedInstanceState) as RecyclerView
+        recyclerView.background = requireActivity().window.decorView.background
         return recyclerView.apply {
             adapter = SettingBottomSheetAdapter(mItemClick, arguments!!.getFloat(SPEED_ARG))
         }

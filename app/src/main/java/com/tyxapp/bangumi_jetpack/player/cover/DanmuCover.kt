@@ -199,10 +199,6 @@ class DanmuCover(
         super.onReceiverUnBind()
     }
 
-    override fun getCoverLevel(): Int {
-        return levelLow(0)
-    }
-
 }
 
 private inline fun DanmakuView.doOnPrepared(crossinline action: () -> Unit) {

@@ -25,6 +25,7 @@
 
 
         <androidx.cardview.widget.CardView
+            android:foreground="?attr/imageMask"
             android:layout_margin="2dp"
             app:cardCornerRadius="5dp"
             android:id="@+id/cardView"
@@ -47,7 +48,7 @@
         <TextView
             android:layout_marginTop="3dp"
             android:textSize="13sp"
-            android:textColor="@android:color/black"
+            android:textColor="?android:attr/textColorPrimary"
             android:ellipsize="end"
             android:id="@+id/name"
             android:text="@{bangumi.name}"

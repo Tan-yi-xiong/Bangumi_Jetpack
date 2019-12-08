@@ -12,6 +12,7 @@
     </data>
 
     <RelativeLayout
+        android:theme="@style/WhiteTheme"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@android:color/transparent">
@@ -91,10 +92,12 @@
 
 
                 <SeekBar
+                    android:theme="@style/ThemeOverlay.AppCompat.Dark"
                     android:id="@+id/player_control_seekBar"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:progressDrawable="@drawable/seekbar_drawable"
+                    android:secondaryProgressTintMode="src_over"
+                    android:secondaryProgressTint="#66ffffff"
                     app:layout_constraintBottom_toBottomOf="@+id/current_time"
                     app:layout_constraintEnd_toStartOf="@+id/total_time"
                     app:layout_constraintStart_toEndOf="@+id/current_time"
@@ -208,13 +211,12 @@
                 android:textSize="11sp"
                 android:id="@+id/returnToLastWatchText"
                 android:layout_marginStart="8dp"
-                android:textColor="@color/colorAccent"
+                android:textColor="?android:attr/colorAccent"
                 android:text="@string/skipToPlayer"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
 
         </LinearLayout>
-
 
 
         <SeekBar

@@ -17,13 +17,13 @@
         android:layout_height="match_parent">
 
         <com.google.android.material.appbar.AppBarLayout
-            android:background="@color/mdtp_white"
+            android:backgroundTint="?attr/appBarLayoutColor"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
             <androidx.appcompat.widget.Toolbar
+                android:theme="?android:attr/toolbarStyle"
                 android:id="@+id/toolBar"
-                app:layout_scrollFlags="scroll|snap|enterAlways"
                 app:contentInsetStartWithNavigation="0dp"
                 app:navigationIcon="@drawable/ic_arrow_back"
                 app:menu="@menu/search_menu"

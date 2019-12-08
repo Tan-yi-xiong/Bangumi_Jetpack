@@ -10,21 +10,19 @@
         android:orientation="vertical"
         tools:context=".main.home.BangumiFragment">
 
-        <com.google.android.material.tabs.TabLayout
-            android:visibility="gone"
-            android:id="@+id/tabLayout"
+        <com.google.android.material.appbar.AppBarLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:tabIndicatorColor="@color/colorPrimary"
-            app:tabIndicatorFullWidth="false"
-            app:tabSelectedTextColor="@color/colorPrimary" />
+            android:layout_height="wrap_content">
 
-        <View
-            android:visibility="gone"
-            android:id="@+id/topLine"
-            android:background="@color/grey_200"
-            android:layout_width="match_parent"
-            android:layout_height="0.5dp"/>
+            <com.google.android.material.tabs.TabLayout
+                style="@style/tabLayoutStyle"
+                android:visibility="gone"
+                android:id="@+id/tabLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:tabIndicatorFullWidth="false" />
+
+        </com.google.android.material.appbar.AppBarLayout>
 
         <com.tyxapp.bangumi_jetpack.views.NoScrollViewPager
             android:id="@+id/viewpager"

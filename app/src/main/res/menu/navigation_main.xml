@@ -22,6 +22,12 @@
 
 
     <group android:id="@+id/menu_group_setting">
+        <item
+            android:id="@+id/menu_night_light_switch"
+            android:title="@string/text_day_night"
+            android:icon="@drawable/ic_day_night"
+            android:checkable="false"/>
+
         <item android:id="@+id/menu_setting"
             android:title="@string/title_setting"
             android:checkable="true"

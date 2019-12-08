@@ -16,11 +16,10 @@
             android:layout_height="wrap_content">
 
             <com.google.android.material.tabs.TabLayout
+                style="@style/tabLayoutStyle"
                 android:id="@+id/tabLayout"
                 app:tabMode="scrollable"
-                app:tabSelectedTextColor="@color/colorPrimary"
                 app:tabIndicatorFullWidth="false"
-                app:tabIndicatorColor="@color/colorPrimary"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 

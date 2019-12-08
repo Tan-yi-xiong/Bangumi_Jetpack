@@ -51,6 +51,27 @@
     </PreferenceCategory>
 
     <PreferenceCategory
+        android:title="@string/title_theme"
+        android:layout="@layout/coustom_preference_category">
+
+        <ListPreference
+            android:entries="@array/home_sourch"
+            android:entryValues="@array/home_sourch"
+            android:key="@string/key_home_page"
+            android:defaultValue="DiliDili"
+            android:layout="@layout/coustom_preference_widget_checkbox"
+            android:title="@string/title_home_sourch" />
+
+        <Preference
+            android:key="theme"
+            android:layout="@layout/coustom_preference_widget_checkbox"
+            android:title="主题">
+
+        </Preference>
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
         android:layout="@layout/coustom_preference_category"
         android:title="@android:string/search_go">
 
@@ -62,19 +83,13 @@
             android:defaultValue="Nico"
             android:layout="@layout/coustom_preference_widget_checkbox"/>
 
+
     </PreferenceCategory>
 
     <PreferenceCategory
         android:layout="@layout/coustom_preference_category"
         android:title="@string/title_other_settings">
 
-        <ListPreference
-            android:entries="@array/home_sourch"
-            android:entryValues="@array/home_sourch"
-            android:key="@string/key_home_page"
-            android:defaultValue="DiliDili"
-            android:layout="@layout/coustom_preference_widget_checkbox"
-            android:title="@string/title_home_sourch" />
 
         <SwitchPreference
             android:key="@string/key_dl_unlock"

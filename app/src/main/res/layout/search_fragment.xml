@@ -10,12 +10,13 @@
         tools:context=".main.search.SearchFragment">
 
         <com.google.android.material.appbar.AppBarLayout
-            android:background="@color/mdtp_white"
             android:id="@+id/appBarLayout"
+            android:backgroundTint="?attr/appBarLayoutColor"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
             <androidx.appcompat.widget.Toolbar
+                android:theme="?android:attr/toolbarStyle"
                 android:id="@+id/toolBar"
                 app:layout_scrollFlags="scroll|snap|enterAlways"
                 app:contentInsetStartWithNavigation="0dp"
@@ -34,8 +35,8 @@
                     <EditText
                         android:focusable="true"
                         android:focusableInTouchMode="true"
-                        android:textColorHint="@color/grey_400"
                         android:textSize="16sp"
+                        android:textColor="?attr/editTextColor"
                         android:singleLine="true"
                         android:hint="@string/text_search"
                         android:background="@android:color/transparent"

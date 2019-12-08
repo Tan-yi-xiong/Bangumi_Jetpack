@@ -32,6 +32,8 @@ class DanmuSettingBottomSheet : BaseBottomSheet() {
             mDanmuSwitch = danmuSwitch
             mDanmuMaxRawSeekBar = danmuRowsSeekBar
             mDanmuTextSizeSeekBar = danmuTextSeekBar
+
+            root.background = requireActivity().window.decorView.background
         }
         initView()
         return binding.root

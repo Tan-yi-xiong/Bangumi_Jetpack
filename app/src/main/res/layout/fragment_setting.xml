@@ -6,11 +6,15 @@
     android:orientation="vertical">
 
     <com.google.android.material.appbar.AppBarLayout
+
+        android:backgroundTint="?attr/appBarLayoutColor"
         android:background="@color/mdtp_white"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
         <androidx.appcompat.widget.Toolbar
+            android:theme="?android:attr/toolbarStyle"
+            app:contentInsetStartWithNavigation="0dp"
             android:id="@+id/toolBar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"

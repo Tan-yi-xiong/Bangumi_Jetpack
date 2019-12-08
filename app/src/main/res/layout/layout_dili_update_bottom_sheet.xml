@@ -16,6 +16,7 @@
         android:orientation="vertical">
 
         <androidx.cardview.widget.CardView
+            android:backgroundTint="?android:attr/windowBackground"
             android:id="@+id/carView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -36,7 +37,6 @@
 
                 <ImageButton
                     android:id="@+id/close"
-                    android:tint="@color/grey_600"
                     android:background="@android:color/transparent"
                     android:src="@drawable/ic_close"
                     android:layout_width="wrap_content"

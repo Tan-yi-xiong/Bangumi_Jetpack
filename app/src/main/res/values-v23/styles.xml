@@ -1,8 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="MainStyle" parent="AppTheme">
-        <item name="android:windowBackground">@color/mdtp_white</item>
+    <style name="WhiteTheme" parent="BaseLightTheme">
+        <item name="android:toolbarStyle">@style/ThemeOverlay.MaterialComponents.Light</item>
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/mdtp_white</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="tabSelectedTextColor">?android:attr/colorPrimary</item>
+        <item name="tabTextColor">@android:color/tertiary_text_dark</item>
+        <item name="tabIndicatorColor">?android:attr/colorPrimary</item>
+        <item name="mainSearchMeunColor">@android:color/black</item>
+        <item name="appBarLayoutColor">?android:attr/windowBackground</item>
+        <item name="colorControlNormal">@android:color/black</item>
+        <item name="lineColor">@color/grey_300</item>
+        <item name="mainSearchBarColor">@color/defultaMainSearchBarColor</item>
         <item name="android:windowLightStatusBar">true</item>
     </style>
+
 </resources>

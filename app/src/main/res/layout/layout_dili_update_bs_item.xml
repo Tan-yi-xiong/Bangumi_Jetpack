@@ -19,6 +19,7 @@
         android:layout_height="wrap_content">
 
         <androidx.cardview.widget.CardView
+            android:foreground="?attr/imageMask"
             android:id="@+id/cardView"
             android:layout_width="150dp"
             android:layout_height="wrap_content"
@@ -48,7 +49,7 @@
             android:maxLines="2"
             android:minLines="2"
             android:text="@{bangumi.name}"
-            android:textColor="@android:color/black"
+            android:textColor="?android:attr/textColorPrimary"
             app:layout_constraintEnd_toEndOf="@+id/cardView"
             app:layout_constraintStart_toStartOf="@+id/cardView"
             app:layout_constraintTop_toBottomOf="@+id/cardView" />

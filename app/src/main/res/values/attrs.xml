@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="View">
+        <!--播放页面分割线颜色-->
+        <attr name="lineColor" format="color"/>
+<!--        播放页面ToolBar颜色-->
+        <attr name="playerToolBarColor" format="color"/>
+
+        <attr name="toolBarIconTine" format="color"/>
+
+        <attr name="mainSearchBarColor" format="color"/>
+
+        <attr name="imageMask" format="color" />
+
+        <attr name="appBarLayoutColor" format="color"/>
+
+        <attr name="jiBgStrokeColor" format="color"/>
+
+        <attr name="mainSearchMeunColor" format="color"/>
+
+        <attr name="mainSearchTextHint" format="color"/>
+
+
+    </declare-styleable>
+
+    <declare-styleable name="ColorIndicator">
+        <attr name="indicatorColor" format="color"/>
+    </declare-styleable>
+</resources>

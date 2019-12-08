@@ -25,14 +25,14 @@
         tools:context=".main.home.TimeTableFragment">
 
         <com.google.android.material.tabs.TabLayout
-            app:tabSelectedTextColor="@color/colorPrimary"
+            style="@style/tabLayoutStyle"
             android:id="@+id/tabLayout"
             app:tabIndicatorFullWidth="false"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
 
         <View
-            android:background="@color/grey_200"
+            android:background="?attr/lineColor"
             android:layout_width="match_parent"
             android:layout_height="0.5dp"/>
 

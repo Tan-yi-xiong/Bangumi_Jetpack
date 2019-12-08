@@ -300,7 +300,6 @@ class Dilidili : IHomePageParser, IPlayerVideoParser, IsearchParser {
             params: LoadInitialParams<Int>,
             callback: LoadInitialCallback<Int, Bangumi>
         ) {
-            LOGI("nvnb")
             val document = Jsoup.parse(OkhttpUtil.getResponseData("$BASE_URL_PC/zxgx/"))
             CoroutineScope(Dispatchers.Default).launch {
                 try {
@@ -313,6 +312,7 @@ class Dilidili : IHomePageParser, IPlayerVideoParser, IsearchParser {
                         )
                     )
                 } catch (e: Exception) {
+                    e.printStackTrace()
                     initialLoadLiveData.postValue(InitialLoad(NetWordState.error(e.toString())))
                 }
             }

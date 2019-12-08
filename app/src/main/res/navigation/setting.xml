@@ -6,5 +6,6 @@
     <fragment
         android:id="@+id/settingFragment"
         android:name="com.tyxapp.bangumi_jetpack.main.setting.SettingFragment"
-        android:label="SettingFragment" />
+        android:label="SettingFragment" >
+    </fragment>
 </navigation>

@@ -24,8 +24,8 @@
         <ImageView
             android:layout_width="150dp"
             android:layout_height="150dp"
-            app:bindImage="@{@drawable/empty}"
-            tools:src="@drawable/empty" />
+            app:bindImage="@{@drawable/empty2}"
+            tools:src="@drawable/empty2" />
 
         <TextView
             android:layout_width="wrap_content"

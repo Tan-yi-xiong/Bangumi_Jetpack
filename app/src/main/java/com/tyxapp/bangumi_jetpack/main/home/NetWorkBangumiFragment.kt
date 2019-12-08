@@ -41,9 +41,6 @@ class NetWorkBangumiFragment : ListFragment() {
             R.id.bottomNavigationView
         )
     }
-    private val topLine: View by lazy(LazyThreadSafetyMode.NONE) {
-        parentFragment!!.parentFragment!!.view!!.findViewById<View>(R.id.topLine)
-    }
 
 
     companion object {
@@ -129,7 +126,6 @@ class NetWorkBangumiFragment : ListFragment() {
                     if (!mRecyclerView.isVisible) {
                         bottomNavigationView.isGone(false)
                         tabLayout.isGone(false)
-                        topLine.isGone(false)
                     }
                     showContent()
                 }

@@ -14,6 +14,7 @@
     </data>
 
     <androidx.cardview.widget.CardView
+        android:foreground="?attr/imageMask"
         app:cardCornerRadius="8dp"
         android:layout_width="311.5dp"
         android:layout_height="175dp"

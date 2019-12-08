@@ -7,11 +7,8 @@
 本项目是新手练习项目, 采用MVVM架构, 基于Jetpack部分组件开发;
 打包好的apk已放在release文件夹下, 感兴趣的朋友可以下载体验一下。
 
-# 近期更新（2019.11.25）
-1. 检查是否为最新版
-2. 类别番剧交互改变
-3. 时间表改为可滑动式
-4. 一些小优化
+# 近期更新（2019.12.8）
+1. 可以替换主题啦
 
 # 功能
 - 视频本地缓存
@@ -37,15 +34,8 @@
 
 # 应用截图
 
-<div align=center>
-<img src="./Screenshots/player_start.gif" width="40%" />
-<br/>
-<br/>
-<img src="./Screenshots/search.gif" width="40%" />
-<br/>
-<br/>
-<img src="./Screenshots/start.gif" width="40%" />
-<br/>
-<br/>
-<img src="./Screenshots/category.gif" width="40%" />
-</div>
+<img src="./Screenshots/demo1.jpeg" width="30%" />
+<img src="./Screenshots/demo2.jpeg" width="30%" />
+<img src="./Screenshots/demo3.jpeg" width="30%" />
+<img src="./Screenshots/demo4.jpeg" width="30%" />
+<img src="./Screenshots/demo5.jpeg" width="30%" />

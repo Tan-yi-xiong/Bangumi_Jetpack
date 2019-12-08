@@ -18,6 +18,7 @@ class SpeedBottomSheet: BaseBottomSheet() {
     ): View? {
         val recyclerView = super.onCreateView(inflater, container, savedInstanceState) as RecyclerView
         return recyclerView.apply {
+            background = requireActivity().window.decorView.background
             adapter = SpeedBottomSheetAdapter(itemClickListener)
         }
     }

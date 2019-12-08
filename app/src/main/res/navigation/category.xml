@@ -8,5 +8,5 @@
         android:id="@+id/categoryFragment"
         android:name="com.tyxapp.bangumi_jetpack.main.home.CategoryFragment"
         android:label="category_fragment"
-        tools:layout="@layout/category_fragment" />
+        tools:layout="@layout/list_fragment" />
 </navigation>

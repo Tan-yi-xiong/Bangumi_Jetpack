@@ -3,28 +3,30 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <LinearLayout
-        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
         <androidx.coordinatorlayout.widget.CoordinatorLayout
-            android:layout_weight="1"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:orientation="vertical">
+            android:layout_weight="1">
 
             <com.google.android.material.appbar.AppBarLayout
+                android:id="@+id/appBarLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/mdtp_white"
+                android:backgroundTint="?attr/appBarLayoutColor"
                 app:elevation="0dp">
 
                 <com.google.android.material.appbar.CollapsingToolbarLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:minHeight="?attr/actionBarSize"
                     app:layout_scrollFlags="scroll|enterAlways|snap">
 
-                    <androidx.cardview.widget.CardView
+                    <LinearLayout
+                        android:background="@drawable/home_searchbar_bg"
                         android:id="@+id/searchBar"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -33,31 +35,24 @@
                         android:layout_marginTop="4dp"
                         android:layout_marginEnd="15dp"
                         android:layout_marginBottom="4dp"
-                        app:cardCornerRadius="8dp"
-                        app:cardElevation="3dp">
+                        android:gravity="center_vertical">
 
-                        <LinearLayout
-                            android:layout_width="match_parent"
+                        <ImageButton
+                            android:id="@+id/bottonMenu"
+                            android:layout_width="42dp"
+                            android:layout_height="42dp"
+                            android:background="@android:color/transparent"
+                            android:src="@drawable/ic_menu"
+                            android:tint="?attr/mainSearchMeunColor" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:gravity="center_vertical">
+                            android:text="@string/text_search"
+                            android:textColor="?attr/mainSearchTextHint"
+                            android:textSize="16sp" />
 
-                            <ImageButton
-                                android:id="@+id/bottonMenu"
-                                android:layout_width="48dp"
-                                android:layout_height="48dp"
-                                android:background="@android:color/transparent"
-                                android:src="@drawable/ic_menu"
-                                android:tint="@android:color/tertiary_text_light" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="@string/text_search"
-                                android:textColor="@color/grey_400"
-                                android:textSize="16sp" />
-
-                        </LinearLayout>
-                    </androidx.cardview.widget.CardView>
+                    </LinearLayout>
 
                 </com.google.android.material.appbar.CollapsingToolbarLayout>
 
@@ -71,7 +66,6 @@
                 app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
         </androidx.coordinatorlayout.widget.CoordinatorLayout>
-
 
 
         <com.google.android.material.bottomnavigation.BottomNavigationView

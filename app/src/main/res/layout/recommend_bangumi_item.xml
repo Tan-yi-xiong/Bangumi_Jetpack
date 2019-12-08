@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+
         <variable
             name="bangumi"
             type="com.tyxapp.bangumi_jetpack.data.Bangumi" />
@@ -12,16 +13,17 @@
             name="viewModel"
             type="com.tyxapp.bangumi_jetpack.player.PlayerViewModel" />
 
-        <import type="com.tyxapp.bangumi_jetpack.utilities.AnimationUtilsKt"/>
+        <import type="com.tyxapp.bangumi_jetpack.utilities.AnimationUtilsKt" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:onClick="@{() -> viewModel.onRecommendBangumiClick(bangumi)}"
+        android:layout_height="wrap_content"
         android:background="?attr/selectableItemBackground"
-        android:layout_height="wrap_content">
+        android:onClick="@{() -> viewModel.onRecommendBangumiClick(bangumi)}">
 
         <ImageView
+            android:foreground="?attr/imageMask"
             android:id="@+id/recommend_cover"
             android:layout_width="117dp"
             android:layout_height="73dp"
@@ -36,29 +38,30 @@
             tools:srcCompat="@tools:sample/avatars[0]" />
 
         <TextView
-            android:textColor="@android:color/black"
             android:id="@+id/name"
-            android:text="@{bangumi.name}"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
-            android:maxLines="2"
             android:ellipsize="end"
+            android:maxLines="2"
+            android:text="@{bangumi.name}"
+            android:textColor="?android:attr/textColorPrimary"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/recommend_cover"
             app:layout_constraintTop_toTopOf="@+id/recommend_cover" />
 
         <TextView
-            android:text="@{bangumi.jiTotal}"
             android:id="@+id/ji"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
-            android:maxLines="2"
             android:ellipsize="end"
+            android:maxLines="2"
+            android:text="@{bangumi.jiTotal}"
+            android:textColor="?android:attr/textColorPrimary"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/recommend_cover"
             app:layout_constraintTop_toBottomOf="@+id/name" />

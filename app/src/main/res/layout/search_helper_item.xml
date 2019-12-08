@@ -34,7 +34,7 @@
             tools:src="@drawable/ic_search" />
 
         <TextView
-            android:textColor="@android:color/black"
+            android:textColor="?android:attr/textColorPrimary"
             android:id="@+id/textView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

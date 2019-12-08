@@ -80,4 +80,9 @@
     <string name="key_auto_check_updata">key_auto_check_updata</string>
     <string name="title_prioritized_sourch">优先显示的搜索结果</string>
     <string name="key_prioritized_search_sourch">key_prioritized_search_sourch</string>
+    <string name="title_day_light">日间模式</string>
+    <string name="key_isDayNight">key_isDayNight</string>
+    <string name="text_day_night">夜间模式</string>
+    <string name="title_theme">界面</string>
+    <string name="key_theme">key_theme</string>
 </resources>

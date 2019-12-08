@@ -1,6 +1,7 @@
 package com.tyxapp.bangumi_jetpack.utilities
 
 import android.annotation.SuppressLint
+import androidx.core.content.edit
 import com.tyxapp.bangumi_jetpack.BangumiApp
 import com.tyxapp.bangumi_jetpack.R
 import com.tyxapp.bangumi_jetpack.data.BangumiSource
@@ -50,6 +51,33 @@ class PrefUtils {
             return context.defaultSharedPreferences.getString(
                 context.getString(R.string.key_prioritized_search_sourch),
                 BangumiSource.Nico.name
+            )!!
+        }
+
+        fun isDayNight(): Boolean {
+            return context.defaultSharedPreferences.getBoolean(
+                context.getString(R.string.key_isDayNight),
+                false
+            )
+        }
+
+        fun setIsDayNight(isDayNight: Boolean) {
+            context.defaultSharedPreferences.edit {
+                putBoolean(context.getString(R.string.key_isDayNight), isDayNight)
+            }
+        }
+
+        /**
+         * 记录用户设置的主题
+         */
+        fun setCurrentTheme(themeName: String) {
+            context.defaultSharedPreferences.edit { putString(context.getString(R.string.key_theme), themeName) }
+        }
+
+        fun getCurrentTheme(): String {
+            return context.defaultSharedPreferences.getString(
+                context.getString(R.string.key_theme),
+                context.resources.getStringArray(R.array.theme_name)[0]
             )!!
         }
     }
