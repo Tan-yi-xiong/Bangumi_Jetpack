@@ -138,13 +138,13 @@ class Zzzfun : IHomePageParser, IsearchParser, IPlayerVideoParser {
         list
     }
 
-    override fun getCategoryBangumis(category: String): Listing<Bangumi> {
+    override fun getCategoryBangumis(category: String): Listing<CategoryBangumi> {
         val sourceFactor = CategoryPageDataSourceFactor(category)
 
 
         val liveDataPagelist = LivePagedListBuilder(sourceFactor, 10).build()
 
-        return Listing<Bangumi>(
+        return Listing<CategoryBangumi>(
             liveDataPagelist = liveDataPagelist,
             netWordState = sourceFactor.sourceLiveData.switchMap { it.netWordState },
             retry = { sourceFactor.sourceLiveData.value?.retry() },
@@ -414,14 +414,14 @@ private class SearchResultDataSourceFactor(
 
 private class CategoryPageDataSource(
     private val category: String
-) : PageResultDataSourch<Int, Bangumi>(category) {
+) : PageResultDataSourch<Int, CategoryBangumi>(category) {
     private val jsonMediaType: MediaType = "application/json; charset=utf-8".toMediaType()
     private val bangumiDetailDao = AppDataBase.getInstance().bangumiDetailDao()
 
 
     override fun initialLoad(
         params: LoadInitialParams<Int>,
-        callback: LoadInitialCallback<Int, Bangumi>) {
+        callback: LoadInitialCallback<Int, CategoryBangumi>) {
 
         val page = 1
         val result = parserCategoryData(category, page)
@@ -429,9 +429,9 @@ private class CategoryPageDataSource(
         initialLoadLiveData.postValue(InitialLoad(NetWordState.SUCCESS, result.isEmpty()))
     }
 
-    override fun afterload(params: LoadParams<Int>, callback: LoadCallback<Int, Bangumi>) {
+    override fun afterload(params: LoadParams<Int>, callback: LoadCallback<Int, CategoryBangumi>) {
         val page = params.key
-        val result: List<Bangumi> = try {
+        val result: List<CategoryBangumi> = try {
             parserCategoryData(category, page)
         } catch (e: Exception) {
             e.printStackTrace()
@@ -440,7 +440,7 @@ private class CategoryPageDataSource(
         callback.onResult(result, if (result.isEmpty()) null else page + 1)
     }
 
-    private fun parserCategoryData(category: String, page: Int): List<Bangumi> {
+    private fun parserCategoryData(category: String, page: Int): List<CategoryBangumi> {
         var categoryName = category
         var url = "$BASE_URL/type/list.php"
         when (categoryName) {
@@ -459,7 +459,7 @@ private class CategoryPageDataSource(
             JSONObject(responseData).takeIf { !it.isNull("result") } ?: return emptyList()
 
         return jsonObject.getJSONArray("result").run {
-            val bangumis = ArrayList<Bangumi>()
+            val bangumis = ArrayList<CategoryBangumi>()
             this.forEach {
                 val name = it.getString("name")
                 val cover = it.getString("pic")
@@ -474,10 +474,10 @@ private class CategoryPageDataSource(
 
 private class CategoryPageDataSourceFactor(
     private val category: String
-) : DataSource.Factory<Int, Bangumi>() {
+) : DataSource.Factory<Int, CategoryBangumi>() {
     val sourceLiveData = MutableLiveData<CategoryPageDataSource>()
 
-    override fun create(): DataSource<Int, Bangumi> = CategoryPageDataSource(category).apply {
+    override fun create(): DataSource<Int, CategoryBangumi> = CategoryPageDataSource(category).apply {
         sourceLiveData.postValue(this)
     }
 }

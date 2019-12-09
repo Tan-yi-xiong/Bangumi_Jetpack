@@ -28,7 +28,8 @@
             app:layout_behavior="@string/bottom_sheet_behavior">
 
             <androidx.cardview.widget.CardView
-                android:backgroundTint="@android:color/transparent"
+                android:backgroundTintMode="src_in"
+                android:backgroundTint="?android:attr/windowBackground"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:cardCornerRadius="0dp">

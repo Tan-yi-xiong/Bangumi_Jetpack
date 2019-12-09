@@ -7,8 +7,9 @@
 本项目是新手练习项目, 采用MVVM架构, 基于Jetpack部分组件开发;
 打包好的apk已放在release文件夹下, 感兴趣的朋友可以下载体验一下。
 
-# 近期更新（2019.12.8）
-1. 可以替换主题啦
+# 近期更新（2019.12.9）
+1. fix bug
+2. 增加新源
 
 # 功能
 - 视频本地缓存
@@ -26,6 +27,7 @@
 - [silisili](http://www.silisili.me/)
 - [奇米奇米](http://www.qimiqimi.co/)
 - [嘛哩嘛哩](http://www.malimali.com/)
+- [BimiBimi](http://www.bimibimi.tv/)
 
 # 参考的项目
 - [giffun](https://github.com/guolindev/giffun)

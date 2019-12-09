@@ -58,7 +58,7 @@
             android:entries="@array/home_sourch"
             android:entryValues="@array/home_sourch"
             android:key="@string/key_home_page"
-            android:defaultValue="DiliDili"
+            android:defaultValue="BimiBimi"
             android:layout="@layout/coustom_preference_widget_checkbox"
             android:title="@string/title_home_sourch" />
 
@@ -80,7 +80,7 @@
             android:title="@string/title_prioritized_sourch"
             android:entries="@array/search_source"
             android:entryValues="@array/search_source"
-            android:defaultValue="Nico"
+            android:defaultValue="BimiBimi"
             android:layout="@layout/coustom_preference_widget_checkbox"/>
 
 

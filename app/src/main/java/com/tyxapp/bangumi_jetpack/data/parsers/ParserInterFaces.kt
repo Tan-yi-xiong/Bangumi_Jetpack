@@ -22,10 +22,10 @@ interface IHomePageParser {
     suspend fun getCategorItems(): List<CategorItem>
 
     /**
-     * 根据类别词获取该类别番剧
+     * 实际返回是Listing<CategoryBangumi>,不然会报错;  参考[Zzzfun], 早期接口设计失误。
      *
      */
-    fun getCategoryBangumis(category: String): Listing<Bangumi>
+    fun getCategoryBangumis(category: String): Listing<CategoryBangumi>
 
     /**
      * 获取时间表

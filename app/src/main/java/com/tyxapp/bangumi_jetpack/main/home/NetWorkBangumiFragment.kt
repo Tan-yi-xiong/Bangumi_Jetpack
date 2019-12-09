@@ -23,6 +23,7 @@ import com.tyxapp.bangumi_jetpack.data.UIStata
 import com.tyxapp.bangumi_jetpack.main.ListFragment
 import com.tyxapp.bangumi_jetpack.main.home.adapter.DefaultNetWorkBangumiAdapter
 import com.tyxapp.bangumi_jetpack.main.MainViewModel
+import com.tyxapp.bangumi_jetpack.main.home.adapter.BimiNetWorkBangumiAdapter
 import com.tyxapp.bangumi_jetpack.main.home.adapter.DilidiliHomeAdapter
 import com.tyxapp.bangumi_jetpack.main.home.viewmodels.NetWorkBangumiViewModel
 import com.tyxapp.bangumi_jetpack.utilities.*
@@ -106,9 +107,9 @@ class NetWorkBangumiFragment : ListFragment() {
     private fun getHomeAdapter(): RecyclerView.Adapter<RecyclerView.ViewHolder>? {
 
         return when (PrefUtils.getHomeSourceName()) {
-            BangumiSource.Zzzfun.name -> DefaultNetWorkBangumiAdapter()
             BangumiSource.DiliDili.name -> DilidiliHomeAdapter(requireActivity() as AppCompatActivity)
-            else -> throw IllegalAccessException("没有此资源主页")
+            BangumiSource.BimiBimi.name -> BimiNetWorkBangumiAdapter()
+            else -> DefaultNetWorkBangumiAdapter()
         }
     }
 

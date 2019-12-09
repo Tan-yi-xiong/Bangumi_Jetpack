@@ -13,9 +13,7 @@ class CategoryBanumiAdapterFactory {
             return when (sourceName) {
                 BangumiSource.DiliDili.name -> DiliCategoryBanumiAdapter(viewModel)
 
-                BangumiSource.Zzzfun.name -> ZfCategoryBanumiAdapter(viewModel)
-
-                else -> throw IllegalArgumentException("$sourceName 没有适配器")
+                else -> ZfCategoryBanumiAdapter(viewModel)
             }
         }
     }

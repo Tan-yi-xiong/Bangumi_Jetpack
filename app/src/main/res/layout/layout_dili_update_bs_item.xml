@@ -9,7 +9,7 @@
 
         <variable
             name="bangumi"
-            type="com.tyxapp.bangumi_jetpack.data.Bangumi" />
+            type="com.tyxapp.bangumi_jetpack.data.CategoryBangumi" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

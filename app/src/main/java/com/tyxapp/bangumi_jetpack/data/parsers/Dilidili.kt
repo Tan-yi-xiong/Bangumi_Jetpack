@@ -156,10 +156,10 @@ class Dilidili : IHomePageParser, IPlayerVideoParser, IsearchParser {
      *解析最新更新
      *
      */
-    private suspend fun parserUpdateBangmi(document: Document): Pair<String, List<Bangumi>> =
+    private suspend fun parserUpdateBangmi(document: Document): Pair<String, List<CategoryBangumi>> =
         withContext(Dispatchers.IO) {
             val deferredIds = ArrayList<Deferred<String>>()
-            val bangumis = ArrayList<Bangumi>()
+            val bangumis = ArrayList<CategoryBangumi>()
             document.getElementsByClass("book article")[0].children()
                 .run {
                     if (document == pcHomePageDocument) {
@@ -170,7 +170,8 @@ class Dilidili : IHomePageParser, IPlayerVideoParser, IsearchParser {
                 }
                 .forEach { bangumiElement ->
                     deferredIds.add(async { getId(bangumiElement.attrHref()) })
-                    bangumis.add(parserbangumi(bangumiElement))
+                    val bangumi = parserbangumi(bangumiElement)
+                    bangumis.add(CategoryBangumi(bangumi.id, bangumi.name, bangumi.source, bangumi.cover, jiTotal = bangumi.jiTotal))
                 }
             bangumis.forEachWithIndex { index, bangumi ->
                 bangumi.id = deferredIds[index].await()
@@ -265,7 +266,7 @@ class Dilidili : IHomePageParser, IPlayerVideoParser, IsearchParser {
         categorItems
     }
 
-    override fun getCategoryBangumis(category: String): Listing<Bangumi> {
+    override fun getCategoryBangumis(category: String): Listing<CategoryBangumi> {
         return if (category == "最新更新") {
             val factory = UpdateBnagumisDataSourceFactory()
             val pageList = LivePagedListBuilder(factory, 10).build()
@@ -295,10 +296,10 @@ class Dilidili : IHomePageParser, IPlayerVideoParser, IsearchParser {
 
     }
 
-    private inner class UpdateBnagumisDataSource : PageResultDataSourch<Int, Bangumi>(null) {
+    private inner class UpdateBnagumisDataSource : PageResultDataSourch<Int, CategoryBangumi>(null) {
         override fun initialLoad(
             params: LoadInitialParams<Int>,
-            callback: LoadInitialCallback<Int, Bangumi>
+            callback: LoadInitialCallback<Int, CategoryBangumi>
         ) {
             val document = Jsoup.parse(OkhttpUtil.getResponseData("$BASE_URL_PC/zxgx/"))
             CoroutineScope(Dispatchers.Default).launch {
@@ -318,15 +319,15 @@ class Dilidili : IHomePageParser, IPlayerVideoParser, IsearchParser {
             }
         }
 
-        override fun afterload(params: LoadParams<Int>, callback: LoadCallback<Int, Bangumi>) {
+        override fun afterload(params: LoadParams<Int>, callback: LoadCallback<Int, CategoryBangumi>) {
 
         }
 
     }
 
-    private inner class UpdateBnagumisDataSourceFactory : DataSource.Factory<Int, Bangumi>() {
+    private inner class UpdateBnagumisDataSourceFactory : DataSource.Factory<Int, CategoryBangumi>() {
         val dataSourchLiveData = MutableLiveData<UpdateBnagumisDataSource>()
-        override fun create(): DataSource<Int, Bangumi> {
+        override fun create(): DataSource<Int, CategoryBangumi> {
             return UpdateBnagumisDataSource().apply { dataSourchLiveData.postValue(this) }
         }
     }
@@ -443,16 +444,16 @@ private class DiliSearchResultDataSourceFactor(
 
 private class CategoryResultDataSource(
     private val categoryUrl: String
-) : PageResultDataSourch<Int, Bangumi>(null) {
+) : PageResultDataSourch<Int, CategoryBangumi>(null) {
     private val bangumiDetailDao = AppDataBase.getInstance().bangumiDetailDao()
 
     override fun initialLoad(
         params: LoadInitialParams<Int>,
-        callback: LoadInitialCallback<Int, Bangumi>
+        callback: LoadInitialCallback<Int, CategoryBangumi>
     ) {
 
         val document = Jsoup.parse(OkhttpUtil.getResponseData(categoryUrl))
-        val bangumis = ArrayList<Bangumi>()
+        val bangumis = ArrayList<CategoryBangumi>()
         document.getElementById("episode_list").children().forEach { bangumiElement ->
             val id = parserId(bangumiElement.child(0).attrHref())
             val name = bangumiElement.getElementsByClass("ac").text()
@@ -486,7 +487,7 @@ private class CategoryResultDataSource(
         initialLoadLiveData.postValue(InitialLoad(NetWordState.SUCCESS, bangumis.isEmpty()))
     }
 
-    override fun afterload(params: LoadParams<Int>, callback: LoadCallback<Int, Bangumi>) {
+    override fun afterload(params: LoadParams<Int>, callback: LoadCallback<Int, CategoryBangumi>) {
 
     }
 
@@ -494,10 +495,10 @@ private class CategoryResultDataSource(
 
 private class CategoryResultDataSourceFactory(
     private val categoryUrl: String
-) : DataSource.Factory<Int, Bangumi>() {
+) : DataSource.Factory<Int, CategoryBangumi>() {
     val dataSourceLiveData = MutableLiveData<CategoryResultDataSource>()
 
-    override fun create(): DataSource<Int, Bangumi> {
+    override fun create(): DataSource<Int, CategoryBangumi> {
         return CategoryResultDataSource(categoryUrl).apply {
             dataSourceLiveData.postValue(this)
         }

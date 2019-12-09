@@ -10,4 +10,4 @@ class DiliBangumi(
     val intro: String,
     val kandian: String,
     val type: String
-) : CategoryBangumi(id, name, source, cover, isFollow)
+) : CategoryBangumi(id, name, source, cover, isFollow = isFollow)

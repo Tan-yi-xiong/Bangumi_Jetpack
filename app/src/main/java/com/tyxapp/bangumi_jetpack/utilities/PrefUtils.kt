@@ -14,7 +14,7 @@ class PrefUtils {
         fun getHomeSourceName(): String? {
             return context.defaultSharedPreferences.getString(
                 context.getString(R.string.key_home_page),
-                BangumiSource.DiliDili.name
+                BangumiSource.BimiBimi.name
             )
         }
 
@@ -50,7 +50,7 @@ class PrefUtils {
         fun getPrioritizedSearchSourch(): String {
             return context.defaultSharedPreferences.getString(
                 context.getString(R.string.key_prioritized_search_sourch),
-                BangumiSource.Nico.name
+                BangumiSource.BimiBimi.name
             )!!
         }
 

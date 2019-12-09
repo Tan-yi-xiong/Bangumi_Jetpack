@@ -16,6 +16,7 @@
         android:orientation="vertical">
 
         <androidx.cardview.widget.CardView
+            android:backgroundTintMode="src_in"
             android:backgroundTint="?android:attr/windowBackground"
             android:id="@+id/carView"
             android:layout_width="match_parent"

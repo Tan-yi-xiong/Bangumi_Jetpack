@@ -51,7 +51,7 @@ class ZfCategoryBanumiAdapter(
     }
 
     companion object {
-        private val DIFF_CALLBACK = object : DiffUtil.ItemCallback<CategoryBangumi>() {
+        val DIFF_CALLBACK = object : DiffUtil.ItemCallback<CategoryBangumi>() {
             override fun areItemsTheSame(
                 oldItem: CategoryBangumi,
                 newItem: CategoryBangumi

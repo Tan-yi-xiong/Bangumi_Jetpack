@@ -47,6 +47,12 @@ class PlayerViewModel(
                     } else {
                         setCurrentJi(currentJiPositionLiveData.value!!)
                     }
+
+                    // 记录选中的线路
+                    bangumiDetail.value?.let {
+                        it.lastWatchLine = position
+                        playerRepository.updateBangumiDetail(it)
+                    }
                 })
             }
         }

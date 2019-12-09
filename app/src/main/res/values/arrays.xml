@@ -53,10 +53,12 @@
 
     <array name="home_sourch">
         <item>Zzzfun</item>
+        <item>BimiBimi</item>
         <item>DiliDili</item>
     </array>
 
     <array name="search_source">
+        <item>BimiBimi</item>
         <item>Nico</item>
         <item>Zzzfun</item>
         <item>DiliDili</item>

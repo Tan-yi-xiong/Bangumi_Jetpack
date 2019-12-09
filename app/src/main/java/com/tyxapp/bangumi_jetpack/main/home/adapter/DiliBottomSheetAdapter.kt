@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.tyxapp.bangumi_jetpack.R
 import com.tyxapp.bangumi_jetpack.data.Bangumi
+import com.tyxapp.bangumi_jetpack.data.CategoryBangumi
 import com.tyxapp.bangumi_jetpack.databinding.LayoutDiliUpdateBsItemBinding
 import com.tyxapp.bangumi_jetpack.main.BANGUMI_DIFF_CALLBACK
 import com.tyxapp.bangumi_jetpack.player.ARG_BANGUMI_SOURCE
@@ -19,7 +20,7 @@ import com.tyxapp.bangumi_jetpack.player.PlayerActivity
 import com.tyxapp.bangumi_jetpack.utilities.toPx
 
 class DiliBottomSheetAdapter :
-    ListAdapter<Bangumi, DiliBottomSheetAdapter.ViewHolder>(BANGUMI_DIFF_CALLBACK) {
+    ListAdapter<CategoryBangumi, DiliBottomSheetAdapter.ViewHolder>(ZfCategoryBanumiAdapter.DIFF_CALLBACK) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder(
             DataBindingUtil.inflate(
@@ -71,7 +72,7 @@ class DiliBottomSheetAdapter :
             }
         }
 
-        fun bind(bangumi: Bangumi) {
+        fun bind(bangumi: CategoryBangumi) {
             bind.bangumi = bangumi
             bind.cover.setOnClickListener {
                 val intent = Intent(it.context, PlayerActivity::class.java)

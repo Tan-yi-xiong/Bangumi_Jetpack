@@ -1,20 +1,8 @@
 package com.tyxapp.bangumi_jetpack
 
-import com.tyxapp.bangumi_jetpack.data.parsers.Dilidili
-import com.tyxapp.bangumi_jetpack.data.parsers.Qimi
-import com.tyxapp.bangumi_jetpack.data.parsers.Silisili
-import com.tyxapp.bangumi_jetpack.repository.MainRepository
-import com.tyxapp.bangumi_jetpack.utilities.OkhttpUtil
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
+import com.tyxapp.bangumi_jetpack.data.parsers.BimiBimi
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.withContext
-import okhttp3.FormBody
-import okhttp3.Request
-import org.junit.Assert.assertEquals
 import org.junit.Test
-import java.net.URLEncoder
-import java.util.*
 import java.util.concurrent.locks.Lock
 import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.thread
@@ -28,7 +16,6 @@ class ExampleUnitTest {
     @Test
     fun addition_isCorrect() {
         runBlocking {
-            print( MainRepository().getAppVersionFromNet())
 
         }
     }
@@ -57,10 +44,8 @@ class ExampleUnitTest {
     @Test
     fun parserTest() {
         runBlocking {
-            val dilidili = Dilidili()
-            dilidili.getJiList("hpqy3")
-            dilidili.getRecommendBangumis("hpqy3").forEach {
-                println(it)
+            BimiBimi().getRecommendBangumis("2019").forEach {
+                println(it.name)
             }
         }
     }

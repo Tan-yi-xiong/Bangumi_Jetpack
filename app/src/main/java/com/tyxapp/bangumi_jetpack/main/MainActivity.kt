@@ -58,22 +58,9 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
         defaultSharedPreferences.registerOnSharedPreferenceChangeListener(this)
 
-        val homeKey = PrefUtils.getHomeSourceName()
 
         //创建主页Repository供主页的Fragment使用
-        mainViewModel.homeDataRepository.value = when (homeKey) {
-            BangumiSource.Zzzfun.name -> InjectorUtils.getHomeDataRepository(
-                ParserFactory.createHomePageParser(
-                    BangumiSource.Zzzfun
-                )
-            )
-            BangumiSource.DiliDili.name -> InjectorUtils.getHomeDataRepository(
-                ParserFactory.createHomePageParser(
-                    BangumiSource.DiliDili
-                )
-            )
-            else -> throw IllegalAccessException("没有此主页")
-        }
+        setHomeDataRepository()
 
         //drawerLayout能否滑出navigationView
         drawerLayout = findViewById(R.id.drawerlayout)
@@ -116,19 +103,30 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         }
     }
 
+    private fun setHomeDataRepository() {
+        mainViewModel.homeDataRepository.value = when (PrefUtils.getHomeSourceName()) {
+            BangumiSource.Zzzfun.name -> InjectorUtils.getHomeDataRepository(
+                ParserFactory.createHomePageParser(
+                    BangumiSource.Zzzfun
+                )
+            )
+            BangumiSource.DiliDili.name -> InjectorUtils.getHomeDataRepository(
+                ParserFactory.createHomePageParser(
+                    BangumiSource.DiliDili
+                )
+            )
+            BangumiSource.BimiBimi.name -> InjectorUtils.getHomeDataRepository(
+                ParserFactory.createHomePageParser(
+                    BangumiSource.BimiBimi
+                )
+            )
+            else -> throw IllegalAccessException("没有此主页")
+        }
+    }
+
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
         if (key == getString(R.string.key_home_page)) {
-            when (PrefUtils.getHomeSourceName()) {
-                BangumiSource.Zzzfun.name -> {
-                    mainViewModel.homeDataRepository.value =
-                        InjectorUtils.getHomeDataRepository(Zzzfun())
-                }
-
-                BangumiSource.DiliDili.name -> {
-                    mainViewModel.homeDataRepository.value =
-                        InjectorUtils.getHomeDataRepository(Dilidili())
-                }
-            }
+            setHomeDataRepository()
         } else if (key == getString(R.string.key_dl_unlock)) {
             val lockMode = if (PrefUtils.getDrawerLayoutIsUnLock()) {
                 DrawerLayout.LOCK_MODE_UNLOCKED
