@@ -13,6 +13,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import master.flame.danmaku.danmaku.loader.android.DanmakuLoaderFactory
 import master.flame.danmaku.danmaku.parser.BaseDanmakuParser
+import okhttp3.Request
 import org.jetbrains.anko.collections.forEachWithIndex
 import org.json.JSONObject
 import org.jsoup.Jsoup
@@ -106,8 +107,12 @@ class BimiBimi : IHomePageParser, IPlayerVideoParser, IsearchParser {
     override suspend fun getPlayerUrl(id: String, ji: Int, line: Int): VideoUrl = withContext(Dispatchers.IO) {
         try {
             val url = "$BASE_URL/bangumi/$id/play/${line + 1}/${ji + 1}/"
-            val document = Jsoup.parse(OkhttpUtil.getResponseData(url))
-            val jsonData = document.getElementById("video").child(0).toString().run {
+            val request = Request.Builder()
+                .url(url)
+                .addHeader("User-Agent", PHONE_REQUEST)
+                .build()
+            val document = Jsoup.parse(OkhttpUtil.getResponseData(request))
+            val jsonData = document.getElementsByClass("leo-player")[0].child(0).toString().run {
                 substring(indexOf("{"), lastIndexOf("}") + 1)
             }
             val jsonObject = JSONObject(jsonData)
@@ -233,7 +238,13 @@ class BimiBimi : IHomePageParser, IPlayerVideoParser, IsearchParser {
                 val id = parserid(infoElement.get_a_tags()[0].attrHref())!!
                 val name = infoElement.get_a_tags()[0].text()
                 val jiTotal = infoElement.getElementsByTag("span").text()
-                val cover = bangumiElement.getElementsByTag("img")[0].attrSrc()
+                val cover = bangumiElement.getElementsByTag("img")[0].attrSrc().run {
+                    if (!contains("http")) {
+                        "$BASE_URL$this"
+                    } else {
+                        this
+                    }
+                }
                 dayBangumis.add(Bangumi(id, BangumiSource.BimiBimi, name, cover, jiTotal))
             }
             weekBangumis.add(dayBangumis)
@@ -344,9 +355,9 @@ private class BimiCategoryResultDataSource(
         val page = 1
         val categoryKey = getCategoryKey(categoryWord)
         val url = if (categoryKey == null) {
-            "$BASE_URL/vodshow/riman---$encodeSearchWord--------/"
+            "$BASE_URL/vodshow/fanzu---$encodeSearchWord-----$page---"
         } else {
-            "$BASE_URL/type/$categoryKey/"
+            "$BASE_URL/type/$categoryKey-$page/"
         }
         val result = parserCategoryBagnumis(Jsoup.parse(OkhttpUtil.getResponseData(url)))
         callback.onResult(result, null, if (result.isEmpty()) null else page + 1)
@@ -357,9 +368,9 @@ private class BimiCategoryResultDataSource(
         val page = params.key
         val categoryKey = getCategoryKey(categoryWord)
         val url = if (categoryKey == null) {
-            "$BASE_URL/vodshow/fanzu---$encodeSearchWord--------/"
+            "$BASE_URL/vodshow/fanzu---$encodeSearchWord-----$page---"
         } else {
-            "$BASE_URL/type/$categoryKey/"
+            "$BASE_URL/type/$categoryKey-$page/"
         }
         val result = parserCategoryBagnumis(Jsoup.parse(OkhttpUtil.getResponseData(url)))
         callback.onResult(result, if (result.isEmpty()) null else page + 1)

@@ -12,19 +12,16 @@ import android.widget.SeekBar
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.kk.taurus.playerbase.event.EventKey
-import com.kk.taurus.playerbase.log.PLog
-import com.kk.taurus.playerbase.player.IPlayer
 import com.kk.taurus.playerbase.utils.TimeUtil
 import com.tyxapp.bangumi_jetpack.databinding.LayoutGestureCoverBinding
-import com.tyxapp.bangumi_jetpack.player.STATE_BAR_CODE
-import com.tyxapp.bangumi_jetpack.player.STATE_BAR_KEY
 import com.tyxapp.bangumi_jetpack.player.UPDATE_SEEK_CODE
 import com.tyxapp.bangumi_jetpack.player.UPDATE_SEEK_KEY
 import com.tyxapp.bangumi_jetpack.utilities.isGone
 import com.tyxapp.bangumi_jetpack.utilities.toPx
 import kotlin.math.abs
+import kotlin.math.max
 
-private const val SEEK_STEP = 30
+private const val BASE_SEEK = 30f
 private const val MAX_BRIGHTNESS = 255
 
 class GestureCover(
@@ -40,6 +37,7 @@ class GestureCover(
 
     private val mBundle = Bundle()
 
+    private var seekStep = 30f
     private var subjoinValue: Float = 0f //快进值
     private var hasSeekTo = false // 是否进行过进度调节
     private var downY = 0f
@@ -68,7 +66,7 @@ class GestureCover(
     private val screenWidth: Int
         get() = Point().run {
             mActivity.windowManager.defaultDisplay.getSize(this)
-            this.x
+            max(this.x, this.y)
         }
 
 
@@ -92,6 +90,7 @@ class GestureCover(
     override fun onDown(event: MotionEvent?) {
         event ?: return
         downY = event.y
+        seekStep = BASE_SEEK * (2960 / screenWidth)
         if (downY <= stateBarHeight) {
             isDownToStateBar = true
         } else {
@@ -204,7 +203,7 @@ class GestureCover(
         }
 
         val currentTime = playerStateGetter?.currentPosition ?: 0
-        subjoinValue = distanceX * SEEK_STEP + currentTime
+        subjoinValue = distanceX * seekStep + currentTime
         val currentTimeText = TimeUtil.getTimeSmartFormat(currentTime.toLong())
         val subjoinTimeText = TimeUtil.getTimeSmartFormat(subjoinValue.toLong())
         mSeekText.text = "$currentTimeText/$subjoinTimeText"

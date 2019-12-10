@@ -155,12 +155,12 @@ class PlayerActivity : BasePlayerActivity() {
         //BaseVideoView
         setReceiverGroup(ReceiverGroup().apply {
             addReceiver(
-                ControlCover::class.java.simpleName,
-                ControlCover(this@PlayerActivity, viewModel)
-            )
-            addReceiver(
                 DanmuCover::class.java.simpleName,
                 DanmuCover(this@PlayerActivity, viewModel)
+            )
+            addReceiver(
+                ControlCover::class.java.simpleName,
+                ControlCover(this@PlayerActivity, viewModel)
             )
             addReceiver(LoadingCover::class.java.simpleName, LoadingCover(this@PlayerActivity))
             addReceiver(GestureCover::class.java.simpleName, GestureCover(this@PlayerActivity))

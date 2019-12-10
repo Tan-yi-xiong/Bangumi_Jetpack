@@ -47,7 +47,7 @@
             android:maxLines="2"
             android:minLines="2"
             android:text="@{bangumiDetail.name}"
-            android:textColor="@android:color/black"
+            android:textColor="?android:attr/textColorPrimary"
             android:textSize="13sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="@+id/cardView"

@@ -15,7 +15,9 @@ import com.tyxapp.bangumi_jetpack.utilities.startPlayerActivity
 import java.text.SimpleDateFormat
 import java.util.*
 
-class HistoryAdapter : PagedListAdapter<BangumiDetail, HistoryBagnuimisViewHolder>(
+class HistoryAdapter(
+    private val viewModel: HistoryViewModel
+) : PagedListAdapter<BangumiDetail, HistoryBagnuimisViewHolder>(
     BANGUMI_DETAIL_DIFFUTIL
 ) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HistoryBagnuimisViewHolder {
@@ -23,7 +25,8 @@ class HistoryAdapter : PagedListAdapter<BangumiDetail, HistoryBagnuimisViewHolde
             DataBindingUtil.inflate(
                 LayoutInflater.from(parent.context),
                 R.layout.bangumi_follow_history_item, parent, false
-            )
+            ),
+            viewModel
         )
     }
 
@@ -39,12 +42,20 @@ class HistoryAdapter : PagedListAdapter<BangumiDetail, HistoryBagnuimisViewHolde
 }
 
 class HistoryBagnuimisViewHolder(
-    private val binding: BangumiFollowHistoryItemBinding
+    private val binding: BangumiFollowHistoryItemBinding,
+    private val viewModel: HistoryViewModel
 ) : RecyclerView.ViewHolder(binding.root) {
 
     private val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault())
 
     init {
+        binding.root.setOnLongClickListener {
+            binding.bangumi?.let { bangumiDetail ->
+                viewModel.onHistoryItemLongClick(bangumiDetail)
+            }
+            true
+        }
+
         binding.root.setOnClickListener { view ->
             binding.bangumi?.let {
                 (view.context as MainActivity).startPlayerActivity(it.id, it.source.name)

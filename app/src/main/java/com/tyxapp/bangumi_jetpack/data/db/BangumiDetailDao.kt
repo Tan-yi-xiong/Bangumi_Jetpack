@@ -22,7 +22,7 @@ interface BangumiDetailDao {
     @Update
     suspend fun update(bangumiDetail: BangumiDetail)
 
-    @Query("SELECT * FROM bangumi_detail ORDER BY lastWatchTime DESC")
+    @Query("SELECT * FROM bangumi_detail WHERE lastWatchTime>0 ORDER BY lastWatchTime DESC")
     fun getHistoryBangumis(): DataSource.Factory<Int, BangumiDetail>
 
     @Query("SELECT * FROM BANGUMI_DETAIL WHERE isDownLoad=1")

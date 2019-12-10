@@ -17,6 +17,7 @@ import com.tyxapp.bangumi_jetpack.main.ToolbarListFragment
 import com.tyxapp.bangumi_jetpack.main.MainActivity
 import com.tyxapp.bangumi_jetpack.main.NAVIGATION_VIEW_STACK_NAME
 import com.tyxapp.bangumi_jetpack.utilities.*
+import com.tyxapp.bangumi_jetpack.views.snack
 
 class HistoryFragment : ToolbarListFragment() {
     private val viewModel: HistoryViewModel by viewModels {
@@ -67,6 +68,8 @@ class HistoryFragment : ToolbarListFragment() {
                     showContent()
                 }
             }
+
+            alertMessage.observe { mRecyclerView.snack(it) }
         }
     }
 
@@ -87,7 +90,7 @@ class HistoryFragment : ToolbarListFragment() {
             }
         }
 
-        mRecyclerView.adapter = HistoryAdapter()
+        mRecyclerView.adapter = HistoryAdapter(viewModel)
     }
 
     companion object {
