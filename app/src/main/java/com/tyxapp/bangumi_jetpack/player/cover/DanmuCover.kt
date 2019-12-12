@@ -17,6 +17,7 @@ import com.tyxapp.bangumi_jetpack.R
 import com.tyxapp.bangumi_jetpack.player.PlayerViewModel
 import com.tyxapp.bangumi_jetpack.player.SHOW_DANMU_SETTING_CODE
 import com.tyxapp.bangumi_jetpack.player.bottomsheet.DanmuSettingBottomSheet
+import com.tyxapp.bangumi_jetpack.utilities.LOGI
 import master.flame.danmaku.controller.DrawHandler
 import master.flame.danmaku.danmaku.model.BaseDanmaku
 import master.flame.danmaku.danmaku.model.DanmakuTimer
@@ -56,34 +57,44 @@ class DanmuCover(
         }
 
     override fun onPlayerEvent(eventCode: Int, bundle: Bundle?) {
-        if (eventCode == OnPlayerEventListener.PLAYER_EVENT_ON_STATUS_CHANGE) {
-            when (bundle!!.getInt(EventKey.INT_DATA)) {
-
-                IPlayer.STATE_PAUSED -> if (checkDanmakuView()) mDanmakuView.pause()
-
-                IPlayer.STATE_STOPPED -> if (checkDanmakuView()) mDanmakuView.stop()
-
-                IPlayer.STATE_STARTED -> if (checkDanmakuView() && mDanmakuView.isPaused) mDanmakuView.resume()
-
+        when (eventCode) {
+            OnPlayerEventListener.PLAYER_EVENT_ON_PAUSE -> {
+                if (checkDanmakuViewHasInit()) {
+                    mDanmakuView.pause()
+                }
             }
-        } else if (OnPlayerEventListener.PLAYER_EVENT_ON_SEEK_TO == eventCode) {
-            if (checkDanmakuView()) {
-                val position = bundle!!.getInt(EventKey.INT_DATA).toLong()
-                mDanmakuView.seekTo(if (position < 0) 0 else position)
+
+            OnPlayerEventListener.PLAYER_EVENT_ON_START -> {
+                if (checkDanmakuViewHasInit()) {
+                    mDanmakuView.start()
+                }
             }
-        } else if (OnPlayerEventListener.PLAYER_EVENT_ON_START == eventCode ||
-            OnPlayerEventListener.PLAYER_EVENT_ON_BUFFERING_END == eventCode) {
-            if (checkDanmakuView()) {
-                mDanmakuView.start()
+
+            OnPlayerEventListener.PLAYER_EVENT_ON_RESUME -> {
+                if (checkDanmakuViewHasInit()) {
+                    mDanmakuView.resume()
+                }
             }
-        } else if (OnPlayerEventListener.PLAYER_EVENT_ON_BUFFERING_START == eventCode) {
-            if (checkDanmakuView()) {
-                mDanmakuView.pause()
+
+            OnPlayerEventListener.PLAYER_EVENT_ON_SEEK_TO -> {
+                if (checkDanmakuViewHasInit()) {
+                    mDanmakuView.pause()
+                    val position = bundle!!.getInt(EventKey.INT_DATA).toLong()
+                    mDanmakuView.seekTo(if (position < 0) 0 else position)
+                }
+            }
+
+            OnPlayerEventListener.PLAYER_EVENT_ON_SEEK_COMPLETE -> {
+                if (checkDanmakuViewHasInit()) {
+                    if (mDanmakuView.isPaused) {
+                        mDanmakuView.resume()
+                    }
+                }
             }
         }
     }
 
-    private fun checkDanmakuView(): Boolean =
+    private fun checkDanmakuViewHasInit(): Boolean =
         ::mDanmakuView.isInitialized && mDanmakuView.isPrepared
 
     override fun onReceiverEvent(eventCode: Int, bundle: Bundle?) {
@@ -104,7 +115,7 @@ class DanmuCover(
     override fun onReceiverBind() {
         super.onReceiverBind()
         mActivity.defaultSharedPreferences.registerOnSharedPreferenceChangeListener(mListener)
-        viewModel.baseDanmakuParserLiveData.observe(mActivity) {
+        viewModel.baseDanmakuParserLiveData.observe(mActivity) { danmakuParser ->
             if (!::mDanmakuView.isInitialized) {
                 initView()
             }
@@ -117,9 +128,6 @@ class DanmuCover(
                 if (!userSettingShow && mDanmakuView.isShown) {
                     mDanmakuView.hide()
                 }
-                if (playerStateGetter?.state == IPlayer.STATE_STARTED) {
-                    mDanmakuView.start(playerStateGetter?.currentPosition?.toLong() ?: 0L)
-                }
             }
 
             if (mDanmakuView.isPrepared && ::mBaseDanmakuParser.isInitialized) {
@@ -127,8 +135,8 @@ class DanmuCover(
                 mDanmakuView.release()
             }
 
-            mBaseDanmakuParser = it
-            mDanmakuView.prepare(it, mDanmakuContext)
+            mBaseDanmakuParser = danmakuParser
+            mDanmakuView.prepare(danmakuParser, mDanmakuContext)
         }
     }
 
@@ -192,7 +200,7 @@ class DanmuCover(
 
 
     override fun onReceiverUnBind() {
-        if (checkDanmakuView()) {
+        if (checkDanmakuViewHasInit()) {
             mDanmakuView.release()
         }
         mActivity.defaultSharedPreferences.unregisterOnSharedPreferenceChangeListener(mListener)

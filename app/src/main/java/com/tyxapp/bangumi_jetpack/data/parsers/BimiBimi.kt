@@ -326,7 +326,6 @@ private class BimiSearchResultDataSource(
     override fun afterload(params: LoadParams<Int>, callback: LoadCallback<Int, Bangumi>) {
         val page = params.key
         val url = "$BASE_URL/vod/search/wd/$encodeSearchWord/page/$page/"
-        LOGI(url)
         val document = Jsoup.parse(OkhttpUtil.getResponseData(url))
         val result = parserSearchBangumis(document)
 
@@ -403,7 +402,7 @@ private class BimiCategoryResultDataSource(
             "新番放送" -> "riman"
             "国产动漫" -> "guoman"
             "番组计划" -> "fanzu"
-            "剧场动漫" -> "juchang"
+            "剧场动画" -> "juchang"
             "影视" -> "move"
             else -> null
         }
