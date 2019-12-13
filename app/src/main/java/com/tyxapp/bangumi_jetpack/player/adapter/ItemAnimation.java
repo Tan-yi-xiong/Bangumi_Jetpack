@@ -640,14 +640,14 @@ public class ItemAnimation extends SimpleItemAnimator {
      * If the payload list is not empty, DefaultItemAnimator returns <code>true</code>.
      * When this is the case:
      * <ul>
-     * <li>If you override {@link #animateChange(RecyclerView.ViewHolder, RecyclerView.ViewHolder, int, int, int, int)}, both
+     * <header_img_light>If you override {@link #animateChange(RecyclerView.ViewHolder, RecyclerView.ViewHolder, int, int, int, int)}, both
      * ViewHolder arguments will be the same instance.
-     * </li>
-     * <li>
+     * </header_img_light>
+     * <header_img_light>
      * If you are not overriding {@link #animateChange(RecyclerView.ViewHolder, RecyclerView.ViewHolder, int, int, int, int)},
      * then DefaultItemAnimator will call {@link #animateMove(RecyclerView.ViewHolder, int, int, int, int)} and
      * run a move animation instead.
-     * </li>
+     * </header_img_light>
      * </ul>
      */
     @Override

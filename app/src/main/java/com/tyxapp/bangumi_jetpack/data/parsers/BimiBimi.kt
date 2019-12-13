@@ -272,13 +272,13 @@ class BimiBimi : IHomePageParser, IPlayerVideoParser, IsearchParser {
 }
 
 /**
- * <li class="item"><a href="/bangumi/bi/2127/" title="无节操☆Bitch社" target="_blank"class="img">
+ * <header_img_light class="item"><a href="/bangumi/bi/2127/" title="无节操☆Bitch社" target="_blank"class="img">
 <img class="lazy" data-original="https://wxt.sinaimg.cn/large/006MDjU7ly1g9o2o2vxoxj30ak0extaa.jpg" src="/template/bimibimi_pc/images/grey.png" alt="无节操☆Bitch社" width="170" height="224"/><span class="mask"><p>导演：</p><i class="iconfont icon-play"></i></span></a>
 <div class="info">
 <a href="/bangumi/bi/2127/" title="无节操☆Bitch社"target="_blank">无节操☆Bitch社</a>
 <p><span class="fl">全2话</span></p>
 </div>
-</li>
+</header_img_light>
  */
 private fun parserBangumi(bangumiElement: Element): Bangumi {
     val infoElement = bangumiElement.getElementsByClass("info")[0]

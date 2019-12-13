@@ -46,6 +46,10 @@
     <string name="text_get_permission">去授权</string>
     <string name="text_app_update_title">更新提示</string>
     <string name="text_app_update_message">发现了新版本, 喜欢的朋友可以更新一波哦~</string>
+    <string name="text_setting_header_image">设置图片</string>
+    <string name="text_setting_header_image_msg">尽量选择不要太大的图片哦~</string>
+    <string name="text_setting_header_image_coustom">去选图</string>
+    <string name="text_setting_header_image_local">恢复原图</string>
     <string name="text_app_update_now">去下载</string>
 
 
@@ -85,4 +89,5 @@
     <string name="text_day_night">夜间模式</string>
     <string name="title_theme">界面</string>
     <string name="key_theme">key_theme</string>
+    <string name="key_CustomHeaderImagePath">key_CustomHeaderImagePath</string>
 </resources>

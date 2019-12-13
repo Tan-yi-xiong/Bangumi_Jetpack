@@ -1,12 +1,20 @@
 package com.tyxapp.bangumi_jetpack.main
 
+import android.Manifest
+import android.app.Activity
+import android.content.Intent
 import android.content.SharedPreferences
+import android.content.pm.PackageManager
+import android.database.Cursor
 import android.graphics.Color
+import android.graphics.drawable.Drawable
 import android.os.Bundle
+import android.provider.MediaStore
 import android.view.Gravity
 import android.view.MenuItem
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import androidx.core.view.forEach
 import androidx.core.view.get
 import androidx.drawerlayout.widget.DrawerLayout
@@ -16,23 +24,30 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.lifecycle.observe
 import androidx.navigation.fragment.NavHostFragment
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.target.Target
 import com.google.android.material.navigation.NavigationView
 import com.tyxapp.bangumi_jetpack.BangumiApp
 import com.tyxapp.bangumi_jetpack.R
 import com.tyxapp.bangumi_jetpack.data.BangumiSource
-import com.tyxapp.bangumi_jetpack.data.parsers.Dilidili
 import com.tyxapp.bangumi_jetpack.data.parsers.ParserFactory
-import com.tyxapp.bangumi_jetpack.data.parsers.Zzzfun
 import com.tyxapp.bangumi_jetpack.utilities.*
 import com.tyxapp.bangumi_jetpack.views.alertBuilder
 import com.tyxapp.bangumi_jetpack.views.noButton
 import com.tyxapp.bangumi_jetpack.views.yesButton
-import kotlinx.coroutines.*
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.jetbrains.anko.browse
 import org.jetbrains.anko.defaultSharedPreferences
+import org.jetbrains.anko.toast
+
 
 // 通知栏intent key
 const val START_DOWNLOAD = "START_DOWNLOAD"
+const val IMAGE_REQUEST_CODE = 10
 
 class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceChangeListener {
 
@@ -40,6 +55,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         ViewModelProviders.of(this, MainViewModelFactor()).get(MainViewModel::class.java)
     }
     private lateinit var drawerLayout: DrawerLayout
+    private lateinit var navigationView: NavigationView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         ThemeUtil.setTheme(this)
@@ -68,12 +84,35 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
             drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
         }
 
+        navigationView = findViewById(R.id.navigationView)
+        with(navigationView) {
+            getHeaderView(0).setOnClickListener {
+                alertBuilder(R.string.text_setting_header_image, R.string.text_setting_header_image_msg) {
+                    yesButton(R.string.text_setting_header_image_coustom) {
+                        PermissionUtil.requestPermissions(this@MainActivity,
+                            arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE)) { allDenied ->
+                            if (allDenied) {
+                                selectImage()
+                            }
+                        }
+                    }
 
-        //navigationView设置
-        val navigationView = findViewById<NavigationView>(R.id.navigationView)
-        //加载头部图片
-        Glide.with(this).load(R.drawable.header_image)
-            .into(navigationView.getHeaderView(0) as ImageView)
+                    noButton(R.string.text_setting_header_image_local) {
+                        loadLocalmage()
+                        PrefUtils.setCustomHeaderImagePath(null)
+                        it.cancel()
+                    }
+                }.show()
+            }
+
+            val hearderImagePath = PrefUtils.getCustomHeaderImagePath()
+            if (hearderImagePath == null) {
+                loadLocalmage()
+            } else {
+                loadNavigationViewHeadImage(hearderImagePath)
+            }
+        }
+
 
         val navGraphIds = listOf(
             R.navigation.home,
@@ -101,6 +140,26 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
                 noButton { it.cancel() }
             }.show()
         }
+    }
+
+    private fun loadLocalmage() {
+        if (PrefUtils.isDayNight()) {
+            loadNavigationViewHeadImage(R.drawable.header_img_night)
+        } else {
+            loadNavigationViewHeadImage(R.drawable.header_img_light)
+        }
+    }
+
+    private fun selectImage() {
+        val intent = Intent(
+            Intent.ACTION_PICK,
+            MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+        )
+        startActivityForResult(intent, IMAGE_REQUEST_CODE)
+    }
+
+    private fun loadNavigationViewHeadImage(res: Any) {
+        (navigationView.getHeaderView(0) as ImageView).bindImage(res)
     }
 
     private fun setHomeDataRepository() {
@@ -138,7 +197,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     }
 
     override fun onBackPressed() {
-        if (drawerLayout.isDrawerOpen(Gravity.LEFT)) {
+        if (::drawerLayout.isInitialized && drawerLayout.isDrawerOpen(Gravity.LEFT)) {
             drawerLayout.closeDrawer(Gravity.LEFT)
         } else {
             super.onBackPressed()
@@ -161,6 +220,45 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
             R.anim.nav_default_exit_anim
         )
         BangumiApp.getContext().startActivity(cyIntent)
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (grantResults.isNotEmpty() && requestCode == PERMISSION_REQUEST_CODE) {
+            if (permissions[0] == Manifest.permission.WRITE_EXTERNAL_STORAGE && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                selectImage()
+            } else {
+                if (!ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                    PermissionUtil.showSettingPermissionsDialog(this)
+                } else {
+                    toast("你取消了授权")
+                }
+            }
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        when(requestCode) {
+            IMAGE_REQUEST_CODE -> {
+                if (resultCode == Activity.RESULT_OK) {
+                    try {
+                        val imgUrl = data!!.data!!
+                        val cursor = contentResolver.query(
+                            imgUrl, arrayOf(MediaStore.Images.Media.DATA),
+                            null, null, null)!!
+                        cursor.moveToFirst()
+                        val columnIndex = cursor.getColumnIndex(MediaStore.Images.Media.DATA)
+                        val imgPath = cursor.getString(columnIndex)
+                        cursor.close()
+                        loadNavigationViewHeadImage(imgPath)
+                        PrefUtils.setCustomHeaderImagePath(imgPath)
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                    }
+                }
+            }
+        }
     }
 }
 

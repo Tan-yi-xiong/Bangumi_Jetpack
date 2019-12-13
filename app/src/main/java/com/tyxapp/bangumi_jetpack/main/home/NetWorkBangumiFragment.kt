@@ -2,6 +2,7 @@ package com.tyxapp.bangumi_jetpack.main.home
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -93,7 +94,11 @@ class NetWorkBangumiFragment : ListFragment() {
                     isRefreshing = false
                 }
             }
-            setColorSchemeColors(ContextCompat.getColor(requireContext(), R.color.colorPrimary))
+            val swipeRefreshLayoutColor: Int = TypedValue().run {
+                requireContext().theme.resolveAttribute(android.R.attr.colorPrimary, this, true)
+                this.data
+            }
+            setColorSchemeColors(swipeRefreshLayoutColor)
         }
 
         //setRecyclerView

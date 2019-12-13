@@ -80,6 +80,17 @@ class PrefUtils {
                 context.resources.getStringArray(R.array.theme_name)[0]
             )!!
         }
+        
+        fun getCustomHeaderImagePath(): String? {
+            return context.defaultSharedPreferences.getString(
+                context.getString(R.string.key_CustomHeaderImagePath),
+                null
+            )
+        }
+        
+        fun setCustomHeaderImagePath(path: String?) {
+            context.defaultSharedPreferences.edit { putString(context.getString(R.string.key_CustomHeaderImagePath), path) }
+        }
     }
 
 }

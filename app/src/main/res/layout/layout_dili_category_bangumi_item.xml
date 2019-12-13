@@ -93,20 +93,20 @@
             tools:text="safasdfsadfasdfasdf" />
 
         <TextView
-            tools:text="safasdfsadfasdfasdf"
             android:id="@+id/intro"
-            android:scrollbarSize="0dp"
             android:layout_width="0dp"
-            android:layout_height="0dp"
+            android:layout_height="wrap_content"
             android:layout_marginTop="3dp"
-            android:layout_marginEnd="16dp"
             android:ellipsize="end"
             android:maxLines="3"
+            android:scrollbarSize="0dp"
+            android:scrollbars="none"
             android:text="@{diliBangumi.intro}"
             app:layout_constraintBottom_toBottomOf="@+id/cardView2"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/name"
-            app:layout_constraintTop_toBottomOf="@+id/type" />
+            app:layout_constraintEnd_toEndOf="@+id/type"
+            app:layout_constraintStart_toStartOf="@+id/type"
+            app:layout_constraintTop_toBottomOf="@+id/type"
+            tools:text="safasdfsadfasdfasdf \n fghfgh \n sdfgd \n" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

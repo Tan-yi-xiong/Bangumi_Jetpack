@@ -1,6 +1,7 @@
 package com.tyxapp.bangumi_jetpack.main
 
 import android.os.Bundle
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.tyxapp.bangumi_jetpack.R
 import com.tyxapp.bangumi_jetpack.databinding.ListFragmentBinding
+import com.tyxapp.bangumi_jetpack.utilities.LOGI
 
 abstract class ListFragment : Fragment() {
     lateinit var bind: ListFragmentBinding

@@ -143,18 +143,20 @@
 
     <!--    DarkTheme-->
     <style name="BaseDarkTheme" parent="ThemeOverlay.MaterialComponents.Dark">
+        <item name="android:navigationBarColor">@android:color/black</item>
         <item name="mainSearchMeunColor">@android:color/tertiary_text_dark</item>
         <item name="lineColor">@android:color/transparent</item>
         <item name="android:colorBackground">@android:color/black</item>
         <item name="colorSurface">@android:color/black</item>
         <item name="android:windowBackground">?android:colorBackground</item>
-        <item name="playerToolBarColor">?android:attr/windowBackground</item>
         <item name="android:toolbarStyle">@style/ThemeOverlay.MaterialComponents.Dark</item>
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">?android:colorBackground</item>
         <item name="colorAccent">@color/colorAccent</item>
         <item name="colorControlNormal">@color/mdtp_white</item>
         <item name="android:windowLightStatusBar" tools:targetApi="m">false</item>
+
+        <item name="playerToolBarColor">?android:attr/windowBackground</item>
         <item name="mainSearchBarColor">@color/material_grey_850</item>
         <item name="imageMask">#33000000</item>
         <item name="appBarLayoutColor">?android:attr/windowBackground</item>

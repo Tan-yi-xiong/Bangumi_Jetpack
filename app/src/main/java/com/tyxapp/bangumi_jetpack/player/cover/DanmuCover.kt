@@ -78,15 +78,16 @@ class DanmuCover(
 
             OnPlayerEventListener.PLAYER_EVENT_ON_SEEK_TO -> {
                 if (checkDanmakuViewHasInit()) {
-                    mDanmakuView.pause()
                     val position = bundle!!.getInt(EventKey.INT_DATA).toLong()
                     mDanmakuView.seekTo(if (position < 0) 0 else position)
+                    mDanmakuView.pause()
                 }
             }
 
             OnPlayerEventListener.PLAYER_EVENT_ON_SEEK_COMPLETE -> {
                 if (checkDanmakuViewHasInit()) {
-                    if (mDanmakuView.isPaused) {
+                    val isPlay = playerStateGetter?.state == IPlayer.STATE_STARTED
+                    if (mDanmakuView.isPaused && isPlay) {
                         mDanmakuView.resume()
                     }
                 }

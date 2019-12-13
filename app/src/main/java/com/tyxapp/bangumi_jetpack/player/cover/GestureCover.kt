@@ -80,6 +80,7 @@ class GestureCover(
 
             lifecycleOwner = mActivity
         }
+
         return bind.root
     }
 
@@ -90,7 +91,7 @@ class GestureCover(
     override fun onDown(event: MotionEvent?) {
         event ?: return
         downY = event.y
-        seekStep = BASE_SEEK * (2960 / screenWidth)
+        seekStep = BASE_SEEK * (2960f / screenWidth.toFloat())
         if (downY <= stateBarHeight) {
             isDownToStateBar = true
         } else {

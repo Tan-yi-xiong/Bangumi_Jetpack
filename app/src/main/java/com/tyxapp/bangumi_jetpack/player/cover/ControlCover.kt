@@ -5,20 +5,28 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.os.Message
 import android.provider.Settings
+import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
+import android.view.WindowManager
 import android.widget.ImageButton
+import android.widget.RelativeLayout
 import android.widget.SeekBar
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.solver.widgets.ConstraintHorizontalLayout
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.content.getSystemService
+import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.lifecycle.observe
 import com.kk.taurus.playerbase.entity.DataSource
@@ -67,6 +75,7 @@ class ControlCover(
     private lateinit var mBottomProgressBar: SeekBar
     private lateinit var mControlView: View
     private lateinit var mReturnToLastWatchView: View
+    private var navigationBarColor: Int = mActivity.window.navigationBarColor
 
     private val mBundle = Bundle()
     private val dateFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
@@ -95,13 +104,20 @@ class ControlCover(
     private fun controlViewState(isShow: Boolean) {
         val isFullScreen = groupValue.getBoolean(FULL_SCREEN_KEY)
         if (isShow) {
-            requestShowStateBar(true)
             mControlView.fadeIn()
             if (!isFullScreen) mBottomProgressBar.fadeOut()
+            requestShowStateBar(true)
         } else {
             mControlView.fadeOut()
-            if (!isFullScreen) mBottomProgressBar.fadeIn()
-            if (playerStateGetter?.state != IPlayer.STATE_PAUSED) requestShowStateBar(false)
+            if (!isFullScreen) {
+                mBottomProgressBar.fadeIn()
+                if (playerStateGetter?.state == IPlayer.STATE_STARTED) {
+                    requestShowStateBar(false)
+                }
+            } else {
+                requestShowStateBar(false)
+            }
+
         }
     }
 
@@ -115,24 +131,26 @@ class ControlCover(
                 bind.fullScreenButton.isGone(isFullScreen)
                 mNextJIButton.isGone(!isFullScreen)
 
-                if (!isFullScreen && mControlView.isVisible) {
-                    requestShowStateBar(true)
+
+                if (!isFullScreen) {
+                    if (playerStateGetter?.state == IPlayer.STATE_PAUSED) {
+                        requestShowStateBar(true)
+                    }
+                    mActivity.window.navigationBarColor = navigationBarColor
+                    bind.bottomLayout.setPadding(0 ,0 ,0 ,0)
+                    bind.topLayout.setPadding(0 ,0 ,0 ,0)
+                } else {
+                    mActivity.window.navigationBarColor = Color.TRANSPARENT
+                    bind.bottomLayout.setPadding(0 ,0 , getNavigationBarHeight(context) ,0)
+                    bind.topLayout.setPadding(0 ,0 , getNavigationBarHeight(context),0)
                 }
+                mControlView.isGone = true
             } else if (PERMISSION_REQUEST_KEY == key) {
                 if (value as Boolean) {
                     viewModel?.downLoadVideo()
                 } else {
                     if (!ActivityCompat.shouldShowRequestPermissionRationale(mActivity, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-                        // 引导去设置权限
-                        mActivity.alertBuilder(R.string.text_tips, R.string.text_permission) {
-                            noButton { it.dismiss() }
-                            yesButton(R.string.text_get_permission) {
-                                val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
-                                intent.data = Uri.fromParts("package", context.packageName, null)
-                                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                                mActivity.startActivity(intent)
-                            }
-                        }.show()
+                        PermissionUtil.showSettingPermissionsDialog(mActivity)
                     } else {
                         context.toast("你取消了授权")
                     }
@@ -279,15 +297,10 @@ class ControlCover(
             }
 
             DOWNLOAD_ITEM -> {
-                if (ContextCompat.checkSelfPermission(mActivity, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                    != PackageManager.PERMISSION_GRANTED) {
-                    ActivityCompat.requestPermissions(
-                        mActivity,
-                        arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
-                        PERMISSION_REQUEST_CODE
-                    )
-                } else {
-                    viewModel?.downLoadVideo()
+                PermissionUtil.requestPermissions(mActivity, arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE)) { allDenied ->
+                    if (allDenied) {
+                        viewModel?.downLoadVideo()
+                    }
                 }
             }
 
@@ -339,6 +352,7 @@ class ControlCover(
         mHandler.removeMessages(HIDE_VIEV_EVENT)
         mHandler.removeMessages(SINGLE_TAP_EVENT)
         mHandler.sendEmptyMessageDelayed(SINGLE_TAP_EVENT, SINGLE_TAP_EVENT_DELAY)
+        mHandler.sendEmptyMessageDelayed(HIDE_VIEV_EVENT, HIDE_DELAY)
     }
 
     /**
@@ -350,19 +364,15 @@ class ControlCover(
     override fun onDoubleTap(event: MotionEvent?) {
         //移除单击事件
         mHandler.removeMessages(SINGLE_TAP_EVENT)
+        val isFullScreen = groupValue.getBoolean(FULL_SCREEN_KEY)
 
         playerStateGetter?.let {
             if (it.state == IPlayer.STATE_PAUSED) {
                 requestResume(null)
-                //ControlView可见时stateBar已在显示状态
-                if (!mControlView.isVisible) {
-                    requestShowStateBar(false)
-                }
+                if (!isFullScreen && !mControlView.isVisible) requestShowStateBar(false)
             } else if (it.state == IPlayer.STATE_STARTED) {
                 requestPause(null)
-                if (!mControlView.isVisible) {
-                    requestShowStateBar(true)
-                }
+                if (!isFullScreen) requestShowStateBar(true)
             }
         }
     }
