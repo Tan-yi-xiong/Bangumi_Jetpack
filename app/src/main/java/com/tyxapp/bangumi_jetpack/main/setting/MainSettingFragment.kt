@@ -20,6 +20,7 @@ import com.kk.taurus.playerbase.config.PlayerConfig
 import com.tyxapp.bangumi_jetpack.BangumiApp
 import com.tyxapp.bangumi_jetpack.R
 import com.tyxapp.bangumi_jetpack.main.MainViewModel
+import com.tyxapp.bangumi_jetpack.utilities.LOGI
 import com.tyxapp.bangumi_jetpack.utilities.PrefUtils
 import com.tyxapp.bangumi_jetpack.utilities.formatFileSize
 import kotlinx.coroutines.*

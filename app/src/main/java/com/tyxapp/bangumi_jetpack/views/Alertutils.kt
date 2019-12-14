@@ -25,14 +25,15 @@ fun View.snack(msgRes: Int, buttonText: Int? = null, listener: View.OnClickListe
 }
 
 fun Activity.alertBuilder(
-    title: Int,
-    message: Int,
+    title: Int = 0,
+    message: Int = 0,
     alertAction: AlertDialog.Builder.() -> AlertDialog.Builder
 ): AlertDialog.Builder {
-    return AlertDialog.Builder(this)
-        .setTitle(title)
-        .setMessage(message)
-        .alertAction()
+    return AlertDialog.Builder(this).apply {
+        if (title != 0) setTitle(title)
+        if (message != 0) setMessage(message)
+        alertAction()
+    }
 }
 
 inline fun AlertDialog.Builder.yesButton(
