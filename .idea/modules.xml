@@ -2,9 +2,11 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/AndroidStudioProjects-Bangumi_Jetpack.iml" filepath="$PROJECT_DIR$/AndroidStudioProjects-Bangumi_Jetpack.iml" />
       <module fileurl="file://$PROJECT_DIR$/AndroidStudioProjects-Bngumi_Jetpack.iml" filepath="$PROJECT_DIR$/AndroidStudioProjects-Bngumi_Jetpack.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/AndroidStudioProjects-Bngumi_Jetpack-app.iml" filepath="$PROJECT_DIR$/app/AndroidStudioProjects-Bngumi_Jetpack-app.iml" />
       <module fileurl="file://$PROJECT_DIR$/Bangumi_Jetpack.iml" filepath="$PROJECT_DIR$/Bangumi_Jetpack.iml" />
+      <module fileurl="file://$PROJECT_DIR$/app/Bangumi_Jetpack-app.iml" filepath="$PROJECT_DIR$/app/Bangumi_Jetpack-app.iml" />
       <module fileurl="file://$PROJECT_DIR$/Bngumi_Jetpack.iml" filepath="$PROJECT_DIR$/Bngumi_Jetpack.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/Bngumi_Jetpack-app.iml" filepath="$PROJECT_DIR$/app/Bngumi_Jetpack-app.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />

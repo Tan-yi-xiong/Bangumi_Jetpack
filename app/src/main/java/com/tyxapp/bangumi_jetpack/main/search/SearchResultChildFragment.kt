@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import com.tyxapp.bangumi_jetpack.data.BangumiSource
+import com.tyxapp.bangumi_jetpack.data.BangumiSourceNameConversion
 import com.tyxapp.bangumi_jetpack.data.NetWordState
 import com.tyxapp.bangumi_jetpack.data.State
 import com.tyxapp.bangumi_jetpack.data.parsers.IsearchParser
@@ -83,7 +84,7 @@ class SearchResultChildFragment : ListFragment() {
         val bangumiSource = arguments?.getString(SRCF_ARG_KEY)
             ?: throw NullPointerException("SearchResultChildFragment创建必须传递参数")
 
-        return ParserFactory.createSearchParser(BangumiSource.valueOf(bangumiSource))
+        return ParserFactory.createSearchParser(BangumiSourceNameConversion.nameToSource(bangumiSource))
     }
 
     companion object {

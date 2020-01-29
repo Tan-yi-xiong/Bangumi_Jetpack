@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.tabs.TabLayoutMediator
+import com.tyxapp.bangumi_jetpack.R
 import com.tyxapp.bangumi_jetpack.data.BangumiSource
 import com.tyxapp.bangumi_jetpack.data.BangumiSourceNameConversion
 import com.tyxapp.bangumi_jetpack.databinding.SearchResultFragmentBinding
@@ -44,8 +45,9 @@ class SearchResultFragment : Fragment() {
 
         viewPager2.setCurrentItem(getPrioritizedSearchSourchPosistion(), false)
 
+        val sourchName = resources.getStringArray(R.array.search_source)
         TabLayoutMediator(tabLayout, viewPager2) {tab, index ->
-            tab.text = BangumiSourceNameConversion.getConversionName(BangumiSource.values()[index])
+            tab.text = sourchName[index]
         }.attach()
 
         return binding.root

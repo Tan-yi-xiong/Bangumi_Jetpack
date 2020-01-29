@@ -3,6 +3,8 @@ package com.tyxapp.bangumi_jetpack
 import com.tyxapp.bangumi_jetpack.data.parsers.BimiBimi
 import kotlinx.coroutines.runBlocking
 import org.junit.Test
+import java.net.URLDecoder
+import java.net.URLEncoder
 import java.util.concurrent.locks.Lock
 import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.thread
@@ -16,7 +18,7 @@ class ExampleUnitTest {
     @Test
     fun addition_isCorrect() {
         runBlocking {
-
+            print(URLDecoder.decode("%25E6%2588%2591%25E7%259A%2584"))
         }
     }
 

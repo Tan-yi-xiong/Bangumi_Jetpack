@@ -15,7 +15,7 @@ import java.net.URLEncoder
 import kotlin.collections.ArrayList
 
 
-private const val BASE_URL = "http://m.imomoe.io"
+private const val BASE_URL = "http://m.imomoe.in"
 
 
 class Sakura : IsearchParser, IPlayerVideoParser {

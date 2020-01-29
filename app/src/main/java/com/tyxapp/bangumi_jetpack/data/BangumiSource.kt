@@ -17,5 +17,13 @@ class BangumiSourceNameConversion {
 
             else -> bangumiSource.name
         }
+
+        fun nameToSource(name: String): BangumiSource {
+            return when(name) {
+                "樱花动漫" -> BangumiSource.Sakura
+                "嘛哩嘛哩" -> BangumiSource.Malimali
+                else -> BangumiSource.valueOf(name)
+            }
+        }
     }
 }

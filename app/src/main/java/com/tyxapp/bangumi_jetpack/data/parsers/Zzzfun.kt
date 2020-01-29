@@ -1,139 +1,99 @@
 package com.tyxapp.bangumi_jetpack.data.parsers
 
 import android.util.SparseArray
-import androidx.core.util.isEmpty
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.switchMap
 import androidx.paging.DataSource
 import androidx.paging.LivePagedListBuilder
-import com.tyxapp.bangumi_jetpack.BangumiApp
-import com.tyxapp.bangumi_jetpack.R
 import com.tyxapp.bangumi_jetpack.data.*
 import com.tyxapp.bangumi_jetpack.data.db.AppDataBase
 import com.tyxapp.bangumi_jetpack.main.home.adapter.BANNER
-import com.tyxapp.bangumi_jetpack.player.danmakuparser.ZzzFunDanmakuParser
+import com.tyxapp.bangumi_jetpack.player.danmakuparser.BiliDanmukuParser
 import com.tyxapp.bangumi_jetpack.utilities.*
 import com.tyxapp.bangumi_jetpack.utilities.OkhttpUtil.getResponseData
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.withContext
 import master.flame.danmaku.danmaku.loader.android.DanmakuLoaderFactory
 import master.flame.danmaku.danmaku.parser.BaseDanmakuParser
-import okhttp3.MediaType
-import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.FormBody
 import okhttp3.Request
-import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONArray
 import org.json.JSONObject
 import org.jsoup.Jsoup
 import java.net.URLEncoder
-import kotlin.collections.ArrayList
-import kotlin.collections.LinkedHashMap
 
-private const val BASE_URL = "http://111.230.89.165:8089/zapi"
+private const val BASE_URL = "http://111.230.89.165:8089/android"
 private const val SEARCH_URL = "http://111.230.89.165:8099/api.php/provvde/vod/?ac=list&wd="
 private const val PC_URL = "http://www.zzzfun.com"
 
 class Zzzfun : IHomePageParser, IsearchParser, IPlayerVideoParser {
 
-    private val categorItemName by lazy(LazyThreadSafetyMode.NONE) {
-        BangumiApp.getContext()
-            .resources.getStringArray(R.array.zzzfun_categor_name)
-    }
-    private val categorItemImages: IntArray by lazy(LazyThreadSafetyMode.NONE) {
-        intArrayOf(
-            R.drawable.zzzfun_category_movie,
-            R.drawable.zzzfun_category_dianshiju,
-            R.drawable.zzzfun_category_zhenren,
-            R.drawable.zzzfun_category_season_spring,
-            R.drawable.zzzfun_category_season_summer,
-            R.drawable.zzzfun_category_season_autumn,
-            R.drawable.zzzfun_category_season_winter,
-            R.drawable.zzzfun_category_guocan,
-            R.drawable.zzzfun_category_teleplay,
-            R.drawable.zzzfun_category_japan_bangumi
-        )
-    }
-
     private val linkVideoUrls: SparseArray<List<String>> by lazy(LazyThreadSafetyMode.NONE) {
         SparseArray<List<String>>()
     }
 
-    /**
-     * zzzfun主页分为6部分, URL为 /type/home.php?t=1
-     * t的值分别为9(头部轮播), 42, 1-4,
-     */
     override suspend fun getHomeBangumis(): Map<String, List<Bangumi>> =
         withContext(Dispatchers.IO) {
-            val titles = BangumiApp.getContext()
-                .resources.getStringArray(R.array.zzfun_title)
-            val jobList = ArrayList<Deferred<List<Bangumi>>>()
             val bangumiGroup = LinkedHashMap<String, List<Bangumi>>()
-
-            titles.forEachIndexed { index, title ->
-                var position = index
-                if (index == 0) {
-                    position = 42
-                } else if (index == 5) {
-                    position = 9
-                }
-
-                jobList.add(async { parserHomeBangumis(position, title) })
+            val homeBangumiGroup = async { parserHomeBangumis() }
+            val banners = async { parserBanner() }
+            bangumiGroup.run {
+                putAll(homeBangumiGroup.await())
+                plus(banners.await())
             }
-
-            jobList.forEachIndexed { postion, bangumis ->
-                val key = titles[postion]
-                bangumiGroup[key] = bangumis.await()
-            }
-            bangumiGroup
         }
-
-    private fun parserHomeBangumis(position: Int, title: String): List<Bangumi> {
-        val url = "$BASE_URL/type/home.php?t=$position"
-        val jsonObject = JSONObject(getResponseData(url))
-        return jsonObject.run {
-            if (isNull("result")) throw NullPointerException("zzzfunHome $position 结果为空")
-            val list = ArrayList<Bangumi>()
-            jsonObject.getJSONArray("result").forEach {
-
-                //轮播图封面是"img"
-                if (title == BANNER) {
-                    it.replace("pic", "")
-                }
-                list.add(parserToBangumi(it))
-            }
-            list
-        }
-    }
 
     /**
-    "hits": "220",
-    "id": "1327",
-    "img": "",
-    "name": "全职法师第3季",
-    "pic": "http://ws3.sinaimg.cn/large/006AdpFDgy1g0xq8n82qzj307i0amaai.jpg",
-    "remarks": "",
-    "serial": "",
-    "total": "12"
+     * 解析主页番剧
+     *
+     * @return
      */
-    private fun parserToBangumi(jsonObject: JSONObject): Bangumi = jsonObject.run {
-        val id = getString("id")
-        val name = getString("name")
-        val cover = when {
-            getString("pic").isEmpty() -> getString("img")
-            else -> getString("pic")
+    private fun parserHomeBangumis(): Map<String, List<Bangumi>> {
+        val url = "$BASE_URL/home/tj.php "
+        val homeBangumiGroup = LinkedHashMap<String, List<Bangumi>>()
+        val jsonArray = JSONObject(getResponseData(url)).getJSONArray("data")
+        jsonArray.forEach { groups ->
+            val jsonBangumis = groups.getJSONArray("content")
+            val bangumis = ArrayList<Bangumi>()
+            jsonBangumis.forEach {
+                bangumis.add(parserBnagumi(it))
+            }
+
+            val title = groups.getString("title")
+            homeBangumiGroup[title] = bangumis
         }
-        val jiTotal = when {
-            getString("remarks").isNotEmpty() -> getString("remarks")
-            getString("serial").isNotEmpty() -> "更新至${getString("serial")}话"
-            else -> "全${getString("total")}话"
-        }
-        Bangumi(id, BangumiSource.Zzzfun, name, cover, jiTotal)
+        return homeBangumiGroup
     }
+
+
+
+    /**
+     * 解析头部轮播
+     *
+     */
+    private fun parserBanner() : Pair<String, List<Bangumi>> {
+        val url = "$BASE_URL/home/home?v=pic&vcode=103"
+        val jsonArray = JSONObject(getResponseData(url)).getJSONArray("data")
+        val bangumis = ArrayList<Bangumi>()
+        jsonArray.forEach {
+            val id = it.getString("bannerId")
+            if (id == "ad") return@forEach
+            val cover = it.getString("bannerImg")
+            val name = it.getString("bannerName")
+            bangumis.add(Bangumi(id, BangumiSource.Zzzfun, name, cover))
+        }
+        return BANNER to bangumis
+    }
+
 
     override suspend fun getCategorItems(): List<CategorItem> = withContext(Dispatchers.IO) {
         val list = ArrayList<CategorItem>()
-        categorItemImages.forEachIndexed { index, i ->
-            val categorItem = CategorItem(i, categorItemName[index])
-            list.add(categorItem)
+        val url = "$BASE_URL/type/type?userid="
+        JSONObject(getResponseData(url)).getJSONArray("data").forEach {
+            val name = it.getString("typename")
+            val cover = it.getString("typepic")
+            list.add(CategorItem(cover, name))
         }
         list
     }
@@ -155,50 +115,30 @@ class Zzzfun : IHomePageParser, IsearchParser, IPlayerVideoParser {
 
 
     /**
-    [
-    {"dayOfWeek": 1,
-    "seasons": [
-    {
-    "id": "1720",
-    "ji": "第12话",
-    "name": "冰海战记",
-    "pic": "https://img1.doubanio.com/view/photo/s_ratio_poster/public/p2558471577.jpg",
-    "time": "2019-07-10"
-    },
-    .....]},
-
-    {dayOfWeek": 2,
-    "seasons": [
-    {
-    "id": "9",
-    "ji": "第367话",
-    "name": "银魂",
-    "pic": "https://ws3.sinaimg.cn/large/005BYqpgly1g0wwiogt2tj307i0abt9d.jpg",
-    "time": "2018-03-11"
-    },
-    ....]},
-    ......
-    ]
+     *  {
+    "videoId": "1758",
+    "videoImg": "https://img3.doubanio.com/view/photo/s_ratio_poster/public/p2566344205.jpg",
+    "videoName": "巴比伦",
+    "time": "2020-01-21",
+    "ji": "第11话"
+    }
      */
     override suspend fun getBangumiTimeTable(): List<List<Bangumi>> = withContext(Dispatchers.IO) {
-        val timeTableUrl = "$BASE_URL/type/week.php"
-        val jsonObject = JSONObject(getResponseData(timeTableUrl))
-        val timeTableData = jsonObject.takeIf { !it.isNull("result") }?.getJSONArray("result")
-            ?: return@withContext emptyList<List<Bangumi>>()
-
-        return@withContext ArrayList<List<Bangumi>>().apply {
-            timeTableData.forEach { dayObject ->
-                val childList = ArrayList<Bangumi>()
-                val bangumis = dayObject.getJSONArray("seasons")
-
-                bangumis.forEach { bangumiObject ->
-                    //把ji的值放到remarks方便解析
-                    bangumiObject.put("remarks", bangumiObject.getString("ji"))
-                    childList.add(parserToBangumi(bangumiObject))
-                }
-                this.add(childList)
+        val baseDayUrl = "$BASE_URL/week?day="
+        val weekBnagumis = ArrayList<List<Bangumi>>()
+        for (day in 1..7) {
+            val dayBnagumis = ArrayList<Bangumi>()
+            JSONObject(getResponseData("$baseDayUrl$day")).getJSONArray("data").forEach {
+                val id = it.getString("videoId")
+                val cover = it.getString("videoImg")
+                val name = it.getString("videoName")
+                val ji = it.getString("ji")
+                LOGI(name)
+                dayBnagumis.add(Bangumi(id, BangumiSource.Zzzfun, name, cover, ji))
             }
+            weekBnagumis.add(dayBnagumis)
         }
+        weekBnagumis
     }
 
     /*********************************搜索结果******************************************************/
@@ -219,7 +159,8 @@ class Zzzfun : IHomePageParser, IsearchParser, IPlayerVideoParser {
     /*********************************视频播放解析******************************************************/
 
     override suspend fun getBangumiDetail(id: String): BangumiDetail = withContext(Dispatchers.IO) {
-        val url = "$PC_URL/vod-detail-id-$id.html"
+        val url = "$BASE_URL/video/list_ios?videoId=$id"
+        val jsonObject = JSONObject(getResponseData(url)).getJSONObject("data")
         val request = Request.Builder().run {
             addHeader("User-Agent", PHONE_REQUEST)
             url(url)
@@ -231,6 +172,8 @@ class Zzzfun : IHomePageParser, IsearchParser, IPlayerVideoParser {
         val niandai = document.getElementsByAttributeValue("itemprop", "uploadDate")
             .getOrNull(0)?.attr("content") ?: ""
 
+        val type = jsonObject.getString("videoClass")
+
         val cast =
             document.getElementsByAttributeValue("itemprop", "actor")
                 .getOrNull(0)
@@ -238,13 +181,13 @@ class Zzzfun : IHomePageParser, IsearchParser, IPlayerVideoParser {
                 ?: ""
 
         val intro = document.getElementsByClass("leo-color-e leo-fs-s leo-ellipsis-2")
-            .getOrNull(0)?.text() ?: ""
+            .getOrNull(0)?.text() ?: jsonObject.getString("videoDoc")
 
         val jiTotal =
             document.getElementsByClass("leo-color-a leo-fs-l leo-ellipsis-1")
                 .getOrNull(0)
                 ?.run { text().split("|")[1].trim() }
-                ?: ""
+                ?: jsonObject.getString("videoremarks")
 
         val staff =
             document.getElementsByClass("leo-ellipsis-1 leo-fs-s leo-lh-ss")
@@ -254,11 +197,11 @@ class Zzzfun : IHomePageParser, IsearchParser, IPlayerVideoParser {
             document.getElementsByClass("leo-lazy leo-radius-s")
                 .getOrNull(0)
                 ?.run { attr("data-original") }
-                ?: ""
+                ?: jsonObject.getString("videoImg")
 
         val name =
             document.getElementsByClass("leo-lazy leo-radius-s")
-                .getOrNull(0)?.attrAlt() ?: ""
+                .getOrNull(0)?.attrAlt() ?: jsonObject.getString("videoName")
 
         BangumiDetail(
             id = id,
@@ -267,6 +210,7 @@ class Zzzfun : IHomePageParser, IsearchParser, IPlayerVideoParser {
             cover = cover,
             niandai = niandai,
             cast = cast,
+            type = type,
             staff = staff,
             jiTotal = jiTotal,
             intro = intro
@@ -275,25 +219,21 @@ class Zzzfun : IHomePageParser, IsearchParser, IPlayerVideoParser {
 
     override suspend fun getJiList(id: String): Pair<Int, List<JiItem>> =
         withContext(Dispatchers.IO) {
-            val url = "$BASE_URL/list.php?id=$id"
+            val url = "$BASE_URL/video/list_ios?videoId=$id"
             val jsonObject = JSONObject(getResponseData(url))
             val jiList = ArrayList<JiItem>()
+            val lineJaonArray = jsonObject.getJSONObject("data").getJSONArray("videoSets")
             var line = 0
-
-            //线路1
-            jsonObject.takeIf { !it.isNull("result") }?.let {
-                val jiListWithVideoUrls = parserToJiList(it.getJSONArray("result"))
-                jiList.addAll(jiListWithVideoUrls.jiList)
-                linkVideoUrls.append(0, jiListWithVideoUrls.videoUrls)
+            lineJaonArray.forEach {
+                val jiListAndVideoUrls = parserToJiList(it.getJSONArray("list"))
+                if (jiList.size != jiListAndVideoUrls.jiList.size) {
+                    jiList.clear()
+                    jiList.addAll(jiListAndVideoUrls.jiList)
+                }
+                linkVideoUrls.append(line, jiListAndVideoUrls.playIds)
                 line++
             }
 
-            //线路2
-            jsonObject.takeIf { it.get("result2") !is String }?.let {
-                val jiListWithVideoUrls = parserToJiList(it.getJSONArray("result2"))
-                linkVideoUrls.append(1, jiListWithVideoUrls.videoUrls)
-                line++
-            }
             line to jiList
         }
 
@@ -302,8 +242,8 @@ class Zzzfun : IHomePageParser, IsearchParser, IPlayerVideoParser {
         val videoUrls = ArrayList<String>()
 
         jsonArray.forEach {
-            list.add(JiItem(it.getString("ji")))
-            videoUrls.add("$BASE_URL/play.php?url=${it.getString("id")}")
+            list.add(JiItem("第${it.getString("ji")}话"))
+            videoUrls.add(it.getString("playid"))
         }
 
         return JiListAndVideoUrls(list, videoUrls)
@@ -311,46 +251,68 @@ class Zzzfun : IHomePageParser, IsearchParser, IPlayerVideoParser {
 
     override suspend fun getPlayerUrl(id: String, ji: Int, line: Int): VideoUrl =
         withContext(Dispatchers.IO) {
-            if (linkVideoUrls.isEmpty()) {
+            try {
+                val playid = linkVideoUrls[line][ji]
+                val md5Str = MD5Util.md5(playid + 534697)
+                val url = "$BASE_URL/video/play"
+
+                val requestBodyPost = FormBody.Builder()
+                    .add("playid", playid)
+                    .add("sing", md5Str)
+                    .build()
+                val request = Request.Builder()
+                    .post(requestBodyPost)
+                    .url(url)
+                    .build()
+                val jsonObject = JSONObject(getResponseData(request))
+                val playurl = jsonObject.getJSONObject("data").getString("videoplayurl")
+                VideoUrl(playurl)
+            } catch (e:Exception) {
                 VideoUrl("$PC_URL/index.php/vod-detail-id-$id.html", true)
-            } else {
-                VideoUrl(linkVideoUrls[line][ji])
             }
         }
 
     override suspend fun getDanmakuParser(id: String, ji: Int): BaseDanmakuParser? =
         withContext(Dispatchers.IO) {
-            val url = "http://111.230.89.165:8089/zapi/dm.php?id%5B%5D=$id&id%5B%5D=${ji + 1}"
+            val url = "$BASE_URL/video/tdmlist?cid=$id-${ji + 1}"
             val iLoader = DanmakuLoaderFactory.create(DanmakuLoaderFactory.TAG_BILI)
             iLoader.load(OkhttpUtil.getResponseBody(url).byteStream())
-            ZzzFunDanmakuParser().apply { load(iLoader.dataSource) }
+            BiliDanmukuParser().apply { load(iLoader.dataSource) }
         }
 
-    /**
-    "id": "73",
-    "pic": "https://ws4.sinaimg.cn/large/006AdpFDgy1fw337n10i3j30cs0jkq52.jpg",
-    "name": "大剑",
-    "hit": "24"
-     */
     override suspend fun getRecommendBangumis(id: String): List<Bangumi> =
         withContext(Dispatchers.IO) {
-            val url = "$BASE_URL/type/rnd.php"
+            val url = "$BASE_URL/video/with"
             val jsonArray = JSONObject(getResponseData(url))
-                .takeIf { !it.isNull("result") }
-                ?.getJSONArray("result")
+                .takeIf { !it.isNull("data") }
+                ?.getJSONArray("data")
                 ?: return@withContext emptyList<Bangumi>()
 
             val bangumis = ArrayList<Bangumi>()
             jsonArray.forEach {
-                val bangumiId = it.getString("id")
-                val cover = it.getString("pic")
-                val name = it.getString("name")
-                bangumis.add(Bangumi(bangumiId, BangumiSource.Zzzfun, name, cover))
+                bangumis.add(parserBnagumi(it))
             }
             bangumis
         }
 
 
+}
+
+/**
+ *  {
+"videoId": "219",
+"videoImg": "http://puui.qpic.cn/fans_admin/0/3_380704150_1578035344262/0",
+"videoName": "告白实行委员会剧场版",
+"videoremarks": "HD"
+}
+ */
+private fun parserBnagumi(jsonObject: JSONObject) : Bangumi {
+    val id = jsonObject.getString("videoId")
+    val name = jsonObject.getString("videoName")
+    val cover = jsonObject.getString("videoImg")
+    val ji = jsonObject.getString("videoremarks")
+
+    return Bangumi(id, BangumiSource.Zzzfun, name, cover, ji)
 }
 
 private class ZzzfunSearchResultDataSource(
@@ -361,28 +323,27 @@ private class ZzzfunSearchResultDataSource(
         callback: LoadInitialCallback<Int, Bangumi>) {
 
 
-        val url = "$SEARCH_URL${URLEncoder.encode(searchWord, "UTF-8")}"
+        val url = "$BASE_URL/search"
 
-        val jsonObject = JSONObject(getResponseData(url)).takeIf { !it.isNull("list") }
+        val requestBody = FormBody.Builder()
+            .add("userid", "")
+            .add("key", searchWord)
+            .build()
+        val request = Request.Builder()
+            .url(url)
+            .post(requestBody)
+            .build()
 
-        if (jsonObject == null) {
+        val jsonArray = JSONObject(getResponseData(request)).getJSONArray("data").takeIf { it.length() != 0 }
+        LOGI(JSONObject(getResponseData(request)).toString())
+        if (jsonArray == null) {
             initialLoadLiveData.postValue(InitialLoad(NetWordState.SUCCESS, true))
             return callback.onResult(emptyList(), null, null)
         }
 
         val bangumis = ArrayList<Bangumi>()
-        jsonObject.getJSONArray("list").forEach {
-            val name = it.getString("vod_name")
-            val id = it.getString("vod_id")
-            val cover = it.getString("vod_pic")
-
-            val ji = when {
-                it.getString("vod_remarks").isNotEmpty() -> it.getString("vod_remarks")
-                it.getString("vod_serial").isNotEmpty() -> "更新至${it.getString("vod_serial")}集"
-                else -> "全${it.getString("vod_total")}集"
-            }
-
-            bangumis.add(Bangumi(id, BangumiSource.Zzzfun, name, cover, ji))
+        jsonArray.forEach {
+            bangumis.add(parserBnagumi(it))
         }
         callback.onResult(bangumis, null, null)
         initialLoadLiveData.postValue(InitialLoad(NetWordState.SUCCESS, bangumis.isEmpty()))
@@ -396,7 +357,7 @@ private class ZzzfunSearchResultDataSource(
 
 private data class JiListAndVideoUrls(
     val jiList: List<JiItem>,
-    val videoUrls: List<String>
+    val playIds: List<String>
 )
 
 private class SearchResultDataSourceFactor(
@@ -415,7 +376,6 @@ private class SearchResultDataSourceFactor(
 private class CategoryPageDataSource(
     private val category: String
 ) : PageResultDataSourch<Int, CategoryBangumi>(category) {
-    private val jsonMediaType: MediaType = "application/json; charset=utf-8".toMediaType()
     private val bangumiDetailDao = AppDataBase.getInstance().bangumiDetailDao()
 
 
@@ -440,30 +400,30 @@ private class CategoryPageDataSource(
         callback.onResult(result, if (result.isEmpty()) null else page + 1)
     }
 
+    private fun getCategoryTypeId(category: String) : Int = when (category) {
+        "电影" -> 39
+        "TV剧" -> 40
+        "真人版" -> 38
+        "国漫" -> 2
+        "日漫", "动漫" -> 1
+        "剧场版", "剧场" ->3
+        "新番" -> 42
+        else -> throw IllegalArgumentException("没有这个类型")
+    }
+
     private fun parserCategoryData(category: String, page: Int): List<CategoryBangumi> {
-        var categoryName = category
-        var url = "$BASE_URL/type/list.php"
-        when (categoryName) {
-            "最近更新" -> url = "$BASE_URL/type/hot2.php?page=$page"
-            "日本动漫" -> categoryName = "1"
-            "影视剧" -> categoryName = "4"
-        }
-        //POST请求
-        val requestJaon = "{\"pageNow\":$page,\"tagNames\":\"$categoryName\"}"
-        val requestBody = requestJaon.toRequestBody(jsonMediaType)
-        val responseData = getResponseData(url, RequestMode.POST, requestBody).run {
-            substring(indexOf("{"), lastIndexOf("}") + 1)
-        }
+        val url = "$BASE_URL/type/typelist?pg=$page&typeid=${getCategoryTypeId(category)}"
 
-        val jsonObject =
-            JSONObject(responseData).takeIf { !it.isNull("result") } ?: return emptyList()
+        val jsonObject= JSONObject(getResponseData(url))
 
-        return jsonObject.getJSONArray("result").run {
+        jsonObject.getJSONArray("data").takeIf { it.length() != 0 } ?: return emptyList()
+
+        return jsonObject.getJSONArray("data").run {
             val bangumis = ArrayList<CategoryBangumi>()
             this.forEach {
-                val name = it.getString("name")
-                val cover = it.getString("pic")
-                val id = it.getString("id")
+                val name = it.getString("videoName")
+                val cover = it.getString("videoImg")
+                val id = it.getString("videoId")
                 val isFollow = bangumiDetailDao.isFollowingBangumi(id, BangumiSource.Zzzfun.name)
                 bangumis.add(CategoryBangumi(id, name, BangumiSource.Zzzfun, cover, isFollow = isFollow))
             }

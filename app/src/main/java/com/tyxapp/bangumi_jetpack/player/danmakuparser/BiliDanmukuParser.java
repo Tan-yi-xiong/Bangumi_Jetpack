@@ -3,6 +3,9 @@ package com.tyxapp.bangumi_jetpack.player.danmakuparser;
 import android.graphics.Color;
 import android.text.TextUtils;
 
+import com.tyxapp.bangumi_jetpack.utilities.OkhttpUtil;
+import com.tyxapp.bangumi_jetpack.utilities.OkhttpUtilKt;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.xml.sax.Attributes;

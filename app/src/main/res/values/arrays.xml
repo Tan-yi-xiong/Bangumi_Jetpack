@@ -28,18 +28,18 @@
     </array>
 
 
-    <array name="zzzfun_categor_name">
-        <item>电影</item>
-        <item>电视剧</item>
-        <item>动漫真人版</item>
-        <item>春季番</item>
-        <item>夏季番</item>
-        <item>秋季番</item>
-        <item>冬季番</item>
-        <item>国产动漫</item>
-        <item>剧场版</item>
-        <item>日本动漫</item>
-    </array>
+<!--    <array name="zzzfun_categor_name">-->
+<!--        <item>电影</item>-->
+<!--        <item>电视剧</item>-->
+<!--        <item>动漫真人版</item>-->
+<!--        <item>春季番</item>-->
+<!--        <item>夏季番</item>-->
+<!--        <item>秋季番</item>-->
+<!--        <item>冬季番</item>-->
+<!--        <item>国产动漫</item>-->
+<!--        <item>剧场版</item>-->
+<!--        <item>日本动漫</item>-->
+<!--    </array>-->
 
     <array name="week">
         <item>周一</item>
@@ -63,7 +63,6 @@
         <item>Zzzfun</item>
         <item>DiliDili</item>
         <item>樱花动漫</item>
-        <item>DiliDili</item>
         <item>SiliSili</item>
         <item>Qimi</item>
         <item>嘛哩嘛哩</item>

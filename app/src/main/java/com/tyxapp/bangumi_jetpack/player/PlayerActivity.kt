@@ -470,23 +470,28 @@ class PlayerActivity : BasePlayerActivity() {
 
 
     private fun showStateBar() {
+
+        var windowState = View.SYSTEM_UI_FLAG_LAYOUT_STABLE or
+                View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+
         if (!isLandscape) {
             window.clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
+            windowState = windowState or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
             binding.barLayout.isGone(false)
+        } else {
+            windowState = windowState or View.SYSTEM_UI_LAYOUT_FLAGS
         }
         //显示导航栏
-        window.decorView.systemUiVisibility = View.SYSTEM_UI_LAYOUT_FLAGS or
-                View.SYSTEM_UI_FLAG_LAYOUT_STABLE or
-                View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+        window.decorView.systemUiVisibility = windowState
     }
 
     private fun hideStateBar() {
         var windowState =  View.SYSTEM_UI_FLAG_LAYOUT_STABLE or
-                View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY or
-                View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
 
         if (isLandscape) { //全屏隐藏导航栏
-            windowState = windowState or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+            windowState = windowState or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or
+                    View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
         }
 
         binding.barLayout.isGone(true)
