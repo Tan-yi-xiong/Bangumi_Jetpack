@@ -81,10 +81,15 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         navigationView = findViewById(R.id.navigationView)
         with(navigationView) {
             getHeaderView(0).setOnClickListener {
-                alertBuilder(R.string.text_setting_header_image, R.string.text_setting_header_image_msg) {
+                alertBuilder(
+                    R.string.text_setting_header_image,
+                    R.string.text_setting_header_image_msg
+                ) {
                     yesButton(R.string.text_setting_header_image_coustom) {
-                        PermissionUtil.requestPermissions(this@MainActivity,
-                            arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE)) { allDenied ->
+                        PermissionUtil.requestPermissions(
+                            this@MainActivity,
+                            arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                        ) { allDenied ->
                             if (allDenied) {
                                 selectImage()
                             }
@@ -165,17 +170,20 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
                     BangumiSource.Zzzfun
                 )
             )
-            BangumiSource.DiliDili.name -> InjectorUtils.getHomeDataRepository(
-                ParserFactory.createHomePageParser(
-                    BangumiSource.DiliDili
-                )
-            )
+//            BangumiSource.DiliDili.name -> InjectorUtils.getHomeDataRepository(
+//                ParserFactory.createHomePageParser(
+//                    BangumiSource.BimiBimi
+//                )
+//            )
             BangumiSource.BimiBimi.name -> InjectorUtils.getHomeDataRepository(
                 ParserFactory.createHomePageParser(
                     BangumiSource.BimiBimi
                 )
             )
-            else -> throw IllegalAccessException("没有此主页")
+            else -> {
+                PrefUtils.setHomeSourceName(BangumiSource.BimiBimi.name)
+                InjectorUtils.getHomeDataRepository(ParserFactory.createHomePageParser(BangumiSource.BimiBimi))
+            }
         }
     }
 
@@ -218,13 +226,21 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         BangumiApp.getContext().startActivity(cyIntent)
     }
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (grantResults.isNotEmpty() && requestCode == PERMISSION_REQUEST_CODE) {
             if (permissions[0] == Manifest.permission.WRITE_EXTERNAL_STORAGE && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 selectImage()
             } else {
-                if (!ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                if (!ActivityCompat.shouldShowRequestPermissionRationale(
+                        this,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE
+                    )
+                ) {
                     PermissionUtil.showSettingPermissionsDialog(this)
                 } else {
                     toast("你取消了授权")
@@ -235,14 +251,15 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        when(requestCode) {
+        when (requestCode) {
             IMAGE_REQUEST_CODE -> {
                 if (resultCode == Activity.RESULT_OK) {
                     try {
                         val imgUrl = data!!.data!!
                         val cursor = contentResolver.query(
                             imgUrl, arrayOf(MediaStore.Images.Media.DATA),
-                            null, null, null)!!
+                            null, null, null
+                        )!!
                         cursor.moveToFirst()
                         val columnIndex = cursor.getColumnIndex(MediaStore.Images.Media.DATA)
                         val imgPath = cursor.getString(columnIndex)
@@ -271,7 +288,7 @@ private fun NavigationView.setupWithNavController(
     val fristFragmentTag = getFragmentTag(0)
 
     navGraphIds.forEachIndexed { index, navGraphId ->
-        
+
         if (navGraphId == R.id.menu_night_light_switch) {
             if (PrefUtils.isDayNight()) {
                 with(menu[index]) {

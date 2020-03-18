@@ -11,9 +11,7 @@ import com.tyxapp.bangumi_jetpack.main.home.adapter.BANNER
 import com.tyxapp.bangumi_jetpack.player.danmakuparser.BiliDanmukuParser
 import com.tyxapp.bangumi_jetpack.utilities.*
 import com.tyxapp.bangumi_jetpack.utilities.OkhttpUtil.getResponseData
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 import master.flame.danmaku.danmaku.loader.android.DanmakuLoaderFactory
 import master.flame.danmaku.danmaku.parser.BaseDanmakuParser
 import okhttp3.FormBody
@@ -23,7 +21,8 @@ import org.json.JSONObject
 import org.jsoup.Jsoup
 import java.net.URLEncoder
 
-private const val BASE_URL = "http://111.230.89.165:8089/android"
+private const val GET_BASE_URL = "http://alicdn-1259251677.file.myqcloud.com/android.txt"
+private var BASE_URL = "http://service-agbhuggw-1259251677.gz.apigw.tencentcs.com/android"
 private const val SEARCH_URL = "http://111.230.89.165:8099/api.php/provvde/vod/?ac=list&wd="
 private const val PC_URL = "http://www.zzzfun.com"
 
@@ -31,6 +30,12 @@ class Zzzfun : IHomePageParser, IsearchParser, IPlayerVideoParser {
 
     private val linkVideoUrls: SparseArray<List<String>> by lazy(LazyThreadSafetyMode.NONE) {
         SparseArray<List<String>>()
+    }
+
+    constructor() {
+        GlobalScope.launch(Dispatchers.IO) {
+            BASE_URL = OkhttpUtil.getResponseData(GET_BASE_URL)
+        }
     }
 
     override suspend fun getHomeBangumis(): Map<String, List<Bangumi>> =
@@ -163,7 +168,7 @@ class Zzzfun : IHomePageParser, IsearchParser, IPlayerVideoParser {
         val jsonObject = JSONObject(getResponseData(url)).getJSONObject("data")
         val request = Request.Builder().run {
             addHeader("User-Agent", PHONE_REQUEST)
-            url(url)
+            url("$PC_URL/vod-detail-id-$id.html")
             build()
         }
 

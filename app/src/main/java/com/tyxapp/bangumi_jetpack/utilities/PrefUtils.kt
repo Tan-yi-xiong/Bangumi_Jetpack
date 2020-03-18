@@ -18,6 +18,12 @@ class PrefUtils {
             )
         }
 
+        fun setHomeSourceName(name: String) {
+            context.defaultSharedPreferences.edit {
+                putString(context.getString(R.string.key_home_page), name)
+            }
+        }
+
         fun getDecodePlanName(defaultvalue: String): String? {
             return context.defaultSharedPreferences.getString(
                 context.getString(R.string.key_decoder_plan),

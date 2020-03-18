@@ -2,6 +2,7 @@ package com.tyxapp.bangumi_jetpack
 
 import androidx.test.runner.AndroidJUnit4
 import com.tyxapp.bangumi_jetpack.data.db.AppDataBase
+import com.tyxapp.bangumi_jetpack.data.parsers.BimiBimi
 import com.tyxapp.bangumi_jetpack.data.parsers.Nico
 import com.tyxapp.bangumi_jetpack.data.parsers.Qimi
 import com.tyxapp.bangumi_jetpack.data.parsers.Zzzfun
@@ -25,9 +26,8 @@ class ExampleInstrumentedTest {
     @Test
     fun homeData() {
         runBlocking {
-            val zzzfun = Zzzfun()
-            zzzfun.getJiList("18")
-            val playerUrl = zzzfun.getPlayerUrl("18", 1, 0)
+            val b = BimiBimi()
+            val playerUrl = b.getPlayerUrl("1994", 0, 12)
             LOGI(playerUrl.toString())
         }
     }

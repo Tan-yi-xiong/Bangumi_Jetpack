@@ -23,6 +23,7 @@ import java.net.URLDecoder
 
 private const val BASE_URL = "http://www.BimiBimi.tv"
 private const val DANMU_URL = "http://119.23.209.33/static/danmu/dm"
+private const val VIDEO_BASE_URL = "http://119.23.209.33/static/danmu/play.php?url="
 
 class BimiBimi : IHomePageParser, IPlayerVideoParser, IsearchParser {
 
@@ -49,24 +50,29 @@ class BimiBimi : IHomePageParser, IPlayerVideoParser, IsearchParser {
         "http://www.dilidili.name/uploads/allimg/180515/290_1537527161.jpg"
     )
 
-    override suspend fun getBangumiDetail(id: String): BangumiDetail = withContext(Dispatchers.IO){
+    override suspend fun getBangumiDetail(id: String): BangumiDetail = withContext(Dispatchers.IO) {
         initPlayDocument(id)
         val parentElement = playerDocument!!.getElementsByClass("row")[0]
-        val cover = parentElement.getElementsByClass("v_pic")[0].child(0).attr("data-original").run {
-            if (!contains("http")) {
-                "$BASE_URL$this"
-            } else {
-                this
+        val cover =
+            parentElement.getElementsByClass("v_pic")[0].child(0).attr("data-original").run {
+                if (!contains("http")) {
+                    "$BASE_URL$this"
+                } else {
+                    this
+                }
             }
-        }
 
         val titElement = parentElement.getElementsByClass("tit")[0]
         val name = titElement.getElementsByTag("h1").text()
         val ji = titElement.getElementsByTag("p").text()
-        val cast = getAtagsText(parentElement.getElementsByClass("clearfix").getOrNull(2)).replace(" ", "\n")
+        val cast = getAtagsText(parentElement.getElementsByClass("clearfix").getOrNull(2)).replace(
+            " ",
+            "\n"
+        )
         val type = getAtagsText(parentElement.getElementsByClass("clearfix fn-left").getOrNull(0))
         val staff = getAtagsText(parentElement.getElementsByClass("clearfix fn-right").getOrNull(0))
-        val niandai = parentElement.getElementsByClass("clearfix fn-right").getOrNull(1)?.text() ?: ""
+        val niandai =
+            parentElement.getElementsByClass("clearfix fn-right").getOrNull(1)?.text() ?: ""
         val intro = playerDocument!!.getElementsByClass("vod-jianjie").text()
         BangumiDetail(
             id = id,
@@ -89,53 +95,70 @@ class BimiBimi : IHomePageParser, IPlayerVideoParser, IsearchParser {
         }
     }
 
-    override suspend fun getJiList(id: String): Pair<Int, List<JiItem>> = withContext(Dispatchers.IO) {
-        initPlayDocument(id)
-        var line = 0
-        val jiItems = ArrayList<JiItem>()
-        playerDocument!!.getElementsByClass("play_box").forEach {
-            it.child(0).children().forEachWithIndex { index, jiElement ->
-                if (jiItems.getOrNull(index) == null) {
-                    jiItems.add(JiItem(jiElement.text()))
+    override suspend fun getJiList(id: String): Pair<Int, List<JiItem>> =
+        withContext(Dispatchers.IO) {
+            initPlayDocument(id)
+            var line = 0
+            val jiItems = ArrayList<JiItem>()
+            playerDocument!!.getElementsByClass("play_box").forEach {
+                it.child(0).children().forEachWithIndex { index, jiElement ->
+                    if (jiItems.getOrNull(index) == null) {
+                        jiItems.add(JiItem(jiElement.text()))
+                    }
                 }
+                line++
             }
-            line++
+            line to jiItems
         }
-        line to jiItems
+
+    override suspend fun getPlayerUrl(id: String, ji: Int, line: Int): VideoUrl =
+        withContext(Dispatchers.IO) {
+            try {
+                val url = "$BASE_URL/bangumi/$id/play/${line + 1}/${ji + 1}/"
+                val request = Request.Builder()
+                    .url(url)
+                    .addHeader("User-Agent", PHONE_REQUEST)
+                    .build()
+                val document = Jsoup.parse(OkhttpUtil.getResponseData(request))
+                val jsonData =
+                    document.getElementsByClass("leo-player")[0].child(0).toString().run {
+                        substring(indexOf("{"), lastIndexOf("}") + 1)
+                    }
+                val jsonObject = JSONObject(jsonData)
+                val videoUrl: String = jsonObject.getString("url").run {
+                    return@run if (contains("%")) {
+                        parserBase64Url(this)
+                    } else {
+                        parserBimiEncodeUrl(this)
+                    }
+                }
+                VideoUrl(videoUrl)
+            } catch (e: Exception) {
+                e.printStackTrace()
+                VideoUrl("$BASE_URL/bangumi/bi/$id/", true)
+            }
+        }
+
+    private fun parserBase64Url(base64Url: String): String {
+        val vUrl = URLDecoder.decode(base64Url, "utf-8")
+        return if (!vUrl.contains("http")) {
+            val baseUrl = "http://119.23.209.33/static/danmu"
+            val purl = if (vUrl.contains(".mp4")) {
+                "$baseUrl/niux.php?id=$vUrl"
+            } else {
+                "$baseUrl/bit.php?$vUrl"
+            }
+            val videoUrlHtmlDocument = Jsoup.parse(OkhttpUtil.getResponseData(purl))
+            videoUrlHtmlDocument.getElementById("video").child(0).attrSrc()
+        } else {
+            vUrl
+        }
     }
 
-    override suspend fun getPlayerUrl(id: String, ji: Int, line: Int): VideoUrl = withContext(Dispatchers.IO) {
-        try {
-            val url = "$BASE_URL/bangumi/$id/play/${line + 1}/${ji + 1}/"
-            val request = Request.Builder()
-                .url(url)
-                .addHeader("User-Agent", PHONE_REQUEST)
-                .build()
-            val document = Jsoup.parse(OkhttpUtil.getResponseData(request))
-            val jsonData = document.getElementsByClass("leo-player")[0].child(0).toString().run {
-                substring(indexOf("{"), lastIndexOf("}") + 1)
-            }
-            val jsonObject = JSONObject(jsonData)
-            val videoUrl: String = jsonObject.getString("url").run {
-                val vUrl = URLDecoder.decode(this, "utf-8")
-                if (!vUrl.contains("http")) {
-                    val baseUrl = "http://119.23.209.33/static/danmu"
-                    val purl = if (vUrl.contains(".mp4")) {
-                        "$baseUrl/niux.php?id=$vUrl"
-                    } else {
-                        "$baseUrl/bit.php?$vUrl"
-                    }
-                    val videoUrlHtmlDocument = Jsoup.parse(OkhttpUtil.getResponseData(purl))
-                    videoUrlHtmlDocument.getElementById("video").child(0).attrSrc()
-                } else {
-                    vUrl
-                }
-            }
-            VideoUrl(videoUrl)
-        } catch (e: Exception) {
-            e.printStackTrace()
-            VideoUrl("$BASE_URL/bangumi/bi/$id/", true)
-        }
+    private fun parserBimiEncodeUrl(encodeUrl: String): String {
+        val playUrl = "$VIDEO_BASE_URL$encodeUrl"
+        val document = Jsoup.parse(OkhttpUtil.getResponseData(playUrl))
+        return document.getElementsByTag("source").get(0).attrSrc()
     }
 
     override fun getSearchResult(searchWord: String): Listing<Bangumi> {
@@ -149,21 +172,23 @@ class BimiBimi : IHomePageParser, IPlayerVideoParser, IsearchParser {
         )
     }
 
-    override suspend fun getRecommendBangumis(id: String): List<Bangumi> = withContext(Dispatchers.IO) {
-        initPlayDocument(id)
-        val bangumis = ArrayList<Bangumi>()
-        playerDocument!!.getElementsByClass("love-det").getOrNull(0)
-            ?.getElementsByClass("item")
-            ?.forEach { bangumis.add(parserBangumi(it)) }
-        bangumis
-    }
+    override suspend fun getRecommendBangumis(id: String): List<Bangumi> =
+        withContext(Dispatchers.IO) {
+            initPlayDocument(id)
+            val bangumis = ArrayList<Bangumi>()
+            playerDocument!!.getElementsByClass("love-det").getOrNull(0)
+                ?.getElementsByClass("item")
+                ?.forEach { bangumis.add(parserBangumi(it)) }
+            bangumis
+        }
 
-    override suspend fun getDanmakuParser(id: String, ji: Int): BaseDanmakuParser? = withContext(Dispatchers.IO) {
-        val url = "$DANMU_URL/$id/$id-${ji + 1}.php"
-        val loader = DanmakuLoaderFactory.create(DanmakuLoaderFactory.TAG_BILI)
-        loader.load(OkhttpUtil.getResponseBody(url).byteStream())
-        BiliDanmukuParser().apply { load(loader.dataSource) }
-    }
+    override suspend fun getDanmakuParser(id: String, ji: Int): BaseDanmakuParser? =
+        withContext(Dispatchers.IO) {
+            val url = "$DANMU_URL/$id/$id-${ji + 1}.php"
+            val loader = DanmakuLoaderFactory.create(DanmakuLoaderFactory.TAG_BILI)
+            loader.load(OkhttpUtil.getResponseBody(url).byteStream())
+            BiliDanmukuParser().apply { load(loader.dataSource) }
+        }
 
 
     override suspend fun getHomeBangumis(): Map<String, List<Bangumi>> =
