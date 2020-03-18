@@ -413,6 +413,7 @@ private class CategoryPageDataSource(
         "日漫", "动漫" -> 1
         "剧场版", "剧场" ->3
         "新番" -> 42
+        "影视" -> 4
         else -> throw IllegalArgumentException("没有这个类型")
     }
 

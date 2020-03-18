@@ -37,17 +37,17 @@ class BimiBimi : IHomePageParser, IPlayerVideoParser, IsearchParser {
     private val categorWords =
         arrayOf("百合", "青春", "后宫", "冒险", "运动", "科幻", "奇幻", "恋爱", "乙女", "少女", "热血")
     private val categorCoverUrl = arrayOf(
-        "http://www.dilidili.name/uploads/allimg/180515/290_1534355771.jpg",
-        "http://www.dilidili.name/uploads/allimg/180515/290_1537423811.jpg",
-        "http://www.dilidili.name/uploads/allimg/180515/290_1535263451.jpg",
-        "http://www.dilidili.name/uploads/allimg/180515/290_1720208191.jpg",
-        "http://www.dilidili.name/uploads/allimg/180515/290_1538455201.jpg",
-        "http://www.dilidili.name/uploads/allimg/180515/290_1536012441.jpg",
-        "http://www.dilidili.name/uploads/allimg/180515/290_1537308891.jpg",
-        "http://www.dilidili.name/uploads/allimg/180515/290_1536425281.jpg",
-        "http://www.dilidili.name/uploads/allimg/180515/290_1717156631.jpg",
-        "http://www.dilidili.name/uploads/allimg/180515/290_1536558011.jpg",
-        "http://www.dilidili.name/uploads/allimg/180515/290_1537527161.jpg"
+        "https://wxt.sinaimg.cn/large/006MDjU7ly1gan14cph7yj30ak0etgms.jpg",
+        "https://wxt.sinaimg.cn/large/006MDjU7ly1g8uz1p78pxj307i0aj0t7.jpg",
+        "https://wxt.sinaimg.cn/large/006MDjU7ly1g8ug2twtbpj30jn0rsn1v.jpg",
+        "https://wxt.sinaimg.cn/large/006MDjU7ly1g8yo5mjaixj305x08ct8p.jpg",
+        "https://wxt.sinaimg.cn/large/006MDjU7ly1g9ihomt5oaj307i0aldgc.jpg",
+        "https://wxt.sinaimg.cn/large/006MDjU7ly1gah1dbe30pj307i0akdgf.jpg",
+        "https://wxt.sinaimg.cn/large/006MDjU7ly1g7q2moadk2j307i0akjru.jpg",
+        "https://tva3.sinaimg.cn/large/006MDjU7gy1g0dz3eisjmj307i0araap.jpg",
+        "https://wxt.sinaimg.cn/large/006MDjU7ly1g7q2s9chm9j307i0a7jrv.jpg",
+        "https://wxt.sinaimg.cn/large/006MDjU7ly1g7q2jntp9yj307i0ak0tg.jpg",
+        "https://wxt.sinaimg.cn/large/006MDjU7ly1g8t5dg1qf1j30bo0g4dhz.jpg"
     )
 
     override suspend fun getBangumiDetail(id: String): BangumiDetail = withContext(Dispatchers.IO) {
