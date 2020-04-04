@@ -30,3 +30,6 @@
 -keep class tv.danmaku.ijk.media.player.ffmpeg.FFmpegApi{*;}
 
 -keep public class * implements com.kk.taurus.playerbase.player.IPlayer{*;}
+-obfuscationdictionary dic.txt
+-classobfuscationdictionary dic.txt
+-packageobfuscationdictionary dic.txt
