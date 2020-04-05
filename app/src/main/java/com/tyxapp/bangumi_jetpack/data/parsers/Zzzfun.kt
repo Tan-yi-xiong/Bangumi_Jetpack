@@ -258,12 +258,14 @@ class Zzzfun : IHomePageParser, IsearchParser, IPlayerVideoParser {
         withContext(Dispatchers.IO) {
             try {
                 val playid = linkVideoUrls[line][ji]
-                val md5Str = MD5Util.md5(playid + 534697)
-                val url = "$BASE_URL/video/play"
+                val time = System.currentTimeMillis();
+                val md5Str = MD5Util.md5("zandroidzz$time")
+                val url = "$BASE_URL/video/newplay"
 
                 val requestBodyPost = FormBody.Builder()
                     .add("playid", playid)
                     .add("sing", md5Str)
+                    .add("map", time.toString())
                     .build()
                 val request = Request.Builder()
                     .post(requestBodyPost)
