@@ -22,8 +22,8 @@ import org.jsoup.nodes.Element
 import java.net.URLDecoder
 
 private const val BASE_URL = "http://www.bimibimi.me"
-private const val DANMU_URL = "http://119.23.209.33/static/danmu/dm"
-private const val VIDEO_BASE_URL = "http://119.23.209.33/static/danmu/play.php?url="
+private const val DANMU_URL = "http://49.234.56.246/danmu/dm"
+private const val VIDEO_BASE_URL = "http://49.234.56.246/danmu/play.php?url="
 
 class BimiBimi : IHomePageParser, IPlayerVideoParser, IsearchParser {
 
@@ -126,12 +126,26 @@ class BimiBimi : IHomePageParser, IPlayerVideoParser, IsearchParser {
                     }
                 val jsonObject = JSONObject(jsonData)
                 val videoUrl: String = jsonObject.getString("url").run {
-                    return@run if (contains("%")) {
-                        parserBase64Url(this)
-                    } else {
-                        parserBimiEncodeUrl(this)
+                    return@run when {
+                        contains("%") -> parserBase64Url(this)
+                        contains("http") -> this
+                        else -> {
+                            val paeserUrl = parserBimiEncodeUrl("$VIDEO_BASE_URL$this")
+                            if (!paeserUrl.contains("http")) {
+                                val from = jsonObject.getString("from")
+                                val playHtml = if (from.contains("niux")) {
+                                    VIDEO_BASE_URL.replace("play", from).run { replace("url", "id") } + this
+                                } else {
+                                    VIDEO_BASE_URL.replace("play", from) + this
+                                }
+                                parserBimiEncodeUrl(playHtml)
+                            } else {
+                                paeserUrl
+                            }
+                        }
                     }
                 }
+                LOGI(videoUrl)
                 VideoUrl(videoUrl)
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -155,10 +169,9 @@ class BimiBimi : IHomePageParser, IPlayerVideoParser, IsearchParser {
         }
     }
 
-    private fun parserBimiEncodeUrl(encodeUrl: String): String {
-        val playUrl = "$VIDEO_BASE_URL$encodeUrl"
+    private fun parserBimiEncodeUrl(playUrl: String): String {
         val document = Jsoup.parse(OkhttpUtil.getResponseData(playUrl))
-        return document.getElementsByTag("source").get(0).attrSrc()
+        return document.getElementsByTag("source")[0].attrSrc()
     }
 
     override fun getSearchResult(searchWord: String): Listing<Bangumi> {
