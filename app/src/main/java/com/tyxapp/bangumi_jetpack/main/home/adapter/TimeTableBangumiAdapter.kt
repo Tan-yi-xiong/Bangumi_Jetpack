@@ -8,13 +8,14 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.tyxapp.bangumi_jetpack.data.Bangumi
+import com.tyxapp.bangumi_jetpack.data.TimeTableBangumi
 import com.tyxapp.bangumi_jetpack.databinding.TimetableBangumiItemBinding
 import com.tyxapp.bangumi_jetpack.main.BANGUMI_DIFF_CALLBACK
 import com.tyxapp.bangumi_jetpack.main.MainActivity
 import com.tyxapp.bangumi_jetpack.utilities.startPlayerActivity
 import com.tyxapp.bangumi_jetpack.utilities.toPx
 
-class TimeTableBangumiAdapter : ListAdapter<Bangumi, TimeTableViewHolder>(BANGUMI_DIFF_CALLBACK) {
+class TimeTableBangumiAdapter : ListAdapter<TimeTableBangumi, TimeTableViewHolder>(TimeTableBangumi.ItemCallback) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TimeTableViewHolder {
         return TimeTableViewHolder(
@@ -55,7 +56,7 @@ class TimeTableViewHolder(
         }
     }
 
-    fun bind(bangumi: Bangumi) {
+    fun bind(bangumi: TimeTableBangumi) {
         with (bind) {
             this.bangumi = bangumi
             executePendingBindings()

@@ -1,9 +1,6 @@
 package com.tyxapp.bangumi_jetpack.repository
 
-import com.tyxapp.bangumi_jetpack.data.Bangumi
-import com.tyxapp.bangumi_jetpack.data.BangumiDetail
-import com.tyxapp.bangumi_jetpack.data.CategoryBangumi
-import com.tyxapp.bangumi_jetpack.data.Listing
+import com.tyxapp.bangumi_jetpack.data.*
 import com.tyxapp.bangumi_jetpack.data.db.AppDataBase
 import com.tyxapp.bangumi_jetpack.data.parsers.IHomePageParser
 import kotlinx.coroutines.Dispatchers
@@ -19,7 +16,7 @@ class HomeDataRepository(
 
     suspend fun getCategorItems() = iHomePageParser.getCategorItems()
 
-    suspend fun getBangumiTimeTable(): List<List<Bangumi>> = iHomePageParser.getBangumiTimeTable()
+    suspend fun getBangumiTimeTable(): List<List<TimeTableBangumi>> = iHomePageParser.getBangumiTimeTable()
 
     fun getCategoryBangumis(category: String): Listing<CategoryBangumi> = iHomePageParser.getCategoryBangumis(category)
 

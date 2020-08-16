@@ -4,6 +4,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.tyxapp.bangumi_jetpack.data.Bangumi
+import com.tyxapp.bangumi_jetpack.data.TimeTableBangumi
 import com.tyxapp.bangumi_jetpack.data.UIStata
 import com.tyxapp.bangumi_jetpack.repository.HomeDataRepository
 import com.tyxapp.bangumi_jetpack.utilities.LOGI
@@ -13,7 +14,7 @@ class TimeTableViewModel(
     private var mRepository: HomeDataRepository
 ) : ViewModel() {
 
-    val timeTableBagnumisLiveData = MutableLiveData<List<List<Bangumi>>>()
+    val timeTableBagnumisLiveData = MutableLiveData<List<List<TimeTableBangumi>>>()
 
     val uiStata = MutableLiveData<UIStata>()
 

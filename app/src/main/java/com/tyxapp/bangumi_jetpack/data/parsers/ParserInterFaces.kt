@@ -31,7 +31,7 @@ interface IHomePageParser {
      * 获取时间表
      *
      */
-    suspend fun getBangumiTimeTable(): List<List<Bangumi>>
+    suspend fun getBangumiTimeTable(): List<List<TimeTableBangumi>>
 }
 
 /**

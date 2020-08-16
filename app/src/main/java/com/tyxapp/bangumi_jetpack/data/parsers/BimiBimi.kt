@@ -266,16 +266,19 @@ class BimiBimi : IHomePageParser, IPlayerVideoParser, IsearchParser {
         )
     }
 
-    override suspend fun getBangumiTimeTable(): List<List<Bangumi>> = withContext(Dispatchers.IO) {
+    override suspend fun getBangumiTimeTable(): List<List<TimeTableBangumi>> = withContext(Dispatchers.IO) {
         initHomeDocument()
-        val weekBangumis = ArrayList<List<Bangumi>>()
+        val weekBangumis = ArrayList<List<TimeTableBangumi>>()
         homeDocument!!.getElementsByClass("tab-content").forEach { dayBnagumisElement ->
-            val dayBangumis = ArrayList<Bangumi>()
+            val dayBangumis = ArrayList<TimeTableBangumi>()
             dayBnagumisElement.getElementsByClass("bangumi-item").forEach { bangumiElement ->
                 val infoElement = bangumiElement.getElementsByClass("item-info")[0]
                 val id = parserid(infoElement.get_a_tags()[0].attrHref())!!
                 val name = infoElement.get_a_tags()[0].text()
-                val jiTotal = infoElement.getElementsByTag("span").text()
+                val (jiTotal, isUpdate) = infoElement.getElementsByTag("span").run {
+                    text() to (attr("class") == "fl-new")
+                }
+
                 val cover = bangumiElement.getElementsByTag("img")[0].attrSrc().run {
                     if (!contains("http")) {
                         "$BASE_URL$this"
@@ -283,7 +286,7 @@ class BimiBimi : IHomePageParser, IPlayerVideoParser, IsearchParser {
                         this
                     }
                 }
-                dayBangumis.add(Bangumi(id, BangumiSource.BimiBimi, name, cover, jiTotal))
+                dayBangumis.add(TimeTableBangumi(id, BangumiSource.BimiBimi, name, cover, jiTotal, isUpdate))
             }
             weekBangumis.add(dayBangumis)
         }

@@ -1,6 +1,9 @@
 package com.tyxapp.bangumi_jetpack
 
 import com.tyxapp.bangumi_jetpack.data.parsers.BimiBimi
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.runBlocking
 import org.junit.Test
 import java.net.URLDecoder
@@ -18,8 +21,18 @@ class ExampleUnitTest {
     @Test
     fun addition_isCorrect() {
         runBlocking {
-            print(URLDecoder.decode("%25E6%2588%2591%25E7%259A%2584"))
+            flowTest().collect {
+                println(Thread.currentThread().name + it)
+            }
         }
+    }
+
+    suspend fun flowTest() = flow {
+        for (i in 0 .. 10) {
+            delay(500)
+            emit(i)
+        }
+
     }
 
     @Test

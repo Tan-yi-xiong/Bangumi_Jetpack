@@ -332,17 +332,17 @@ class Dilidili : IHomePageParser, IPlayerVideoParser, IsearchParser {
         }
     }
 
-    override suspend fun getBangumiTimeTable(): List<List<Bangumi>> = withContext(Dispatchers.IO) {
+    override suspend fun getBangumiTimeTable(): List<List<TimeTableBangumi>> = withContext(Dispatchers.IO) {
         initPcHomePageDocument()
         val weekBangumisElement = pcHomePageDocument!!.getElementsByClass("book small")
-        val weekBangumis = ArrayList<List<Bangumi>>()
+        val weekBangumis = ArrayList<List<TimeTableBangumi>>()
         weekBangumisElement.forEach { dayBangumisElement ->
-            val dayBangumis = ArrayList<Bangumi>()
+            val dayBangumis = ArrayList<TimeTableBangumi>()
             dayBangumisElement.children().forEach { bagnumiElement ->
                 val id = parserId(bagnumiElement.attrHref())
                 val cover = bagnumiElement.get_img_tags()[0].attrSrc()
                 val name = bagnumiElement.get_p_tags()[0].text()
-                dayBangumis.add(Bangumi(id, BangumiSource.DiliDili, name, cover))
+                dayBangumis.add(TimeTableBangumi(id, BangumiSource.DiliDili, name, cover, ""))
             }
             weekBangumis.add(dayBangumis)
         }

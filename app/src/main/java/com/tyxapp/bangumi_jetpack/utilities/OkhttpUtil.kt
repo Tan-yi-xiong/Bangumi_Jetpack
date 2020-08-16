@@ -69,6 +69,13 @@ object OkhttpUtil {
         return client.newCall(request).execute().body
             ?: throw NullPointerException("应答体为空")
     }
+
+    fun createPhoneRequest(url: String): Request {
+        return Request.Builder()
+            .url(url)
+            .addHeader("User-Agent", PHONE_REQUEST)
+            .build()
+    }
 }
 
 

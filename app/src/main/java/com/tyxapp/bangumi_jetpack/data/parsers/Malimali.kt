@@ -10,13 +10,17 @@ import com.tyxapp.bangumi_jetpack.utilities.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import master.flame.danmaku.danmaku.parser.BaseDanmakuParser
+import okhttp3.Request
 import org.jetbrains.anko.collections.forEachWithIndex
+import org.json.JSONObject
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.nodes.Element
+import java.lang.RuntimeException
 import java.net.URI
 import java.net.URLDecoder
 
-private const val BASE_URL = "http://www.malimali.com"
+private const val BASE_URL = "https://www.malimali.tv"
 
 
 class Malimali : IsearchParser, IPlayerVideoParser {
@@ -24,139 +28,116 @@ class Malimali : IsearchParser, IPlayerVideoParser {
     private val lineWithPlayerurls by lazy(LazyThreadSafetyMode.NONE) { SparseArray<List<String>>() }
 
     override suspend fun getBangumiDetail(id: String): BangumiDetail = withContext(Dispatchers.IO) {
-        val url = "$BASE_URL?m=vod-detail-id-$id.html"
-        playerDetailDocument = Jsoup.parse(OkhttpUtil.getResponseData(url))
-        val pTags = playerDetailDocument!!.getElementsByClass("oi8EDlVc")[0].get_p_tags()
-        val name = playerDetailDocument!!.getElementsByClass("oi8EDlVc")[0]
-            .getElementsByTag("h1")
-            .takeIf { it.size > 0 }
-            ?.get(0)
+        val url = "$BASE_URL/voddetail/$id.html"
+        playerDetailDocument =
+            Jsoup.parse(OkhttpUtil.getResponseData(OkhttpUtil.createPhoneRequest(url)))
+
+        val baseInfoElement =
+            playerDetailDocument!!.getElementsByClass("leo-detail-media leo-po-re")[0]!!
+        val (name, ji) = baseInfoElement.children()
+            .getOrNull(0)
             ?.text()
-            ?: ""
-
-        val ji = pTags.takeIf { it.size > 0 }?.let { elemetn ->
-            elemetn[0].text().split(" ").run { get(size - 1) }
-        } ?: ""
-
-        val coverurl = playerDetailDocument!!.getElementsByClass("_1JapLbCo")[0]
-            .get_img_tags()[0].attrSrc()
-        val cover = if (coverurl.contains("http")) coverurl else "$BASE_URL$coverurl"
-
-        val niandai = pTags.takeIf { it.size > 4 }?.get(3)?.text() ?: ""
-        val intro = playerDetailDocument!!.getElementsByClass("mt10 _3mSSX7tA")
-            .takeIf { it.size > 0 }?.get(0)?.text() ?: ""
+            ?.split("|")
+            ?.run { getOrNull(0)?.trim() to getOrNull(1)?.trim() }
+            ?: Pair("", "")
+        val makeInformationElements =
+            baseInfoElement.getElementsByClass("leo-mt-20 leo-color-a").getOrNull(0)?.children()
+        val staff = makeInformationElements?.getOrNull(0)?.run { parserStaffInfo(this) } ?: ""
+        val cast = makeInformationElements?.getOrNull(1)?.run { parserStaffInfo(this) } ?: ""
+        val (niandai, type) = makeInformationElements?.getOrNull(2)
+            ?.children()
+            ?.run { getOrNull(0)?.text() to getOrNull(1)?.text() }
+            ?: Pair("", "")
+        val intro = playerDetailDocument!!.getElementsByClass("leo-color-e leo-fs-s leo-ellipsis-2")
+            ?.getOrNull(0)
+            ?.text()
+        val cover = playerDetailDocument!!.getElementsByClass("leo-lazy leo-radius-s")
+            .getOrNull(0)
+            ?.attrSrc()
 
         BangumiDetail(
             id = id,
             source = BangumiSource.Malimali,
-            name = name,
-            cover = cover,
-            jiTotal = ji,
-            niandai = niandai,
-            intro = intro
+            name = name ?: "",
+            cover = cover ?: "",
+            jiTotal = ji ?: "",
+            niandai = niandai ?: "",
+            staff = staff,
+            cast = cast,
+            type = type ?: "",
+            intro = intro ?: ""
         )
+    }
 
+    private fun parserStaffInfo(element: Element): String {
+        return element.getElementsByTag("a")
+            .joinToString(separator = "\n") { it.text() }
     }
 
     override suspend fun getJiList(id: String): Pair<Int, List<JiItem>> =
         withContext(Dispatchers.IO) {
             if (playerDetailDocument == null) {
-                val url = "$BASE_URL?m=vod-detail-id-$id.html"
-                playerDetailDocument = Jsoup.parse(OkhttpUtil.getResponseData(url))
+                val url = "$BASE_URL/voddetail/$id.html"
+                playerDetailDocument =
+                    Jsoup.parse(OkhttpUtil.getResponseData(OkhttpUtil.createPhoneRequest(url)))
             }
             var line = 0
             val jiList = ArrayList<JiItem>()
 
-            var videoUrl: String? = null
-            playerDetailDocument!!.getElementsByClass("_1QUOPvL_ listurl").forEach { lines ->
+            playerDetailDocument!!.getElementsByClass("leo-play-num").forEach { lines ->
                 line++
+                val playurls = ArrayList<String>()
                 lines.children().forEach { jiElement ->
-                    if (videoUrl == null) {
-                        videoUrl = "$BASE_URL${jiElement.get_a_tags()[0].attrHref()}"
+                    val (name, plaUrl) = jiElement.get_a_tags()[0].run {
+                        text() to attrHref()
                     }
                     if (jiList.size < lines.children().size) {
-                        val name = jiElement.get_p_tags()[0].text()
-
                         jiList.add(JiItem(name))
                     }
+                    playurls.add(plaUrl)
                 }
+                lineWithPlayerurls.append(line, playurls)
             }
-
-            // 获取所有线路视频播放地址
-            videoUrl?.let { url ->
-                val document = Jsoup.parse(OkhttpUtil.getResponseData(url))
-                val playurls =
-                    document.getElementsByClass("fl playerbox iframe")[0].getElementsByTag("script")
-                        .toString().run {
-                            val s = substring(indexOf("(") + 1, lastIndexOf(")") - 1)
-                            s.split("%24%24%24%")
-                        }
-                playurls.forEachWithIndex { index, urls ->
-                    val spliturls = urls.split("%23")
-                    val urlList = ArrayList<String>()
-                    spliturls.forEach {
-                        try {
-                            val playurl = URLDecoder.decode(it.split("%24")[1], "UTF-8")
-                            urlList.add(playurl)
-                        } catch (e: Exception) {
-                            return@forEach
-                        }
-                    }
-                    lineWithPlayerurls.append(index, urlList)
-                }
-            }
-
             Pair(line, jiList)
         }
 
-    override suspend fun getPlayerUrl(id: String, ji: Int, line: Int): VideoUrl =
-        withContext(Dispatchers.IO) {
-            if (line >= lineWithPlayerurls.size()) {
-                VideoUrl("$BASE_URL/?m=vod-detail-id-$id.html", true)
-            } else {
-                val url = lineWithPlayerurls[line].takeIf { ji < it.size }
-
-                if (url == null) {
-                    VideoUrl("$BASE_URL/?m=vod-detail-id-$id.html", true)
-                } else {
-                    var playurl = lineWithPlayerurls[line][ji]
-                    if (!playurl.contains(".mp4") || !playurl.contains(".m3u8")) {
-                        try {
-                            playurl = OkhttpUtil.getResponseData(playurl).run {
-                                val urlText = substring(indexOf("main")).split(";")[0].run {
-                                    substring(this.indexOf("\"") + 1, this.lastIndexOf("\""))
-                                }
-                                val uri = URI(playurl)
-
-                                "${uri.scheme}://${uri.host}$urlText"
-                            }
-                        } catch (e: Exception) {
-                            VideoUrl("$BASE_URL/?m=vod-detail-id-$id.html", true)
-                        }
-                    }
-                    VideoUrl(playurl, false)
+    override suspend fun getPlayerUrl(id: String, ji: Int, line: Int): VideoUrl {
+        return if (line >= lineWithPlayerurls.size()) {
+            VideoUrl("$BASE_URL/voddetail/$id.html", true)
+        } else {
+            withContext(Dispatchers.IO) {
+                val url = "$BASE_URL${lineWithPlayerurls[line + 1][ji]}"
+                val document = Jsoup.parse(OkhttpUtil.getResponseData(url))
+                val playJSONObject = document.getElementById("player").child(0).toString().run {
+                    JSONObject(substring(indexOf("{"), lastIndexOf("}") + 1))
                 }
+                VideoUrl(playJSONObject.getString("url"), false)
             }
         }
+    }
 
     override suspend fun getRecommendBangumis(id: String): List<Bangumi> =
         withContext(Dispatchers.IO) {
             if (playerDetailDocument == null) {
-                val url = "$BASE_URL?m=vod-detail-id-$id.html"
-                playerDetailDocument = Jsoup.parse(OkhttpUtil.getResponseData(url))
+                val url = "$BASE_URL/voddetail/$id.html"
+                playerDetailDocument =
+                    Jsoup.parse(OkhttpUtil.getResponseData(OkhttpUtil.createPhoneRequest(url)))
             }
-            val elements = playerDetailDocument!!.getElementsByClass("QZ0baptH")
+            val elements =
+                playerDetailDocument!!.getElementsByClass("swiper-slide leo-video-ritem leo-col-4 leo-left leo-mb-30 leo-mr-20")
             val bangumis = ArrayList<Bangumi>()
             elements.forEach { bangumisElements ->
                 bangumisElements.children().forEach { bangumiElement ->
-                    val bangumiId = parserid(bangumiElement.get_a_tags()[0].attrHref())!!
-                    val name = bangumiElement.getElementsByTag("h3").text()
-                    val cover = if (bangumiElement.get_img_tags()[0].attrSrc().contains("http")) {
-                        bangumiElement.get_img_tags()[0].attrSrc()
-                    } else {
-                        "$BASE_URL${bangumiElement.get_img_tags()[0].attrSrc()}"
-                    }
-                    val ji = bangumiElement.get_p_tags()[0].text()
+                    val bangumiId = parserid(bangumiElement.attrHref())!!
+                    val name = bangumiElement.attr("title")
+                    val cover = bangumiElement.getElementsByTag("img")
+                        ?.getOrNull(0)
+                        ?.attrSrc()
+                        ?: ""
+                    val ji =
+                        bangumiElement.getElementsByClass("leo-video-remark leo-po-re leo-fs-s leo-color-a leo-right leo-ellipsis-1")
+                            ?.getOrNull(0)
+                            ?.text() ?: ""
                     bangumis.add(Bangumi(bangumiId, BangumiSource.Malimali, name, cover, ji))
                 }
             }
@@ -189,9 +170,10 @@ class MalimaliSearchResultDataSource(
 ) : PageResultDataSourch<Int, Bangumi>(searchWord) {
     override fun initialLoad(
         params: LoadInitialParams<Int>,
-        callback: LoadInitialCallback<Int, Bangumi>) {
+        callback: LoadInitialCallback<Int, Bangumi>
+    ) {
 
-        val url = "$BASE_URL/index.php?m=vod-search-pg-1-wd-$encodeSearchWord.html"
+        val url = "$BASE_URL/vodsearch/$encodeSearchWord----------1---.html"
 
         val document = Jsoup.parse(OkhttpUtil.getResponseData(url))
         val result = parserBangumiFromHtml(document)
@@ -201,7 +183,7 @@ class MalimaliSearchResultDataSource(
 
     override fun afterload(params: LoadParams<Int>, callback: LoadCallback<Int, Bangumi>) {
         val page = params.key
-        val url = "$BASE_URL/index.php?m=vod-search-pg-$page-wd-$encodeSearchWord.html"
+        val url = "$BASE_URL/vodsearch/$encodeSearchWord----------$page---.html"
         val document = Jsoup.parse(OkhttpUtil.getResponseData(url))
         val result = parserBangumiFromHtml(document)
 
@@ -213,20 +195,25 @@ class MalimaliSearchResultDataSource(
     }
 
     private fun parserBangumiFromHtml(document: Document): List<Bangumi> {
-        val bangumisElement = document.getElementsByClass("d-vod-list")[0]
-        if (bangumisElement.children().size == 0) return emptyList()
+        val bangumisElements = document.getElementsByClass("search list")
+        bangumisElements.takeIf { it.isNotEmpty() } ?: return emptyList()
         val bangumis = ArrayList<Bangumi>()
-        bangumisElement.children().forEach { bangumiElement ->
-            val bangumiMessage = bangumiElement.get_a_tags()[0]
-            val id = parserid(bangumiMessage.attrHref()) ?: ""
-            val imgTag = bangumiMessage.get_img_tags()[0]
-            val cover = if (imgTag.attrSrc().contains("http")) {
-                imgTag.attrSrc()
-            } else {
-                "$BASE_URL${imgTag.attrSrc()}"
-            }
-            val name = imgTag.attrAlt()
-            val ji = bangumiMessage.getElementsByClass("text")[0].text()
+        bangumisElements.forEach { element ->
+            val (cover, name) = element.getElementsByClass("item-lazy")
+                .getOrNull(0)
+                ?.run { attr("data-echo") to attr("alt") }
+                ?: Pair("", "")
+
+            val ji = element.getElementsByClass("so-imgTag_rb")
+                .getOrNull(0)
+                ?.text()
+                ?: ""
+
+            val id = element.getElementsByTag("a")
+                .getOrNull(0)
+                ?.run { parserid(attrHref()) }
+                ?: return@forEach
+
             bangumis.add(Bangumi(id, BangumiSource.Malimali, name, cover, ji))
         }
         return bangumis

@@ -128,18 +128,18 @@ class Zzzfun : IHomePageParser, IsearchParser, IPlayerVideoParser {
     "ji": "第11话"
     }
      */
-    override suspend fun getBangumiTimeTable(): List<List<Bangumi>> = withContext(Dispatchers.IO) {
+    override suspend fun getBangumiTimeTable(): List<List<TimeTableBangumi>> = withContext(Dispatchers.IO) {
         val baseDayUrl = "$BASE_URL/week?day="
-        val weekBnagumis = ArrayList<List<Bangumi>>()
+        val weekBnagumis = ArrayList<List<TimeTableBangumi>>()
         for (day in 1..7) {
-            val dayBnagumis = ArrayList<Bangumi>()
+            val dayBnagumis = ArrayList<TimeTableBangumi>()
             JSONObject(getResponseData("$baseDayUrl$day")).getJSONArray("data").forEach {
                 val id = it.getString("videoId")
                 val cover = it.getString("videoImg")
                 val name = it.getString("videoName")
                 val ji = it.getString("ji")
                 LOGI(name)
-                dayBnagumis.add(Bangumi(id, BangumiSource.Zzzfun, name, cover, ji))
+                dayBnagumis.add(TimeTableBangumi(id, BangumiSource.Zzzfun, name, cover, ji))
             }
             weekBnagumis.add(dayBnagumis)
         }

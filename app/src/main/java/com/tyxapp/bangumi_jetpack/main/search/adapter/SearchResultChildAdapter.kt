@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.tyxapp.bangumi_jetpack.R
 import com.tyxapp.bangumi_jetpack.data.Bangumi
 import com.tyxapp.bangumi_jetpack.data.NetWordState
+import com.tyxapp.bangumi_jetpack.databinding.ItemSearchBangumiBinding
 import com.tyxapp.bangumi_jetpack.databinding.NetwordstateViewholderLayoutBinding
 import com.tyxapp.bangumi_jetpack.databinding.TimetableBangumiItemBinding
 import com.tyxapp.bangumi_jetpack.main.BANGUMI_DIFF_CALLBACK
@@ -29,7 +30,7 @@ class SearchResultChildAdapter(
             )
 
             R.layout.timetable_bangumi_item -> SearchResultChildViewHolder(
-                TimetableBangumiItemBinding.inflate(
+                ItemSearchBangumiBinding.inflate(
                     LayoutInflater.from(parent.context), parent, false
                 )
             )
@@ -113,7 +114,7 @@ class NetWordStateViewHolder(
 }
 
 class SearchResultChildViewHolder(
-    val bind: TimetableBangumiItemBinding
+    val bind: ItemSearchBangumiBinding
 ) : RecyclerView.ViewHolder(bind.root) {
 
     init {
