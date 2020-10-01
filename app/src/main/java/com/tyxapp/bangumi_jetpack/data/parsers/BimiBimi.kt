@@ -120,59 +120,23 @@ class BimiBimi : IHomePageParser, IPlayerVideoParser, IsearchParser {
                     .addHeader("User-Agent", PHONE_REQUEST)
                     .build()
                 val document = Jsoup.parse(OkhttpUtil.getResponseData(request))
-                val jsonData =
-                    document.getElementsByClass("leo-player")[0].child(0).toString().run {
-                        substring(indexOf("{"), lastIndexOf("}") + 1)
-                    }
-                val jsonObject = JSONObject(jsonData)
-                val videoUrl: String = jsonObject.getString("url").run {
-                    return@run when {
-                        contains("%") -> parserBase64Url(this)
-                        contains("http") -> this
-                        else -> {
-                            val paeserUrl = parserBimiEncodeUrl("$VIDEO_BASE_URL$this")
-                            if (!paeserUrl.contains("http")) {
-                                val from = jsonObject.getString("from")
-                                val playHtml = if (from.contains("niux")) {
-                                    VIDEO_BASE_URL.replace("play", from).run { replace("url", "id") } + this
-                                } else {
-                                    VIDEO_BASE_URL.replace("play", from) + this
-                                }
-                                parserBimiEncodeUrl(playHtml)
-                            } else {
-                                paeserUrl
-                            }
-                        }
-                    }
+                val jsonData = document.getElementById("video").toString().run {
+                    substring(indexOf("{"), lastIndexOf("}") + 1)
                 }
-                LOGI(videoUrl)
-                VideoUrl(videoUrl)
+                val videoHtmlUrl = "$VIDEO_BASE_URL${JSONObject(jsonData).getString("url")}"
+                val playUrl = parserPlayUrl(videoHtmlUrl)
+                VideoUrl(playUrl)
             } catch (e: Exception) {
                 e.printStackTrace()
                 VideoUrl("$BASE_URL/bangumi/bi/$id/", true)
             }
         }
 
-    private fun parserBase64Url(base64Url: String): String {
-        val vUrl = URLDecoder.decode(base64Url, "utf-8")
-        return if (!vUrl.contains("http")) {
-            val baseUrl = "http://119.23.209.33/static/danmu"
-            val purl = if (vUrl.contains(".mp4")) {
-                "$baseUrl/niux.php?id=$vUrl"
-            } else {
-                "$baseUrl/bit.php?$vUrl"
-            }
-            val videoUrlHtmlDocument = Jsoup.parse(OkhttpUtil.getResponseData(purl))
-            videoUrlHtmlDocument.getElementById("video").child(0).attrSrc()
-        } else {
-            vUrl
-        }
+    private fun parserPlayUrl(videoHtmlUrl: String): String {
+        val document = Jsoup.parse(OkhttpUtil.getResponseData(videoHtmlUrl))
+        return document.getElementById("video").getElementsByTag("source")[0].attrSrc()
     }
 
-    private fun parserBimiEncodeUrl(playUrl: String): String {
-        val document = Jsoup.parse(OkhttpUtil.getResponseData(playUrl))
-        return document.getElementsByTag("source")[0].attrSrc()
-    }
 
     override fun getSearchResult(searchWord: String): Listing<Bangumi> {
         val factor = BimiSearchResultDataSourceFactor(searchWord)

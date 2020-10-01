@@ -16,7 +16,7 @@ import okhttp3.Request
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 
-private const val BASEURL_PC = "http://www.silisili.me"
+private const val BASEURL_PC = "http://www.silisili.in"
 private const val DANMU_URL = "http://27.124.39.40"
 
 class Silisili : IsearchParser, IPlayerVideoParser {
@@ -48,8 +48,7 @@ class Silisili : IsearchParser, IPlayerVideoParser {
         val type = DLTag.getOrNull(2)?.text() ?: ""
         val ji = DLTag.getOrNull(3)?.text() ?: ""
         val intro =
-            detailElement.getElementsByClass("d_label2").getOrNull(1)?.text()
-                ?: ""
+            detailElement.getElementById("content").text()
         BangumiDetail(
             id = id,
             source = BangumiSource.SiliSili,
@@ -157,7 +156,7 @@ private class SiliSiliSearchResultDataSource(
     ) {
         val url = "$BASEURL_PC/e/search/index.php"
         val formBody = FormBody.Builder()
-            .add("show", "title,ftitle,zz")
+            .add("show", "title")
             .add("tbname", "movie")
             .add("tempid", "1")
             .add("keyboard", searchWord)

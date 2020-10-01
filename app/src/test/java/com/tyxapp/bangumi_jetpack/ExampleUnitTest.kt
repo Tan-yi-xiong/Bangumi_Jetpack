@@ -37,24 +37,9 @@ class ExampleUnitTest {
 
     @Test
     fun test() {
-        val lock = ReentrantLock()
-        thread {
-            a(lock)
-        }
-        thread {
-            a(lock)
-        }
+        URLDecoder.decode("%E6%90%9C%E7%B4%A2").also { print(it) }
     }
 
-    fun a(lock: Lock) {
-        var i = 0
-        while (i < 50000) {
-            val a = "sdafasdf"
-            val b = "asdfasdasdf"
-            println("$i  ${Thread.currentThread().name}")
-            i++
-        }
-    }
 
     @Test
     fun parserTest() {
