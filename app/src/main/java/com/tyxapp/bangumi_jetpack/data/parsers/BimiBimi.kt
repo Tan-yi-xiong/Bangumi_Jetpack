@@ -21,9 +21,9 @@ import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 import java.net.URLDecoder
 
-private const val BASE_URL = "http://www.bimibimi.me"
+private const val BASE_URL = "http://www.bimiacg.com"
 private const val DANMU_URL = "http://49.234.56.246/danmu/dm"
-private const val VIDEO_BASE_URL = "http://49.234.56.246/danmu/play.php?url="
+private const val VIDEO_BASE_URL = "http://49.234.56.246/danmu/"
 
 class BimiBimi : IHomePageParser, IPlayerVideoParser, IsearchParser {
 
@@ -117,15 +117,33 @@ class BimiBimi : IHomePageParser, IPlayerVideoParser, IsearchParser {
                 val url = "$BASE_URL/bangumi/$id/play/${line + 1}/${ji + 1}/"
                 val request = Request.Builder()
                     .url(url)
-                    .addHeader("User-Agent", PHONE_REQUEST)
                     .build()
                 val document = Jsoup.parse(OkhttpUtil.getResponseData(request))
                 val jsonData = document.getElementById("video").toString().run {
                     substring(indexOf("{"), lastIndexOf("}") + 1)
                 }
-                val videoHtmlUrl = "$VIDEO_BASE_URL${JSONObject(jsonData).getString("url")}"
-                val playUrl = parserPlayUrl(videoHtmlUrl)
-                VideoUrl(playUrl)
+                val jsonObject = JSONObject(jsonData)
+                val jsonUrl = jsonObject.getString("url")
+
+                if (jsonUrl.contains("http")) {
+                    VideoUrl(jsonUrl)
+                } else {
+                    var from = jsonObject.getString("from")
+                    from = when (from) {
+                        "wei" -> {
+                            "wy"
+                        }
+                        "ksyun" -> {
+                            "ksyun"
+                        }
+                        else -> {
+                            "play"
+                        }
+                    }
+                    val videoHtmlUrl = "$VIDEO_BASE_URL$from.php?url=$jsonUrl&myurl=$url"
+                    val playUrl = parserPlayUrl(videoHtmlUrl)
+                    VideoUrl(playUrl)
+                }
             } catch (e: Exception) {
                 e.printStackTrace()
                 VideoUrl("$BASE_URL/bangumi/bi/$id/", true)
