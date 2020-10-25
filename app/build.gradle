@@ -4,13 +4,21 @@ apply plugin: 'kotlin-kapt'
 apply plugin: "androidx.navigation.safeargs.kotlin"
 
 android {
+    signingConfigs {
+        debug {
+            storeFile file('../release/Sing')
+            storePassword '1273025'
+            keyPassword '1273025'
+            keyAlias 'key0'
+        }
+    }
     compileSdkVersion 28
     defaultConfig {
         applicationId "com.tyxapp.bangumi_jetpack"
         minSdkVersion 21
         targetSdkVersion 28
-        versionCode 24
-        versionName "3.0.11"
+        versionCode 25
+        versionName "3.0.12"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {

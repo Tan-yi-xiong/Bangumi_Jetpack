@@ -5,10 +5,12 @@ import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
 import android.content.res.Configuration
+import android.graphics.Color
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
+import android.os.Build
 import android.os.Bundle
 import android.view.Gravity
 import android.view.View
@@ -77,6 +79,7 @@ class PlayerActivity : BasePlayerActivity() {
     //datas
     private val resultIntent = Intent() // 回传给启动这个Activity的Intent
     private var scrimViewOffset: Int = 0
+    private var isBangs = false
 
     private var videoViewHeight = 0
     private val bangumiId: String by lazy(LazyThreadSafetyMode.NONE) {
@@ -101,8 +104,6 @@ class PlayerActivity : BasePlayerActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         ThemeUtil.setTheme(this)
         super.onCreate(savedInstanceState)
-        window.addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
-        window.statusBarColor = ContextCompat.getColor(this, R.color.overlay_drak)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_player)
         mSensorManager = getSystemService()
         init()
@@ -178,16 +179,31 @@ class PlayerActivity : BasePlayerActivity() {
             }
         }
 
-        //ImitationStateBar
-        val resId = resources.getIdentifier("status_bar_height", "dimen", "android")
-        var stateBarHeight = resources.getDimension(resId)
-        stateBarHeight = if (stateBarHeight == 0f) {
-            10.toPx().toFloat()
-        } else {
-            stateBarHeight
+        window.decorView.post {
+            window.decorView.post {
+                val stateBarHeight = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && window.decorView.rootWindowInsets.displayCutout == null) {
+                    //ImitationStateBar
+                    val resId = resources.getIdentifier("status_bar_height", "dimen", "android")
+                    var height = resources.getDimension(resId)
+                    if (height == 0f) {
+                        10.toPx().toFloat()
+                    } else {
+                        height
+                    }
+                } else {
+                    isBangs = true
+                    0f
+                }
+                binding.stateBar.layoutParams.height = stateBarHeight.toInt()
+                if (!isBangs) {
+                    window.addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
+                    window.statusBarColor = ContextCompat.getColor(this, R.color.overlay_drak)
+                } else {
+                    window.statusBarColor = Color.BLACK
+                    showStateBar()
+                }
+            }
         }
-
-        binding.stateBar.layoutParams.height = stateBarHeight.toInt()
     }
 
     private fun offsetScrimView(offset: Int) {
@@ -470,13 +486,14 @@ class PlayerActivity : BasePlayerActivity() {
 
 
     private fun showStateBar() {
-
         var windowState = View.SYSTEM_UI_FLAG_LAYOUT_STABLE or
                 View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
 
         if (!isLandscape) {
             window.clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
-            windowState = windowState or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+            if (!isBangs) {
+                windowState = windowState or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+            }
             binding.barLayout.isGone(false)
         } else {
             windowState = windowState or View.SYSTEM_UI_LAYOUT_FLAGS
@@ -492,10 +509,16 @@ class PlayerActivity : BasePlayerActivity() {
         if (isLandscape) { //全屏隐藏导航栏
             windowState = windowState or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or
                     View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+            window.addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
+        } else {
+            if (!isBangs) {
+                window.addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
+            } else {
+                window.clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
+            }
         }
 
         binding.barLayout.isGone(true)
-        window.addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
         window.decorView.systemUiVisibility = windowState
     }
 
