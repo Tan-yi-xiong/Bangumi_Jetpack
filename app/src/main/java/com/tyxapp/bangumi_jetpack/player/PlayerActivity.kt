@@ -201,6 +201,7 @@ class PlayerActivity : BasePlayerActivity() {
                 } else {
                     window.statusBarColor = Color.BLACK
                     showStateBar()
+                    binding.barLayout.isGone(true)
                 }
             }
         }
