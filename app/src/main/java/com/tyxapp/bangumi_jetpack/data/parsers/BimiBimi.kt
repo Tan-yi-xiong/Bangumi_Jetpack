@@ -21,7 +21,7 @@ import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 import java.net.URLDecoder
 
-private const val BASE_URL = "http://www.bimiacg.com"
+private const val BASE_URL = "http://www.bimiacg.net"
 private const val DANMU_URL = "http://49.234.56.246/danmu/dm"
 private const val VIDEO_BASE_URL = "http://49.234.56.246/danmu/"
 
