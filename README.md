@@ -1,5 +1,7 @@
 <img src="./Screenshots/icon.png">
 
+# 暂停维护了
+
 # Bangumi
 
 一个追番和看番的Android应用
@@ -8,10 +10,6 @@
 
 本项目是新手练习项目, 采用MVVM架构, 基于Jetpack部分组件开发;
 打包好的apk已放在release文件夹下, 感兴趣的朋友可以下载体验一下。
-
-# 近期更新（2021.6.2）
-
-1. 适配Bimibimi; 其他源有空再适配
 
 # 功能
 
