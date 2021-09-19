@@ -1,6 +1,6 @@
-<img src="./Screenshots/icon.png">
+<div align='center' ><font size='70'>暂停维护了</font></div> 
 
-# 暂停维护了
+<img src="./Screenshots/icon.png">
 
 # Bangumi
 
